@@ -26,14 +26,15 @@ class NetworkClient(private val context: Context) {
         } ?: false
     }
 
+    @Suppress("TooGenericExceptionCaught")
     suspend fun <T> executeRequest(
         request: suspend () -> Response<T>
     ): NetworkResult<T> {
-        return withContext(Dispatchers.IO) {
-            if (!isConnected()) {
-                return@withContext NetworkResult.NoConnection
-            }
+        if (!isConnected()) {
+            return NetworkResult.NoConnection
+        }
 
+        return withContext(Dispatchers.IO) {
             try {
                 val response = request()
 
