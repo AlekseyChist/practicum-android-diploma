@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 class VacancyFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return ComposeView(requireContext()).apply {
-            setContent{
+            setContent {
                 VacancyScreen()
             }
         }
