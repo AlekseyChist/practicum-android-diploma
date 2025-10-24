@@ -3,6 +3,7 @@ package ru.practicum.android.diploma.data.network
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
@@ -26,7 +27,6 @@ class NetworkClient(private val context: Context) {
         } ?: false
     }
 
-    @Suppress("TooGenericExceptionCaught")
     suspend fun <T> executeRequest(
         request: suspend () -> Response<T>
     ): NetworkResult<T> {
@@ -58,12 +58,14 @@ class NetworkClient(private val context: Context) {
                     }
                 }
             } catch (e: IOException) {
+                Log.w(TAG, "Network request failed: ${e.message}", e)
                 NetworkResult.NoConnection
             }
         }
     }
 
     companion object {
+        private const val TAG = "NetworkClient"
         private const val HTTP_SUCCESS_START = 200
         private const val HTTP_SUCCESS_END = 299
         private const val RESPONSE_BODY_NULL_MESSAGE = "Response body is null"
