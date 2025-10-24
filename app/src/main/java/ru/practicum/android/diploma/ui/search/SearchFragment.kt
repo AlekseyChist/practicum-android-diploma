@@ -1,9 +1,21 @@
 package ru.practicum.android.diploma.ui.search
 
+
+
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 
@@ -16,3 +28,36 @@ class SearchFragment : Fragment() {
         }
     }
 }
+
+
+
+@Composable
+fun DebouncedSearchField(
+    delayMs: Long = 500L,
+    onSearch: (String) -> Unit
+) {
+    var query by remember { mutableStateOf("") }
+
+    // Само текстовое поле
+    TextField(
+        value = query,
+        onValueChange = { query = it },
+        label = { Text("Введите запрос") },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    )
+
+    // Debounce через Flow
+    LaunchedEffect(Unit) {
+        snapshotFlow { query }
+            .debounce(delayMs)
+            .distinctUntilChanged()
+            .collectLatest { text ->
+                onSearch(text)
+            }
+    }
+}
+
+
+
