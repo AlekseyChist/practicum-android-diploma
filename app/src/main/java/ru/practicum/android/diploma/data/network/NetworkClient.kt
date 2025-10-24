@@ -38,14 +38,14 @@ class NetworkClient(private val context: Context) {
                 val response = request()
 
                 when (response.code()) {
-                    in 200..299 -> {
+                    in HTTP_SUCCESS_START..HTTP_SUCCESS_END -> {
                         val body = response.body()
                         if (body != null) {
                             NetworkResult.Success(body)
                         } else {
                             NetworkResult.Error(
                                 code = response.code(),
-                                message = "Response body is null"
+                                message = RESPONSE_BODY_NULL_MESSAGE
                             )
                         }
                     }
@@ -58,12 +58,13 @@ class NetworkClient(private val context: Context) {
                 }
             } catch (e: IOException) {
                 NetworkResult.NoConnection
-            } catch (e: Exception) {
-                NetworkResult.Error(
-                    code = -1,
-                    message = e.message
-                )
             }
         }
+    }
+
+    companion object {
+        private const val HTTP_SUCCESS_START = 200
+        private const val HTTP_SUCCESS_END = 299
+        private const val RESPONSE_BODY_NULL_MESSAGE = "Response body is null"
     }
 }
