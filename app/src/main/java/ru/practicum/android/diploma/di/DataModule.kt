@@ -6,8 +6,15 @@ import ru.practicum.android.diploma.data.network.NetworkClient
 import ru.practicum.android.diploma.data.network.RetrofitClient
 import ru.practicum.android.diploma.data.network.VacancyNetworkDataSource
 import ru.practicum.android.diploma.data.network.api.VacancyApi
+import ru.practicum.android.diploma.data.storage.LocalStorage
+import ru.practicum.android.diploma.data.storage.impl.LocalStorageImpl
 
 val dataModule = module {
+
+    // LocalStorage
+    single<LocalStorage> {
+        LocalStorageImpl(context = androidContext())
+    }
 
     // NetworkClient
     single {
