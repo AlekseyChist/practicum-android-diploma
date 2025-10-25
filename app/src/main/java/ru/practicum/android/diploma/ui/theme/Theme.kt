@@ -8,28 +8,30 @@ import androidx.compose.runtime.Composable
 
 private val LightColorPalette = lightColorScheme(
     primary = Blue,
-    onPrimary = WhiteUniversal,
+    onPrimary = White,
     secondary = Gray,
-    onSecondary = BlackUniversal,
-    background = WhiteUniversal,
-    onBackground = BlackUniversal,
+    onSecondary = Black,
+    background = White,
+    onBackground = Black,
     surface = LightGray,
     onSurface = Gray,
     error = Red,
-    onError = WhiteUniversal
+    onError = White,
+    scrim = BackgroundOverlay
 )
 
 private val DarkColorPalette = darkColorScheme(
     primary = Blue,
-    onPrimary = BlackUniversal,
+    onPrimary = Black,
     secondary = LightGray,
-    onSecondary = BlackUniversal,
-    background = BlackUniversal,
-    onBackground = WhiteUniversal,
+    onSecondary = Black,
+    background = Black,
+    onBackground = White,
     surface = Gray,
-    onSurface = WhiteUniversal,
+    onSurface = White,
     error = Red,
-    onError = BlackUniversal
+    onError = Black,
+    scrim = BackgroundOverlay
 )
 
 @Composable
@@ -41,6 +43,7 @@ fun AppTheme(
 
     MaterialTheme(
         colorScheme = colors,
-        content = content
+        content = content,
+        typography = AppTypography
     )
 }
