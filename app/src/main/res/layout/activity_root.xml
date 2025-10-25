@@ -20,6 +20,8 @@
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
+        app:itemTextAppearanceActive="@style/BottomNavTextAppearance"
+        app:itemTextAppearanceInactive="@style/BottomNavTextAppearance"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:minHeight="@dimen/height_bottom_nav"

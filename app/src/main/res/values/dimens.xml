@@ -2,4 +2,5 @@
 <resources>
     <dimen name="height_bottom_nav">56dp</dimen>
     <dimen name="padding_icon">8dp</dimen>
+    <dimen name="bottom_nav_text">12sp</dimen>
 </resources>
