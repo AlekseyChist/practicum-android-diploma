@@ -18,7 +18,7 @@ fun TeamScreen() {
             .fillMaxSize()
     ) {
         Text(
-            text = stringResource(R.string.Team)
+            text = stringResource(R.string.team)
         )
     }
 }

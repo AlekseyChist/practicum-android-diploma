@@ -18,7 +18,7 @@ fun FiltersSettingsScreen() {
             .fillMaxSize()
     ) {
         Text(
-            text = stringResource(R.string.FiltersSettings)
+            text = stringResource(R.string.filters_settings)
         )
     }
 }

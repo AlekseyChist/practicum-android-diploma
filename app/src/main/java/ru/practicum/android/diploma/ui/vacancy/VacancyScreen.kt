@@ -18,7 +18,7 @@ fun VacancyScreen() {
             .fillMaxSize()
     ) {
         Text(
-            text = stringResource(R.string.Vacancy)
+            text = stringResource(R.string.vacancy)
         )
     }
 }
