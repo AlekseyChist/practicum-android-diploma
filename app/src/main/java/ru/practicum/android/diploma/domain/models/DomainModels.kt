@@ -18,41 +18,13 @@ data class Area(
 )
 
 /**
- * Зарплата с бизнес-логикой
+ * Зарплата
  */
 data class Salary(
     val from: Int?,
     val to: Int?,
     val currency: String
-) {
-    /**
-     * Форматирование зарплаты для отображения
-     * Пример: "от 50 000 до 100 000 ₽"
-     */
-    fun formatForDisplay(): String {
-        val symbol = when (currency) {
-            "RUR", "RUB" -> "₽"
-            "USD" -> "$"
-            "EUR" -> "€"
-            else -> currency
-        }
-
-        return when {
-            from != null && to != null -> "от ${formatNumber(from)} до ${formatNumber(to)} $symbol"
-            from != null -> "от ${formatNumber(from)} $symbol"
-            to != null -> "до ${formatNumber(to)} $symbol"
-            else -> "Зарплата не указана"
-        }
-    }
-
-    private fun formatNumber(number: Int): String {
-        return number.toString()
-            .reversed()
-            .chunked(3)
-            .joinToString(" ")
-            .reversed()
-    }
-}
+)
 
 /**
  * Опыт работы
@@ -86,3 +58,42 @@ data class Contacts(
     val email: String?,
     val phones: List<String>
 )
+
+// Extension functions для форматирования
+
+/**
+ * Константа для группировки цифр в числе
+ */
+private const val NUMBER_GROUP_SIZE = 3
+
+/**
+ * Форматирование зарплаты для отображения
+ * Пример: "от 50 000 до 100 000 ₽"
+ */
+fun Salary.formatForDisplay(): String {
+    val symbol = when (currency) {
+        "RUR", "RUB" -> "₽"
+        "USD" -> "$"
+        "EUR" -> "€"
+        else -> currency
+    }
+
+    return when {
+        from != null && to != null -> "от ${from.formatNumber()} до ${to.formatNumber()} $symbol"
+        from != null -> "от ${from.formatNumber()} $symbol"
+        to != null -> "до ${to.formatNumber()} $symbol"
+        else -> "Зарплата не указана"
+    }
+}
+
+/**
+ * Форматирование числа с пробелами
+ * Пример: 50000 -> "50 000"
+ */
+private fun Int.formatNumber(): String {
+    return toString()
+        .reversed()
+        .chunked(NUMBER_GROUP_SIZE)
+        .joinToString(" ")
+        .reversed()
+}
