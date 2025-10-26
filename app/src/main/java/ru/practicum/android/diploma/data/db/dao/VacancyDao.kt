@@ -18,7 +18,7 @@ interface VacancyDao {
      * Добавить вакансию в избранное
      * При конфликте (вакансия уже существует) - заменяем
      */
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insertVacancy(vacancy: VacancyEntity)
 
     /**
