@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("ru.practicum.android.diploma.plugins.developproperties")
+    id("com.google.devtools.ksp") version "1.9.21-1.0.15"
 }
 
 android {
@@ -52,6 +53,7 @@ dependencies {
     implementation(libs.ui.material)
     implementation(libs.ui.constraintLayout)
     implementation(libs.room.common.jvm)
+    implementation(libs.room.ktx)
 
     // region Unit tests
     testImplementation(libs.unitTests.junit)
@@ -92,5 +94,10 @@ dependencies {
     // Navigation Component
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
+
+    // Room
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx.v261)
+    ksp(libs.room.compiler)
 
 }
