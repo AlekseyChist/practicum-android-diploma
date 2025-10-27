@@ -1,6 +1,8 @@
 package ru.practicum.android.diploma.data.repository
 
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import ru.practicum.android.diploma.data.db.dao.VacancyDao
 import ru.practicum.android.diploma.data.mappers.VacancyEntityMapper
@@ -19,13 +21,11 @@ class FavoritesRepository(
      * Принимает domain модель, конвертирует в Entity, сохраняет в БД
      */
     suspend fun addToFavorites(vacancy: Vacancy): Result<Unit> {
-        return try {
-            // Domain → Entity
+        return runCatching {
             val entity = VacancyEntityMapper.mapToEntity(vacancy)
             vacancyDao.insertVacancy(entity)
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
+        }.onFailure { exception ->
+            Log.e(TAG, "Error adding vacancy to favorites: ${vacancy.id}", exception)
         }
     }
 
@@ -33,11 +33,10 @@ class FavoritesRepository(
      * Удалить вакансию из избранного
      */
     suspend fun removeFromFavorites(vacancyId: String): Result<Unit> {
-        return try {
+        return runCatching {
             vacancyDao.deleteVacancyById(vacancyId)
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
+        }.onFailure { exception ->
+            Log.e(TAG, "Error removing vacancy from favorites: $vacancyId", exception)
         }
     }
 
@@ -49,10 +48,13 @@ class FavoritesRepository(
     fun getFavoriteVacancies(): Flow<List<Vacancy>> {
         return vacancyDao.getAllVacancies()
             .map { entities ->
-                // Entity → Domain (для каждой вакансии)
                 entities.map { entity ->
                     VacancyEntityMapper.mapToDomain(entity)
                 }
+            }
+            .catch { exception ->
+                Log.e(TAG, "Error getting favorite vacancies", exception)
+                emit(emptyList())
             }
     }
 
@@ -60,35 +62,34 @@ class FavoritesRepository(
      * Получить избранную вакансию по ID
      */
     suspend fun getFavoriteVacancyById(vacancyId: String): Vacancy? {
-        return try {
+        return runCatching {
             val entity = vacancyDao.getVacancyById(vacancyId)
-            // Entity → Domain
             entity?.let { VacancyEntityMapper.mapToDomain(it) }
-        } catch (e: Exception) {
-            null
-        }
+        }.onFailure { exception ->
+            Log.e(TAG, "Error getting vacancy by id: $vacancyId", exception)
+        }.getOrNull()
     }
 
     /**
      * Проверить, находится ли вакансия в избранном
      */
     suspend fun isVacancyFavorite(vacancyId: String): Boolean {
-        return try {
+        return runCatching {
             vacancyDao.isVacancyFavorite(vacancyId)
-        } catch (e: Exception) {
-            false
-        }
+        }.onFailure { exception ->
+            Log.e(TAG, "Error checking if vacancy is favorite: $vacancyId", exception)
+        }.getOrDefault(false)
     }
 
     /**
      * Получить количество избранных вакансий
      */
     suspend fun getFavoritesCount(): Int {
-        return try {
+        return runCatching {
             vacancyDao.getVacanciesCount()
-        } catch (e: Exception) {
-            0
-        }
+        }.onFailure { exception ->
+            Log.e(TAG, "Error getting favorites count", exception)
+        }.getOrDefault(0)
     }
 
     /**
@@ -100,5 +101,13 @@ class FavoritesRepository(
             .map { entities ->
                 entities.map { it.id }.toSet()
             }
+            .catch { exception ->
+                Log.e(TAG, "Error getting favorite vacancy ids", exception)
+                emit(emptySet())
+            }
+    }
+
+    companion object {
+        private const val TAG = "FavoritesRepository"
     }
 }
