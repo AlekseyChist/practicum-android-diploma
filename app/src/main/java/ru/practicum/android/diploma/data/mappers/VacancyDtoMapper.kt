@@ -1,7 +1,23 @@
 package ru.practicum.android.diploma.data.mappers
 
-import ru.practicum.android.diploma.data.dto.responses.*
-import ru.practicum.android.diploma.domain.models.*
+import ru.practicum.android.diploma.data.dto.responses.AddressDto
+import ru.practicum.android.diploma.data.dto.responses.ContactsDto
+import ru.practicum.android.diploma.data.dto.responses.EmployerDto
+import ru.practicum.android.diploma.data.dto.responses.EmploymentDto
+import ru.practicum.android.diploma.data.dto.responses.ExperienceDto
+import ru.practicum.android.diploma.data.dto.responses.FilterAreaDto
+import ru.practicum.android.diploma.data.dto.responses.SalaryDto
+import ru.practicum.android.diploma.data.dto.responses.ScheduleDto
+import ru.practicum.android.diploma.data.dto.responses.VacancyDetailDto
+import ru.practicum.android.diploma.data.dto.responses.VacancyDto
+import ru.practicum.android.diploma.domain.models.Area
+import ru.practicum.android.diploma.domain.models.Contacts
+import ru.practicum.android.diploma.domain.models.Employer
+import ru.practicum.android.diploma.domain.models.Employment
+import ru.practicum.android.diploma.domain.models.Experience
+import ru.practicum.android.diploma.domain.models.Salary
+import ru.practicum.android.diploma.domain.models.Schedule
+import ru.practicum.android.diploma.domain.models.Vacancy
 
 /**
  * Конвертер из DTO (от API) в Domain модели
@@ -27,7 +43,7 @@ object VacancyDtoMapper {
             contacts = dto.contacts?.let { mapContacts(it) },
             address = buildAddress(dto.address),
             url = dto.url,
-            isFavorite = false // По умолчанию не в избранном (проверим потом)
+            isFavorite = false // По умолчанию не в избранном
         )
     }
 
@@ -119,20 +135,14 @@ object VacancyDtoMapper {
     }
 
     private fun buildAddress(dto: AddressDto?): String? {
-        if (dto == null) return null
-
-        // Если есть полный адрес - используем его
-        if (!dto.fullAddress.isNullOrBlank()) {
-            return dto.fullAddress
+        return when {
+            dto == null -> null
+            !dto.fullAddress.isNullOrBlank() -> dto.fullAddress
+            else -> {
+                val parts = listOfNotNull(dto.city, dto.street, dto.building)
+                    .filter { it.isNotBlank() }
+                parts.takeIf { it.isNotEmpty() }?.joinToString(", ")
+            }
         }
-
-        // Иначе собираем из частей
-        val parts = listOfNotNull(
-            dto.city,
-            dto.street,
-            dto.building
-        ).filter { it.isNotBlank() }
-
-        return parts.takeIf { it.isNotEmpty() }?.joinToString(", ")
     }
 }
