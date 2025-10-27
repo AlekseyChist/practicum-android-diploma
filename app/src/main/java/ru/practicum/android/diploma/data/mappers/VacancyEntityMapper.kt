@@ -79,71 +79,93 @@ object VacancyEntityMapper {
             name = entity.name,
             description = entity.description,
             url = entity.url,
-
-            // Работодатель
-            employer = Employer(
-                id = entity.employerId,
-                name = entity.employerName,
-                logoUrl = entity.employerLogoUrl
-            ),
-
-            // Регион
-            area = Area(
-                id = entity.areaId,
-                name = entity.areaName
-            ),
-
-            // Зарплата (создаём только если есть хоть что-то)
-            salary = if (entity.salaryFrom != null || entity.salaryTo != null) {
-                Salary(
-                    from = entity.salaryFrom,
-                    to = entity.salaryTo,
-                    currency = entity.salaryCurrency ?: "RUR"
-                )
-            } else null,
-
-            // Опыт
-            experience = if (entity.experienceId != null && entity.experienceName != null) {
-                Experience(
-                    id = entity.experienceId,
-                    name = entity.experienceName
-                )
-            } else null,
-
-            // Занятость
-            employment = if (entity.employmentId != null && entity.employmentName != null) {
-                Employment(
-                    id = entity.employmentId,
-                    name = entity.employmentName
-                )
-            } else null,
-
-            // График
-            schedule = if (entity.scheduleId != null && entity.scheduleName != null) {
-                Schedule(
-                    id = entity.scheduleId,
-                    name = entity.scheduleName
-                )
-            } else null,
-
-            // Контакты
-            contacts = if (entity.contactsName != null ||
-                entity.contactsEmail != null ||
-                !entity.contactsPhones.isNullOrBlank()) {
-                Contacts(
-                    name = entity.contactsName,
-                    email = entity.contactsEmail,
-                    phones = parsePhones(entity.contactsPhones)
-                )
-            } else null,
-
-            // Дополнительно
+            employer = createEmployer(entity),
+            area = createArea(entity),
+            salary = createSalary(entity),
+            experience = createExperience(entity),
+            employment = createEmployment(entity),
+            schedule = createSchedule(entity),
+            contacts = createContacts(entity),
             address = entity.address,
             keySkills = parseSkills(entity.keySkills),
-
-            // Если в БД, значит в избранном!
             isFavorite = true
         )
+    }
+
+    private fun createEmployer(entity: VacancyEntity): Employer {
+        return Employer(
+            id = entity.employerId,
+            name = entity.employerName,
+            logoUrl = entity.employerLogoUrl
+        )
+    }
+
+    private fun createArea(entity: VacancyEntity): Area {
+        return Area(
+            id = entity.areaId,
+            name = entity.areaName
+        )
+    }
+
+    private fun createSalary(entity: VacancyEntity): Salary? {
+        return if (entity.salaryFrom != null || entity.salaryTo != null) {
+            Salary(
+                from = entity.salaryFrom,
+                to = entity.salaryTo,
+                currency = entity.salaryCurrency ?: "RUR"
+            )
+        } else {
+            null
+        }
+    }
+
+    private fun createExperience(entity: VacancyEntity): Experience? {
+        return if (entity.experienceId != null && entity.experienceName != null) {
+            Experience(
+                id = entity.experienceId,
+                name = entity.experienceName
+            )
+        } else {
+            null
+        }
+    }
+
+    private fun createEmployment(entity: VacancyEntity): Employment? {
+        return if (entity.employmentId != null && entity.employmentName != null) {
+            Employment(
+                id = entity.employmentId,
+                name = entity.employmentName
+            )
+        } else {
+            null
+        }
+    }
+
+    private fun createSchedule(entity: VacancyEntity): Schedule? {
+        return if (entity.scheduleId != null && entity.scheduleName != null) {
+            Schedule(
+                id = entity.scheduleId,
+                name = entity.scheduleName
+            )
+        } else {
+            null
+        }
+    }
+
+    private fun createContacts(entity: VacancyEntity): Contacts? {
+        val hasAnyContact = entity.contactsName != null ||
+            entity.contactsEmail != null ||
+            !entity.contactsPhones.isNullOrBlank()
+
+        return if (hasAnyContact) {
+            Contacts(
+                name = entity.contactsName,
+                email = entity.contactsEmail,
+                phones = parsePhones(entity.contactsPhones)
+            )
+        } else {
+            null
+        }
     }
 
     /**
