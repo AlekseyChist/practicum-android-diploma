@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -21,9 +22,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.material.icons.outlined.FilterList
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import ru.practicum.android.diploma.R
 
 data class VacancyUi(
@@ -54,18 +62,53 @@ fun SearchScreen(
     onFilterClick: () -> Unit,
     onVacancyClick: (VacancyUi) -> Unit,
 ) {
+    var textState by remember { mutableStateOf(query) }
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.search_job)) },
-                actions = {
-                    IconButton(onClick = onFilterClick) {
-                        Icon(
-                            imageVector = Icons.Outlined.FilterList,
-                            contentDescription = stringResource(R.string.filters_settings)
+                modifier = Modifier
+                    .height(64.dp),
+                title = {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight(),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        Text(
+                            text = stringResource(R.string.search_job),
+                            style = TextStyle(
+                                fontFamily = FontFamily(Font(R.font.ys_display_medium)),
+                                fontSize = 22.sp,
+                                color = colorResource(R.color.black_text)
+                            )
                         )
                     }
-                }
+                },
+                actions = {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(end = 4.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        IconButton(
+                            onClick = onFilterClick,
+                            modifier = Modifier.size(40.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.FilterList,
+                                contentDescription = stringResource(R.string.filters_settings),
+                                modifier = Modifier.size(24.dp),
+                                tint = colorResource(R.color.black_text)
+                            )
+                        }
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent,
+                    titleContentColor = colorResource(R.color.black_text),
+                    actionIconContentColor = colorResource(R.color.black_text)
+                )
             )
         }
     ) { inner ->
@@ -76,9 +119,15 @@ fun SearchScreen(
                 .background(MaterialTheme.colorScheme.background)
         ) {
             SearchField(
-                value = query,
-                onValueChange = onQueryChange,
-                onClear = onClearClick,
+                value = textState,
+                onValueChange = {
+                    textState = it
+                    onQueryChange(it)
+                },
+                onClear = {
+                    textState = ""
+                    onClearClick()
+                },
                 onSubmit = onSearchClick
             )
 
@@ -119,21 +168,55 @@ private fun SearchField(
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .height(56.dp),
         value = value,
         onValueChange = onValueChange,
         singleLine = true,
-        placeholder = { Text(text = stringResource(R.string.search_hint)) },
-        leadingIcon = {
-            Icon(imageVector = Icons.Filled.Search, contentDescription = null)
+        placeholder = {
+            Text(
+                text = stringResource(R.string.search_hint),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Normal,
+                color = colorResource(R.color.color_gray_search_placeholder)
+            )
         },
+        textStyle = TextStyle(
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Normal,
+            color = Color.Black
+        ),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = colorResource(R.color.light_gray),
+            unfocusedContainerColor = colorResource(R.color.light_gray),
+            disabledContainerColor = colorResource(R.color.light_gray),
+            focusedBorderColor = Color.Transparent,
+            unfocusedBorderColor = Color.Transparent,
+            cursorColor = Color.Blue
+        ),
+        shape = RoundedCornerShape(12.dp),
+        leadingIcon = null,
         trailingIcon = {
-            if (value.isNotEmpty()) {
-                IconButton(onClick = onClear) {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = stringResource(R.string.clear)
-                    )
+            Row(
+                modifier = Modifier.padding(end = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (value.isNotEmpty()) {
+                    IconButton(onClick = onClear, modifier = Modifier.size(24.dp)) {
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = stringResource(R.string.clear),
+                            tint = Color.Black
+                        )
+                    }
+                } else {
+                    IconButton(onClick = onSubmit, modifier = Modifier.size(24.dp)) {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = stringResource(R.string.search_hint),
+                            tint = Color.Black
+                        )
+                    }
                 }
             }
         },
@@ -193,7 +276,7 @@ private fun Placeholder(image: Int, text: String) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 32.dp),
+            .padding(horizontal = 16.dp),
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -201,15 +284,9 @@ private fun Placeholder(image: Int, text: String) {
                 painter = painterResource(id = image),
                 contentDescription = null,
                 modifier = Modifier
-                    .fillMaxWidth(0.7f)
+                    .fillMaxWidth()
                     .aspectRatio(1f),
                 contentScale = ContentScale.Fit
-            )
-            Spacer(Modifier.height(24.dp))
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
