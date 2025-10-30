@@ -281,7 +281,7 @@ private fun SearchField(
 }
 
 @Composable
-internal fun VacancyList( // потом нужно будет вернуть приват!!! не забыть
+internal fun VacancyList( // потом нужно будет вернуть приват!! не забыть
     items: List<VacancyUi>,
     onItemClick: (VacancyUi) -> Unit
 ) {
