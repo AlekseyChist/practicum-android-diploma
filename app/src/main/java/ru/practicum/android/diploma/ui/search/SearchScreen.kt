@@ -59,6 +59,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.R.drawable.search_placeholder_euy
 import ru.practicum.android.diploma.ui.search.UiSpec.BODY_FONT_SIZE
 import ru.practicum.android.diploma.ui.search.UiSpec.ICON_SIZE
 import ru.practicum.android.diploma.ui.search.UiSpec.ICON_SIZE1
@@ -199,7 +200,7 @@ fun SearchScreen(
 
             when (currentState) {
                 SearchUiState.Idle -> Placeholder(
-                    image = R.drawable.search_placeholder_euy
+                    image = search_placeholder_euy
                 )
 
                 SearchUiState.Typing -> {
