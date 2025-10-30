@@ -201,9 +201,11 @@ fun SearchScreen(
                 SearchUiState.Idle -> Placeholder(
                     image = R.drawable.search_placeholder
                 )
+
                 SearchUiState.Typing -> {
                     Spacer(Modifier.height(ICON_SIZE1))
                 }
+
                 SearchUiState.Loading -> LoadingPlaceholder()
                 else -> {}
             }
@@ -279,7 +281,7 @@ private fun SearchField(
 }
 
 @Composable
-private fun VacancyList(
+internal fun VacancyList(  //потом нужно будет вернуть приват!!! не забыть
     items: List<VacancyUi>,
     onItemClick: (VacancyUi) -> Unit
 ) {
@@ -325,7 +327,7 @@ private fun LoadingPlaceholder() {
 }
 
 @Composable
-private fun Placeholder(image: Int,) {
+private fun Placeholder(image: Int) {
     Box(
         modifier = Modifier
             .fillMaxSize()
