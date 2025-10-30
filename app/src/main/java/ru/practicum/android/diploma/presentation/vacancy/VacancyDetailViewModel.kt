@@ -11,6 +11,7 @@ import ru.practicum.android.diploma.domain.api.GetVacancyDetailsUseCase
 /**
  * ViewModel для экрана деталей вакансии
  */
+
 class VacancyDetailViewModel(
     private val getVacancyDetailsUseCase: GetVacancyDetailsUseCase
 ) : ViewModel() {
