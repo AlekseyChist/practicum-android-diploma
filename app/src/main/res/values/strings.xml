@@ -10,4 +10,10 @@
     <string name="select_region">Выбор региона</string>
     <string name="select_industry">Выбор отрасли</string>
     <string name="main">Главная</string>
+    <string name="list_of_developers">Над приложением работали</string>
+    <string name="AC">Алексей Чистяков</string>
+    <string name="ET">Евгений Токарев</string>
+    <string name="IV">Иван Васильев</string>
+    <string name="KK">Кермен Корнаев</string>
 </resources>
+<!--<string name="teamNames">Алексей Чистяков\n\nЕвгений Токарев\n\nИван Васильев\n\nКермен Корнаев</string>-->

@@ -1,37 +1,95 @@
 package ru.practicum.android.diploma.ui.team
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.ui.theme.AppTheme
 
+object Dimens {
+    val dp_8 = 8.dp
+    val dp_16 = 16.dp
+    val dp_24 = 24.dp
+    val dp_32 = 32.dp
+    val dp_56 = 56.dp
+    val sp_16 = 16.sp
+    val sp_22 = 22.sp
+    val sp_32 = 32.sp
+}
+
 @Composable
 fun TeamScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Column {
         Text(
-            modifier = Modifier
-                .padding(top = 40.dp),
             text = stringResource(R.string.team),
-            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(start = Dimens.dp_24, top = Dimens.dp_56, bottom = Dimens.dp_8),
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontSize = Dimens.sp_22,
+                fontWeight = FontWeight.Medium
+            ),
+            color = MaterialTheme.colorScheme.onBackground
+        )
+
+        Text(
+            text = stringResource(R.string.list_of_developers),
+            modifier = Modifier.padding(start = Dimens.dp_24, top = Dimens.dp_32, bottom = Dimens.dp_8),
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontSize = Dimens.sp_32,
+                fontWeight = FontWeight.Bold
+            ),
+            color = MaterialTheme.colorScheme.onBackground
+        )
+
+        Text(
+            text = stringResource(R.string.AC),
+            modifier = Modifier.padding(start = Dimens.dp_24, top = Dimens.dp_32, bottom = Dimens.dp_8),
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontSize = Dimens.sp_16,
+                fontWeight = FontWeight.Medium
+            ),
+            color = MaterialTheme.colorScheme.onBackground
+        )
+
+        Text(
+            text = stringResource(R.string.ET),
+            modifier = Modifier.padding(start = Dimens.dp_24, top = Dimens.dp_8, bottom = Dimens.dp_8),
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontSize = Dimens.sp_16,
+                fontWeight = FontWeight.Medium
+            ),
+            color = MaterialTheme.colorScheme.onBackground
+        )
+
+        Text(
+            text = stringResource(R.string.IV),
+            modifier = Modifier.padding(start = Dimens.dp_24, top = Dimens.dp_8, bottom = Dimens.dp_8),
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontSize = Dimens.sp_16,
+                fontWeight = FontWeight.Medium
+            ),
+            color = MaterialTheme.colorScheme.onBackground
+        )
+
+        Text(
+            text = stringResource(R.string.KK),
+            modifier = Modifier.padding(start = Dimens.dp_24, top = Dimens.dp_8, bottom = Dimens.dp_8),
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontSize = Dimens.sp_16,
+                fontWeight = FontWeight.Medium
+            ),
             color = MaterialTheme.colorScheme.onBackground
         )
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
