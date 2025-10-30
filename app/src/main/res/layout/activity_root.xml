@@ -6,14 +6,37 @@
     android:layout_height="match_parent"
     tools:context=".ui.root.RootActivity">
 
-    <TextView
-        android:id="@+id/buildConfigReadExampleTextView"
-        android:layout_width="wrap_content"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/rootFragmentContainerView"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/nav_graph"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        app:itemTextAppearanceActive="@style/BottomNavTextAppearance"
+        app:itemTextAppearanceInactive="@style/BottomNavTextAppearance"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:minHeight="@dimen/height_bottom_nav"
+        android:background="@drawable/bottom_nav_background"
+        app:itemActiveIndicatorStyle="@style/Widget.Design.BottomNavigationView"
+        app:itemIconTint="@color/nav_item_icon_color"
+        app:itemTextColor="@color/nav_item_text_color"
+        app:itemPaddingBottom="@dimen/padding_icon"
+        app:itemPaddingTop="@dimen/padding_icon"
+        app:itemBackground="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:itemTextAppearanceActiveBoldEnabled="false"
+        app:menu="@menu/bottom_nav_menu"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
