@@ -22,13 +22,8 @@ class VacancyRepository(
     suspend fun getVacancyById(vacancyId: String): Result<Vacancy> {
         return when (val result = networkDataSource.getVacancyDetails(vacancyId)) {
             is NetworkResult.Success -> {
-                try {
-                    val vacancy = VacancyDtoMapper.mapDetailToDomain(result.data)
-                    Result.success(vacancy)
-                } catch (e: Exception) {
-                    Log.e(TAG, "Error mapping vacancy details: $vacancyId", e)
-                    Result.failure(e)
-                }
+                val vacancy = VacancyDtoMapper.mapDetailToDomain(result.data)
+                Result.success(vacancy)
             }
             is NetworkResult.Error -> {
                 Log.e(TAG, "Network error getting vacancy: $vacancyId, code: ${result.code}")
