@@ -9,8 +9,11 @@ import ru.practicum.android.diploma.data.network.RetrofitClient
 import ru.practicum.android.diploma.data.network.VacancyNetworkDataSource
 import ru.practicum.android.diploma.data.network.api.VacancyApi
 import ru.practicum.android.diploma.data.repository.FavoritesRepository
+import ru.practicum.android.diploma.data.repository.VacancyRepository
 import ru.practicum.android.diploma.data.storage.LocalStorage
 import ru.practicum.android.diploma.data.storage.impl.LocalStorageImpl
+import ru.practicum.android.diploma.domain.api.GetVacancyDetailsUseCase
+import ru.practicum.android.diploma.domain.impl.GetVacancyDetailsUseCaseImpl
 
 /**
  * Koin модуль для слоя данных
@@ -30,7 +33,7 @@ val dataModule = module {
             AppDatabase::class.java,
             AppDatabase.DATABASE_NAME
         )
-            .fallbackToDestructiveMigration() // При изменении схемы - пересоздать БД
+            .fallbackToDestructiveMigration()
             .build()
     }
 
@@ -65,4 +68,19 @@ val dataModule = module {
             vacancyDao = get()
         )
     }
+
+    // Repository для вакансий
+    single {
+        VacancyRepository(
+            networkDataSource = get()
+        )
+    }
+
+    // Use Case для получения деталей вакансии
+    single<GetVacancyDetailsUseCase> {
+        GetVacancyDetailsUseCaseImpl(
+            vacancyRepository = get()
+        )
+    }
+
 }
