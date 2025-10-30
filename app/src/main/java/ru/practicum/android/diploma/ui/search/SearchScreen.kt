@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
 import ru.practicum.android.diploma.R
 
 data class VacancyUi(
@@ -45,6 +46,7 @@ data class VacancyUi(
 sealed interface SearchUiState {
     data object Idle : SearchUiState
     data object Loading : SearchUiState
+    data object Typing : SearchUiState
     data object NoInternet : SearchUiState
     data object EmptyResult : SearchUiState
     data class Success(val items: List<VacancyUi>) : SearchUiState
@@ -63,6 +65,18 @@ fun SearchScreen(
     onVacancyClick: (VacancyUi) -> Unit,
 ) {
     var textState by remember { mutableStateOf(query) }
+    var currentState by remember { mutableStateOf<SearchUiState>(SearchUiState.Idle) }
+
+    LaunchedEffect(textState) {
+        if (textState.isNotEmpty()) {
+            currentState = SearchUiState.Typing
+            delay(2000)
+            currentState = SearchUiState.Loading
+        } else {
+            currentState = SearchUiState.Idle
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -131,28 +145,15 @@ fun SearchScreen(
                 onSubmit = onSearchClick
             )
 
-            when (state) {
+            when (currentState) {
                 SearchUiState.Idle -> Placeholder(
-                    image = R.drawable.search_placeholder,
-                    text = stringResource(R.string.search_hint)
+                    image = R.drawable.search_placeholder
                 )
+                SearchUiState.Typing -> {
+                    Spacer(Modifier.height(0.dp))
+                }
                 SearchUiState.Loading -> LoadingPlaceholder()
-                SearchUiState.NoInternet -> Placeholder(
-                    image = R.drawable.no_internet_placeholder,
-                    text = stringResource(R.string.placeholder_no_internet)
-                )
-                SearchUiState.EmptyResult -> Placeholder(
-                    image = R.drawable.no_vacanc_placeholder,
-                    text = stringResource(R.string.placeholder_error)
-                )
-                is SearchUiState.Error -> Placeholder(
-                    image = R.drawable.no_vacanc_placeholder,
-                    text = state.message ?: stringResource(R.string.placeholder_error)
-                )
-                is SearchUiState.Success -> VacancyList(
-                    items = state.items,
-                    onItemClick = onVacancyClick
-                )
+                else -> {}
             }
         }
     }
@@ -168,7 +169,7 @@ private fun SearchField(
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = 16.dp, vertical = 27.dp)
             .height(56.dp),
         value = value,
         onValueChange = onValueChange,
@@ -272,7 +273,7 @@ private fun LoadingPlaceholder() {
 }
 
 @Composable
-private fun Placeholder(image: Int, text: String) {
+private fun Placeholder(image: Int,) {
     Box(
         modifier = Modifier
             .fillMaxSize()
