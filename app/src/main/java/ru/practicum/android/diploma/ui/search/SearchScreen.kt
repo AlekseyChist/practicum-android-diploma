@@ -3,7 +3,18 @@ package ru.practicum.android.diploma.ui.search
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,26 +23,54 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.outlined.FilterList
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.ui.search.UiSpec.BODY_FONT_SIZE
+import ru.practicum.android.diploma.ui.search.UiSpec.ICON_SIZE
+import ru.practicum.android.diploma.ui.search.UiSpec.ICON_SIZE1
+import ru.practicum.android.diploma.ui.search.UiSpec.PLACEHOLDER_VERTICAL_PADDING
+import ru.practicum.android.diploma.ui.search.UiSpec.SCREEN_PADDING_H
+import ru.practicum.android.diploma.ui.search.UiSpec.SEARCH_FIELD_HEIGHT
+import ru.practicum.android.diploma.ui.search.UiSpec.SEARCH_FIELD_VERTICAL_PADDING
+import ru.practicum.android.diploma.ui.search.UiSpec.SEARCH_LOADING_DELAY_MS
+import ru.practicum.android.diploma.ui.search.UiSpec.TITLE_FONT_SIZE
+import ru.practicum.android.diploma.ui.search.UiSpec.TOP_BAR_ACTION_END_PADDING
+import ru.practicum.android.diploma.ui.search.UiSpec.TOP_BAR_ACTION_TOUCH
+import ru.practicum.android.diploma.ui.search.UiSpec.TOP_BAR_HEIGHT
 
 data class VacancyUi(
     val id: String,
@@ -51,6 +90,21 @@ sealed interface SearchUiState {
     data class Error(val message: String? = null) : SearchUiState
 }
 
+private object UiSpec {
+    const val SEARCH_LOADING_DELAY_MS = 2000L
+    val TOP_BAR_HEIGHT = 64.dp
+    val TOP_BAR_ACTION_TOUCH = 40.dp
+    val ICON_SIZE = 24.dp
+    val SCREEN_PADDING_H = 16.dp
+    val TOP_BAR_ACTION_END_PADDING = 12.dp
+    val SEARCH_FIELD_HEIGHT = 56.dp
+    val SEARCH_FIELD_VERTICAL_PADDING = 4.dp
+    val PLACEHOLDER_VERTICAL_PADDING = 27.dp
+    val TITLE_FONT_SIZE = 22.sp
+    val BODY_FONT_SIZE = 16.sp
+    val ICON_SIZE1 = 0.dp
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
@@ -68,7 +122,7 @@ fun SearchScreen(
     LaunchedEffect(textState) {
         if (textState.isNotEmpty()) {
             currentState = SearchUiState.Typing
-            delay(2000)
+            delay(SEARCH_LOADING_DELAY_MS)
             currentState = SearchUiState.Loading
         } else {
             currentState = SearchUiState.Idle
@@ -79,7 +133,7 @@ fun SearchScreen(
         topBar = {
             TopAppBar(
                 modifier = Modifier
-                    .height(64.dp),
+                    .height(TOP_BAR_HEIGHT),
                 title = {
                     Box(
                         modifier = Modifier
@@ -90,7 +144,7 @@ fun SearchScreen(
                             text = stringResource(R.string.search_job),
                             style = TextStyle(
                                 fontFamily = FontFamily(Font(R.font.ys_display_medium)),
-                                fontSize = 22.sp,
+                                fontSize = TITLE_FONT_SIZE,
                                 color = colorResource(R.color.black_text)
                             )
                         )
@@ -100,17 +154,17 @@ fun SearchScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxHeight()
-                            .padding(end = 4.dp),
+                            .padding(end = SEARCH_FIELD_VERTICAL_PADDING),
                         contentAlignment = Alignment.Center
                     ) {
                         IconButton(
                             onClick = onFilterClick,
-                            modifier = Modifier.size(40.dp)
+                            modifier = Modifier.size(TOP_BAR_ACTION_TOUCH)
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.FilterList,
                                 contentDescription = stringResource(R.string.filters_settings),
-                                modifier = Modifier.size(24.dp),
+                                modifier = Modifier.size(ICON_SIZE),
                                 tint = colorResource(R.color.black_text)
                             )
                         }
@@ -148,7 +202,7 @@ fun SearchScreen(
                     image = R.drawable.search_placeholder
                 )
                 SearchUiState.Typing -> {
-                    Spacer(Modifier.height(0.dp))
+                    Spacer(Modifier.height(ICON_SIZE1))
                 }
                 SearchUiState.Loading -> LoadingPlaceholder()
                 else -> {}
@@ -167,21 +221,21 @@ private fun SearchField(
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 27.dp)
-            .height(56.dp),
+            .padding(horizontal = SCREEN_PADDING_H, vertical = PLACEHOLDER_VERTICAL_PADDING)
+            .height(SEARCH_FIELD_HEIGHT),
         value = value,
         onValueChange = onValueChange,
         singleLine = true,
         placeholder = {
             Text(
                 text = stringResource(R.string.search_hint),
-                fontSize = 16.sp,
+                fontSize = BODY_FONT_SIZE,
                 fontWeight = FontWeight.Normal,
                 color = colorResource(R.color.color_gray_search_placeholder)
             )
         },
         textStyle = TextStyle(
-            fontSize = 16.sp,
+            fontSize = BODY_FONT_SIZE,
             fontWeight = FontWeight.Normal,
             color = Color.Black
         ),
@@ -193,15 +247,15 @@ private fun SearchField(
             unfocusedBorderColor = Color.Transparent,
             cursorColor = Color.Blue
         ),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(TOP_BAR_ACTION_END_PADDING),
         leadingIcon = null,
         trailingIcon = {
             Row(
-                modifier = Modifier.padding(end = 16.dp),
+                modifier = Modifier.padding(end = SCREEN_PADDING_H),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (value.isNotEmpty()) {
-                    IconButton(onClick = onClear, modifier = Modifier.size(24.dp)) {
+                    IconButton(onClick = onClear, modifier = Modifier.size(ICON_SIZE)) {
                         Icon(
                             imageVector = Icons.Filled.Close,
                             contentDescription = stringResource(R.string.clear),
@@ -209,7 +263,7 @@ private fun SearchField(
                         )
                     }
                 } else {
-                    IconButton(onClick = onSubmit, modifier = Modifier.size(24.dp)) {
+                    IconButton(onClick = onSubmit, modifier = Modifier.size(ICON_SIZE)) {
                         Icon(
                             imageVector = Icons.Filled.Search,
                             contentDescription = stringResource(R.string.search_hint),
@@ -231,7 +285,7 @@ private fun VacancyList(
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp)
+        contentPadding = PaddingValues(start = SCREEN_PADDING_H, end = SCREEN_PADDING_H, bottom = SCREEN_PADDING_H)
     ) {
         items(items, key = { it.id }) { item ->
             VacancyListItem(item = item, onClick = { onItemClick(item) })
@@ -246,7 +300,7 @@ private fun VacancyListItem(item: VacancyUi, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(vertical = 12.dp)
+            .padding(vertical = TOP_BAR_ACTION_END_PADDING)
     ) {
         Text(text = item.title, style = MaterialTheme.typography.titleMedium)
         item.company?.let { Text(text = it, style = MaterialTheme.typography.bodyMedium) }
@@ -275,7 +329,7 @@ private fun Placeholder(image: Int,) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = SCREEN_PADDING_H),
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
