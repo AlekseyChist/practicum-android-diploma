@@ -199,7 +199,7 @@ fun SearchScreen(
 
             when (currentState) {
                 SearchUiState.Idle -> Placeholder(
-                    image = R.drawable.search_placeholder
+                    image = R.drawable.search_placeholder_euy
                 )
 
                 SearchUiState.Typing -> {
