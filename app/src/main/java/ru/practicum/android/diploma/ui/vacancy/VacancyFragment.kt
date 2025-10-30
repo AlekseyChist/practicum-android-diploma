@@ -13,7 +13,11 @@ class VacancyFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 AppTheme {
-                    VacancyScreen()
+                    VacancyScreen(
+                        onBackClick = { requireActivity().onBackPressedDispatcher.onBackPressed() },
+                        onIcon1Click = {},
+                        onIcon2Click = {}
+                    )
                 }
             }
         }
