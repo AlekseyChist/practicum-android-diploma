@@ -26,12 +26,10 @@ class VacancyDetailViewModel(
     private val _state = MutableStateFlow<VacancyDetailState>(VacancyDetailState.Initial)
     val state: StateFlow<VacancyDetailState> = _state.asStateFlow()
 
-    // Текущая загруженная вакансия (для добавления/удаления из избранного)
     private var currentVacancy: Vacancy? = null
 
     /**
      * Загрузить детальную информацию о вакансии
-     * @param vacancyId - идентификатор вакансии
      */
     fun loadVacancy(vacancyId: String) {
         if (vacancyId.isBlank()) {
@@ -42,14 +40,10 @@ class VacancyDetailViewModel(
         _state.value = VacancyDetailState.Loading
 
         viewModelScope.launch {
-            // Загружаем вакансию
             getVacancyDetailsUseCase.execute(vacancyId)
                 .onSuccess { vacancy ->
                     currentVacancy = vacancy
-
-                    // Проверяем, находится ли вакансия в избранном
                     val isFavorite = checkIfVacancyFavoriteUseCase.execute(vacancyId)
-
                     _state.value = VacancyDetailState.Success(
                         vacancy = vacancy,
                         isFavorite = isFavorite
@@ -63,8 +57,6 @@ class VacancyDetailViewModel(
 
     /**
      * Переключить статус избранного для текущей вакансии
-     * Добавляет в избранное, если не добавлена
-     * Удаляет из избранного, если уже добавлена
      */
     fun toggleFavorite() {
         val vacancy = currentVacancy ?: return
@@ -72,13 +64,11 @@ class VacancyDetailViewModel(
 
         viewModelScope.launch {
             if (currentState.isFavorite) {
-                // Удаляем из избранного
                 removeVacancyFromFavoritesUseCase.execute(vacancy.id)
                     .onSuccess {
                         _state.value = currentState.copy(isFavorite = false)
                     }
             } else {
-                // Добавляем в избранное
                 addVacancyToFavoritesUseCase.execute(vacancy)
                     .onSuccess {
                         _state.value = currentState.copy(isFavorite = true)
