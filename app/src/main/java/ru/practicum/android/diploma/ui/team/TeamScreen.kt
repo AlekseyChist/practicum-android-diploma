@@ -30,7 +30,11 @@ fun TeamScreen() {
     Column {
         Text(
             text = stringResource(R.string.team),
-            modifier = Modifier.padding(start = TeamScreenDimens.dp_24, top = TeamScreenDimens.dp_56, bottom = TeamScreenDimens.dp_8),
+            modifier = Modifier.padding(
+                start = TeamScreenDimens.dp_24,
+                top = TeamScreenDimens.dp_56,
+                bottom = TeamScreenDimens.dp_8
+            ),
             style = MaterialTheme.typography.titleLarge.copy(
                 fontSize = TeamScreenDimens.sp_22,
                 fontWeight = FontWeight.Medium
@@ -40,7 +44,11 @@ fun TeamScreen() {
 
         Text(
             text = stringResource(R.string.list_of_developers),
-            modifier = Modifier.padding(start = TeamScreenDimens.dp_24, top = TeamScreenDimens.dp_32, bottom = TeamScreenDimens.dp_8),
+            modifier = Modifier.padding(
+                start = TeamScreenDimens.dp_24,
+                top = TeamScreenDimens.dp_32,
+                bottom = TeamScreenDimens.dp_8
+            ),
             style = MaterialTheme.typography.titleLarge.copy(
                 fontSize = TeamScreenDimens.sp_32,
                 fontWeight = FontWeight.Bold
@@ -50,7 +58,11 @@ fun TeamScreen() {
 
         Text(
             text = stringResource(R.string.AC),
-            modifier = Modifier.padding(start = TeamScreenDimens.dp_24, top = TeamScreenDimens.dp_32, bottom = TeamScreenDimens.dp_8),
+            modifier = Modifier.padding(
+                start = TeamScreenDimens.dp_24,
+                top = TeamScreenDimens.dp_32,
+                bottom = TeamScreenDimens.dp_8
+            ),
             style = MaterialTheme.typography.titleLarge.copy(
                 fontSize = TeamScreenDimens.sp_16,
                 fontWeight = FontWeight.Medium
@@ -60,7 +72,11 @@ fun TeamScreen() {
 
         Text(
             text = stringResource(R.string.ET),
-            modifier = Modifier.padding(start = TeamScreenDimens.dp_24, top = TeamScreenDimens.dp_8, bottom = TeamScreenDimens.dp_8),
+            modifier = Modifier.padding(
+                start = TeamScreenDimens.dp_24,
+                top = TeamScreenDimens.dp_8,
+                bottom = TeamScreenDimens.dp_8
+            ),
             style = MaterialTheme.typography.titleLarge.copy(
                 fontSize = TeamScreenDimens.sp_16,
                 fontWeight = FontWeight.Medium
@@ -70,7 +86,11 @@ fun TeamScreen() {
 
         Text(
             text = stringResource(R.string.IV),
-            modifier = Modifier.padding(start = TeamScreenDimens.dp_24, top = TeamScreenDimens.dp_8, bottom = TeamScreenDimens.dp_8),
+            modifier = Modifier.padding(
+                start = TeamScreenDimens.dp_24,
+                top = TeamScreenDimens.dp_8,
+                bottom = TeamScreenDimens.dp_8
+            ),
             style = MaterialTheme.typography.titleLarge.copy(
                 fontSize = TeamScreenDimens.sp_16,
                 fontWeight = FontWeight.Medium
@@ -80,7 +100,11 @@ fun TeamScreen() {
 
         Text(
             text = stringResource(R.string.KK),
-            modifier = Modifier.padding(start = TeamScreenDimens.dp_24, top = TeamScreenDimens.dp_8, bottom = TeamScreenDimens.dp_8),
+            modifier = Modifier.padding(
+                start = TeamScreenDimens.dp_24,
+                top = TeamScreenDimens.dp_8,
+                bottom = TeamScreenDimens.dp_8
+            ),
             style = MaterialTheme.typography.titleLarge.copy(
                 fontSize = TeamScreenDimens.sp_16,
                 fontWeight = FontWeight.Medium
