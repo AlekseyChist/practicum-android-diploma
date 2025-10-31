@@ -14,7 +14,6 @@ import ru.practicum.android.diploma.domain.models.Vacancy
 
 /**
  * ViewModel для экрана деталей вакансии
- * Обновлена для поддержки функционала избранного
  */
 class VacancyDetailViewModel(
     private val getVacancyDetailsUseCase: GetVacancyDetailsUseCase,
@@ -30,6 +29,7 @@ class VacancyDetailViewModel(
 
     /**
      * Загрузить детальную информацию о вакансии
+     * @param vacancyId - идентификатор вакансии
      */
     fun loadVacancy(vacancyId: String) {
         if (vacancyId.isBlank()) {
@@ -89,13 +89,15 @@ class VacancyDetailViewModel(
      */
     private fun handleError(exception: Throwable) {
         val message = exception.message ?: "Неизвестная ошибка"
-        val isConnectionError = message.contains("интернет", ignoreCase = true) ||
-                message.contains("connection", ignoreCase = true)
 
-        _state.value = if (isConnectionError) {
-            VacancyDetailState.NoConnection
-        } else {
-            VacancyDetailState.Error(message)
+        _state.value = when {
+            message.contains("интернет", ignoreCase = true) ||
+                    message.contains("connection", ignoreCase = true) -> {
+                VacancyDetailState.NoConnection
+            }
+            else -> {
+                VacancyDetailState.Error(message)
+            }
         }
     }
 }
