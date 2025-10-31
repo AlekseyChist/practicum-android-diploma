@@ -91,13 +91,13 @@ class VacancyDetailViewModel(
         val message = exception.message ?: "Неизвестная ошибка"
 
         _state.value = when {
-            message.contains("интернет", ignoreCase = true) ||
-                    message.contains("connection", ignoreCase = true) -> {
-                VacancyDetailState.NoConnection
-            }
-            else -> {
-                VacancyDetailState.Error(message)
-            }
+            isConnectionMessage(message) -> VacancyDetailState.NoConnection
+            else -> VacancyDetailState.Error(message)
         }
+    }
+
+    private fun isConnectionMessage(text: String): Boolean {
+        return text.contains("интернет", ignoreCase = true) ||
+                text.contains("connection", ignoreCase = true)
     }
 }
