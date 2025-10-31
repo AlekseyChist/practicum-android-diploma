@@ -6,6 +6,7 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 import ru.practicum.android.diploma.di.dataModule
+import ru.practicum.android.diploma.di.domainModule
 import ru.practicum.android.diploma.di.presentationModule
 
 class App : Application() {
@@ -18,7 +19,8 @@ class App : Application() {
             androidContext(this@App)
             modules(
                 dataModule,
-                presentationModule
+                presentationModule,
+                domainModule
             )
         }
     }
