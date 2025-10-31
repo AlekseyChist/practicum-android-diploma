@@ -97,7 +97,6 @@ class VacancyDetailViewModel(
     }
 
     private fun isConnectionMessage(text: String): Boolean {
-        return text.contains("интернет", ignoreCase = true) ||
-                text.contains("connection", ignoreCase = true)
+        return text.contains("интернет", ignoreCase = true) || text.contains("connection", ignoreCase = true)
     }
 }
