@@ -7,17 +7,25 @@ import ru.practicum.android.diploma.domain.api.GetFavoriteVacanciesUseCase
 import ru.practicum.android.diploma.domain.api.GetFavoriteVacancyByIdUseCase
 import ru.practicum.android.diploma.domain.api.GetVacancyDetailsUseCase
 import ru.practicum.android.diploma.domain.api.RemoveVacancyFromFavoritesUseCase
+import ru.practicum.android.diploma.domain.api.SearchVacanciesUseCase
 import ru.practicum.android.diploma.domain.impl.AddVacancyToFavoritesUseCaseImpl
 import ru.practicum.android.diploma.domain.impl.CheckIfVacancyFavoriteUseCaseImpl
 import ru.practicum.android.diploma.domain.impl.GetFavoriteVacanciesUseCaseImpl
 import ru.practicum.android.diploma.domain.impl.GetFavoriteVacancyByIdUseCaseImpl
 import ru.practicum.android.diploma.domain.impl.GetVacancyDetailsUseCaseImpl
 import ru.practicum.android.diploma.domain.impl.RemoveVacancyFromFavoritesUseCaseImpl
+import ru.practicum.android.diploma.domain.impl.SearchVacanciesUseCaseImpl
 
 /**
  * Koin модуль для Domain слоя (UseCases)
  */
 val domainModule = module {
+
+    single<SearchVacanciesUseCase> {
+        SearchVacanciesUseCaseImpl(
+            vacancyRepository = get()
+        )
+    }
 
     // Epic 2: Детали вакансии
     single<GetVacancyDetailsUseCase> {
