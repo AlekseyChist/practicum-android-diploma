@@ -13,14 +13,15 @@ val presentationModule = module {
     // ViewModel для экрана деталей вакансии
     viewModel {
         VacancyDetailViewModel(
-            getVacancyDetailsUseCase = get()
+            getVacancyDetailsUseCase = get(),
         )
     }
 
+    // ViewModel для экрана списка избранного
     viewModel {
         FavoritesViewModel(
             getFavoriteVacanciesUseCase = get(),
             removeVacancyFromFavoritesUseCase = get()
-            )
+        )
     }
 }
