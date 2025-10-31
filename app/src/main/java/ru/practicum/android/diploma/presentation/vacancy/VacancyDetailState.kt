@@ -4,6 +4,7 @@ import ru.practicum.android.diploma.domain.models.Vacancy
 
 /**
  * Состояния экрана деталей вакансии
+ * Обновлено для поддержки функционала избранного
  */
 sealed class VacancyDetailState {
 
@@ -20,8 +21,12 @@ sealed class VacancyDetailState {
     /**
      * Данные успешно загружены
      * @param vacancy - загруженная вакансия
+     * @param isFavorite - находится ли вакансия в избранном
      */
-    data class Success(val vacancy: Vacancy) : VacancyDetailState()
+    data class Success(
+        val vacancy: Vacancy,
+        val isFavorite: Boolean
+    ) : VacancyDetailState()
 
     /**
      * Ошибка при загрузке (проблемы с сервером, вакансия не найдена и т.д.)

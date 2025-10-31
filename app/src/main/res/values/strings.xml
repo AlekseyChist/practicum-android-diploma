@@ -10,4 +10,8 @@
     <string name="select_region">Выбор региона</string>
     <string name="select_industry">Выбор отрасли</string>
     <string name="main">Главная</string>
+    <string name="placeholder_no_internet">Нет интернета</string>
+    <string name="placeholder_error">Не удалось получить список вакансий</string>
+    <string name="search_hint">Введите запрос</string>
+    <string name="clear">Очистить</string>
 </resources>

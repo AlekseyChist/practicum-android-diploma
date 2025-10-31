@@ -7,6 +7,7 @@ import ru.practicum.android.diploma.presentation.vacancy.VacancyDetailViewModel
 
 /**
  * Koin модуль для Presentation слоя (ViewModels)
+ * Обновлён для поддержки функционала избранного
  */
 val presentationModule = module {
 
@@ -14,6 +15,9 @@ val presentationModule = module {
     viewModel {
         VacancyDetailViewModel(
             getVacancyDetailsUseCase = get(),
+            addVacancyToFavoritesUseCase = get(),
+            removeVacancyFromFavoritesUseCase = get(),
+            checkIfVacancyFavoriteUseCase = get()
         )
     }
 
