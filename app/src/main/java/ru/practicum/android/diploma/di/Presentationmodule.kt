@@ -2,6 +2,7 @@ package ru.practicum.android.diploma.di
 
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
+import ru.practicum.android.diploma.presentation.favorites.FavoritesViewModel
 import ru.practicum.android.diploma.presentation.vacancy.VacancyDetailViewModel
 
 /**
@@ -11,13 +12,20 @@ import ru.practicum.android.diploma.presentation.vacancy.VacancyDetailViewModel
 val presentationModule = module {
 
     // ViewModel для экрана деталей вакансии
-    // Теперь с поддержкой добавления/удаления из избранного
     viewModel {
         VacancyDetailViewModel(
             getVacancyDetailsUseCase = get(),
             addVacancyToFavoritesUseCase = get(),
             removeVacancyFromFavoritesUseCase = get(),
             checkIfVacancyFavoriteUseCase = get()
+        )
+    }
+
+    // ViewModel для экрана списка избранного
+    viewModel {
+        FavoritesViewModel(
+            getFavoriteVacanciesUseCase = get(),
+            removeVacancyFromFavoritesUseCase = get()
         )
     }
 }
