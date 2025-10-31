@@ -5,10 +5,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,8 +41,10 @@ fun VacancyScreen(
 ) {
     Scaffold(
         topBar = {
-            Row(modifier = Modifier
-                .heightIn(64.dp)) {
+            Row(
+                modifier = Modifier
+                    .heightIn(64.dp)
+            ) {
                 TopAppBar(
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.background,
@@ -96,13 +100,15 @@ fun VacancyScreen(
                     top = innerPadding.calculateTopPadding(),
                     start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
                     end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+                    bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
                 )
         ) {
 
         }
-    }
 
+    }
 }
+
 
 @Preview(showBackground = true)
 @Composable
@@ -115,6 +121,7 @@ fun VacancyScreenPreview() {
         )
     }
 }
+
 
 @Preview(
     showBackground = true,
