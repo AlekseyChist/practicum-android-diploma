@@ -56,6 +56,13 @@ class VacancyDetailViewModel(
     }
 
     /**
+     * Повторить загрузку после ошибки
+     */
+    fun retry(vacancyId: String) {
+        loadVacancy(vacancyId)
+    }
+
+    /**
      * Переключить статус избранного для текущей вакансии
      */
     fun toggleFavorite() {
@@ -75,13 +82,6 @@ class VacancyDetailViewModel(
                     }
             }
         }
-    }
-
-    /**
-     * Повторить загрузку после ошибки
-     */
-    fun retry(vacancyId: String) {
-        loadVacancy(vacancyId)
     }
 
     /**
