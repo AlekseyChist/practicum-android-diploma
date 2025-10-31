@@ -103,12 +103,10 @@ fun VacancyScreen(
                     bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
                 )
         ) {
-
+            // основной блок
         }
-
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
@@ -121,7 +119,6 @@ fun VacancyScreenPreview() {
         )
     }
 }
-
 
 @Preview(
     showBackground = true,
