@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.sp
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.ui.theme.AppTheme
 
-object Dimens {
+object TeamScreenDimens {
     val dp_8 = 8.dp
     val dp_16 = 16.dp
     val dp_24 = 24.dp
@@ -30,9 +30,9 @@ fun TeamScreen() {
     Column {
         Text(
             text = stringResource(R.string.team),
-            modifier = Modifier.padding(start = Dimens.dp_24, top = Dimens.dp_56, bottom = Dimens.dp_8),
+            modifier = Modifier.padding(start = TeamScreenDimens.dp_24, top = TeamScreenDimens.dp_56, bottom = TeamScreenDimens.dp_8),
             style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = Dimens.sp_22,
+                fontSize = TeamScreenDimens.sp_22,
                 fontWeight = FontWeight.Medium
             ),
             color = MaterialTheme.colorScheme.onBackground
@@ -40,9 +40,9 @@ fun TeamScreen() {
 
         Text(
             text = stringResource(R.string.list_of_developers),
-            modifier = Modifier.padding(start = Dimens.dp_24, top = Dimens.dp_32, bottom = Dimens.dp_8),
+            modifier = Modifier.padding(start = TeamScreenDimens.dp_24, top = TeamScreenDimens.dp_32, bottom = TeamScreenDimens.dp_8),
             style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = Dimens.sp_32,
+                fontSize = TeamScreenDimens.sp_32,
                 fontWeight = FontWeight.Bold
             ),
             color = MaterialTheme.colorScheme.onBackground
@@ -50,9 +50,9 @@ fun TeamScreen() {
 
         Text(
             text = stringResource(R.string.AC),
-            modifier = Modifier.padding(start = Dimens.dp_24, top = Dimens.dp_32, bottom = Dimens.dp_8),
+            modifier = Modifier.padding(start = TeamScreenDimens.dp_24, top = TeamScreenDimens.dp_32, bottom = TeamScreenDimens.dp_8),
             style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = Dimens.sp_16,
+                fontSize = TeamScreenDimens.sp_16,
                 fontWeight = FontWeight.Medium
             ),
             color = MaterialTheme.colorScheme.onBackground
@@ -60,9 +60,9 @@ fun TeamScreen() {
 
         Text(
             text = stringResource(R.string.ET),
-            modifier = Modifier.padding(start = Dimens.dp_24, top = Dimens.dp_8, bottom = Dimens.dp_8),
+            modifier = Modifier.padding(start = TeamScreenDimens.dp_24, top = TeamScreenDimens.dp_8, bottom = TeamScreenDimens.dp_8),
             style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = Dimens.sp_16,
+                fontSize = TeamScreenDimens.sp_16,
                 fontWeight = FontWeight.Medium
             ),
             color = MaterialTheme.colorScheme.onBackground
@@ -70,9 +70,9 @@ fun TeamScreen() {
 
         Text(
             text = stringResource(R.string.IV),
-            modifier = Modifier.padding(start = Dimens.dp_24, top = Dimens.dp_8, bottom = Dimens.dp_8),
+            modifier = Modifier.padding(start = TeamScreenDimens.dp_24, top = TeamScreenDimens.dp_8, bottom = TeamScreenDimens.dp_8),
             style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = Dimens.sp_16,
+                fontSize = TeamScreenDimens.sp_16,
                 fontWeight = FontWeight.Medium
             ),
             color = MaterialTheme.colorScheme.onBackground
@@ -80,16 +80,15 @@ fun TeamScreen() {
 
         Text(
             text = stringResource(R.string.KK),
-            modifier = Modifier.padding(start = Dimens.dp_24, top = Dimens.dp_8, bottom = Dimens.dp_8),
+            modifier = Modifier.padding(start = TeamScreenDimens.dp_24, top = TeamScreenDimens.dp_8, bottom = TeamScreenDimens.dp_8),
             style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = Dimens.sp_16,
+                fontSize = TeamScreenDimens.sp_16,
                 fontWeight = FontWeight.Medium
             ),
             color = MaterialTheme.colorScheme.onBackground
         )
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
