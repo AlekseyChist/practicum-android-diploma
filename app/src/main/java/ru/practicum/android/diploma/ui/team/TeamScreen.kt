@@ -9,21 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.ui.theme.AppTheme
-
-object TeamScreenDimens {
-    val dp_8 = 8.dp
-    val dp_16 = 16.dp
-    val dp_24 = 24.dp
-    val dp_32 = 32.dp
-    val dp_56 = 56.dp
-    val sp_16 = 16.sp
-    val sp_22 = 22.sp
-    val sp_32 = 32.sp
-}
+import ru.practicum.android.diploma.ui.theme.Dimens
 
 @Composable
 fun TeamScreen() {
@@ -31,12 +19,12 @@ fun TeamScreen() {
         Text(
             text = stringResource(R.string.team),
             modifier = Modifier.padding(
-                start = TeamScreenDimens.dp_24,
-                top = TeamScreenDimens.dp_56,
-                bottom = TeamScreenDimens.dp_8
+                start = Dimens.dp_24,
+                top = Dimens.dp_56,
+                bottom = Dimens.dp_8
             ),
             style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = TeamScreenDimens.sp_22,
+                fontSize = Dimens.sp_22,
                 fontWeight = FontWeight.Medium
             ),
             color = MaterialTheme.colorScheme.onBackground
@@ -45,12 +33,12 @@ fun TeamScreen() {
         Text(
             text = stringResource(R.string.list_of_developers),
             modifier = Modifier.padding(
-                start = TeamScreenDimens.dp_24,
-                top = TeamScreenDimens.dp_32,
-                bottom = TeamScreenDimens.dp_8
+                start = Dimens.dp_24,
+                top = Dimens.dp_32,
+                bottom = Dimens.dp_8
             ),
             style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = TeamScreenDimens.sp_32,
+                fontSize = Dimens.sp_32,
                 fontWeight = FontWeight.Bold
             ),
             color = MaterialTheme.colorScheme.onBackground
@@ -59,12 +47,12 @@ fun TeamScreen() {
         Text(
             text = stringResource(R.string.AC),
             modifier = Modifier.padding(
-                start = TeamScreenDimens.dp_24,
-                top = TeamScreenDimens.dp_32,
-                bottom = TeamScreenDimens.dp_8
+                start = Dimens.dp_24,
+                top = Dimens.dp_32,
+                bottom = Dimens.dp_8
             ),
             style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = TeamScreenDimens.sp_16,
+                fontSize = Dimens.sp_16,
                 fontWeight = FontWeight.Medium
             ),
             color = MaterialTheme.colorScheme.onBackground
@@ -73,12 +61,12 @@ fun TeamScreen() {
         Text(
             text = stringResource(R.string.ET),
             modifier = Modifier.padding(
-                start = TeamScreenDimens.dp_24,
-                top = TeamScreenDimens.dp_8,
-                bottom = TeamScreenDimens.dp_8
+                start = Dimens.dp_24,
+                top = Dimens.dp_8,
+                bottom = Dimens.dp_8
             ),
             style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = TeamScreenDimens.sp_16,
+                fontSize = Dimens.sp_16,
                 fontWeight = FontWeight.Medium
             ),
             color = MaterialTheme.colorScheme.onBackground
@@ -87,12 +75,12 @@ fun TeamScreen() {
         Text(
             text = stringResource(R.string.IV),
             modifier = Modifier.padding(
-                start = TeamScreenDimens.dp_24,
-                top = TeamScreenDimens.dp_8,
-                bottom = TeamScreenDimens.dp_8
+                start = Dimens.dp_24,
+                top = Dimens.dp_8,
+                bottom = Dimens.dp_8
             ),
             style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = TeamScreenDimens.sp_16,
+                fontSize = Dimens.sp_16,
                 fontWeight = FontWeight.Medium
             ),
             color = MaterialTheme.colorScheme.onBackground
@@ -101,12 +89,12 @@ fun TeamScreen() {
         Text(
             text = stringResource(R.string.KK),
             modifier = Modifier.padding(
-                start = TeamScreenDimens.dp_24,
-                top = TeamScreenDimens.dp_8,
-                bottom = TeamScreenDimens.dp_8
+                start = Dimens.dp_24,
+                top = Dimens.dp_8,
+                bottom = Dimens.dp_8
             ),
             style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = TeamScreenDimens.sp_16,
+                fontSize = Dimens.sp_16,
                 fontWeight = FontWeight.Medium
             ),
             color = MaterialTheme.colorScheme.onBackground
