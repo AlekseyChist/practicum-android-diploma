@@ -1,6 +1,8 @@
 package ru.practicum.android.diploma.ui.team
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -15,7 +17,11 @@ import ru.practicum.android.diploma.ui.theme.Dimens
 
 @Composable
 fun TeamScreen() {
-    Column {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
         Text(
             text = stringResource(R.string.team),
             modifier = Modifier.padding(
