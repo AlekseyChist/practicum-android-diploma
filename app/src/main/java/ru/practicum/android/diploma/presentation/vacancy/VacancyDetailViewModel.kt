@@ -6,18 +6,28 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import ru.practicum.android.diploma.domain.api.AddVacancyToFavoritesUseCase
+import ru.practicum.android.diploma.domain.api.CheckIfVacancyFavoriteUseCase
 import ru.practicum.android.diploma.domain.api.GetVacancyDetailsUseCase
+import ru.practicum.android.diploma.domain.api.RemoveVacancyFromFavoritesUseCase
+import ru.practicum.android.diploma.domain.models.Vacancy
 
 /**
  * ViewModel для экрана деталей вакансии
+ * Обновлена для поддержки функционала избранного
  */
-
 class VacancyDetailViewModel(
-    private val getVacancyDetailsUseCase: GetVacancyDetailsUseCase
+    private val getVacancyDetailsUseCase: GetVacancyDetailsUseCase,
+    private val addVacancyToFavoritesUseCase: AddVacancyToFavoritesUseCase,
+    private val removeVacancyFromFavoritesUseCase: RemoveVacancyFromFavoritesUseCase,
+    private val checkIfVacancyFavoriteUseCase: CheckIfVacancyFavoriteUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<VacancyDetailState>(VacancyDetailState.Initial)
     val state: StateFlow<VacancyDetailState> = _state.asStateFlow()
+
+    // Текущая загруженная вакансия (для добавления/удаления из избранного)
+    private var currentVacancy: Vacancy? = null
 
     /**
      * Загрузить детальную информацию о вакансии
@@ -32,13 +42,48 @@ class VacancyDetailViewModel(
         _state.value = VacancyDetailState.Loading
 
         viewModelScope.launch {
+            // Загружаем вакансию
             getVacancyDetailsUseCase.execute(vacancyId)
                 .onSuccess { vacancy ->
-                    _state.value = VacancyDetailState.Success(vacancy)
+                    currentVacancy = vacancy
+
+                    // Проверяем, находится ли вакансия в избранном
+                    val isFavorite = checkIfVacancyFavoriteUseCase.execute(vacancyId)
+
+                    _state.value = VacancyDetailState.Success(
+                        vacancy = vacancy,
+                        isFavorite = isFavorite
+                    )
                 }
                 .onFailure { exception ->
                     handleError(exception)
                 }
+        }
+    }
+
+    /**
+     * Переключить статус избранного для текущей вакансии
+     * Добавляет в избранное, если не добавлена
+     * Удаляет из избранного, если уже добавлена
+     */
+    fun toggleFavorite() {
+        val vacancy = currentVacancy ?: return
+        val currentState = _state.value as? VacancyDetailState.Success ?: return
+
+        viewModelScope.launch {
+            if (currentState.isFavorite) {
+                // Удаляем из избранного
+                removeVacancyFromFavoritesUseCase.execute(vacancy.id)
+                    .onSuccess {
+                        _state.value = currentState.copy(isFavorite = false)
+                    }
+            } else {
+                // Добавляем в избранное
+                addVacancyToFavoritesUseCase.execute(vacancy)
+                    .onSuccess {
+                        _state.value = currentState.copy(isFavorite = true)
+                    }
+            }
         }
     }
 
@@ -57,7 +102,7 @@ class VacancyDetailViewModel(
 
         _state.value = when {
             message.contains("интернет", ignoreCase = true) ||
-                message.contains("connection", ignoreCase = true) -> {
+                    message.contains("connection", ignoreCase = true) -> {
                 VacancyDetailState.NoConnection
             }
             else -> {
