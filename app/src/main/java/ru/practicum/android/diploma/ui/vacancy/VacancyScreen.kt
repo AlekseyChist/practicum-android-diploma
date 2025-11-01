@@ -41,22 +41,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import ru.practicum.android.diploma.R
-import ru.practicum.android.diploma.domain.models.Area
-import ru.practicum.android.diploma.domain.models.Contacts
-import ru.practicum.android.diploma.domain.models.Employer
-import ru.practicum.android.diploma.domain.models.Employment
-import ru.practicum.android.diploma.domain.models.Experience
-import ru.practicum.android.diploma.domain.models.Salary
-import ru.practicum.android.diploma.domain.models.Schedule
 import ru.practicum.android.diploma.domain.models.Vacancy
 import ru.practicum.android.diploma.domain.models.formatForDisplay
 import ru.practicum.android.diploma.presentation.vacancy.VacancyDetailState
 import ru.practicum.android.diploma.ui.theme.AppTheme
+import ru.practicum.android.diploma.ui.vacancy.mock.VacancyStateProvider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -293,59 +288,34 @@ fun ScrollableDetails(
                 color = MaterialTheme.colorScheme.onBackground,
             )
         }
+        Column(
+            modifier = Modifier.padding(bottom = 24.dp)
+        ) {
+
+            Text(
+                text = stringResource(R.string.vacancy_description),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+            )
+            Text(
+                text = vacancy.description,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+        }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun VacancyScreenPreview() {
-    val mockVacancy = Vacancy(
-        id = "1",
-        name = "Android-разработчик",
-        employer = Employer(
-            id = "123",
-            name = "Еда",
-            logoUrl = null
-        ),
-        area = Area(
-            id = "213",
-            name = "Москва"
-        ),
-        salary = Salary(
-            from = 100_000,
-            to = 200_000,
-            currency = "RUR"
-        ),
-        experience = Experience(
-            id = "exp_1",
-            name = "От 1 года до 4 лет"
-        ),
-        employment = Employment(
-            id = "emp_1",
-            name = "Полная занятость"
-        ),
-        schedule = Schedule(
-            id = "sched_1",
-            name = "Удалённая работа"
-        ),
-        description = "Разработка и поддержка Android-приложений компании.",
-        keySkills = listOf("Kotlin", "Jetpack Compose", "MVVM"),
-        contacts = Contacts(
-            name = "HR Анна",
-            email = "hr@eda.ru",
-            phones = listOf("+7 (999) 123-45-67")
-        ),
-        address = "Москва, ул. Ленина, 10",
-        url = "https://company.ru/vacancy/1",
-        isFavorite = false
-    )
-
+fun VacancyScreenPreview(
+    @PreviewParameter(VacancyStateProvider::class) state: VacancyDetailState
+) {
     AppTheme {
         VacancyScreen(
-            state = VacancyDetailState.Success(
-                vacancy = mockVacancy,
-                isFavorite = false
-            ),
+            state = state,
             onBackClick = {},
             onShareClick = {},
             onFavoriteClick = {}
@@ -358,54 +328,12 @@ fun VacancyScreenPreview() {
     uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
-fun VacancyScreenDarkPreview() {
-    val mockVacancy = Vacancy(
-        id = "1",
-        name = "Android-разработчик",
-        employer = Employer(
-            id = "123",
-            name = "Еда",
-            logoUrl = null
-        ),
-        area = Area(
-            id = "213",
-            name = "Белгород"
-        ),
-        salary = Salary(
-            from = 100_000,
-            to = 200_000,
-            currency = "RUR"
-        ),
-        experience = Experience(
-            id = "exp_1",
-            name = "От 1 года до 3 лет"
-        ),
-        employment = Employment(
-            id = "emp_1",
-            name = "Полная занятость"
-        ),
-        schedule = Schedule(
-            id = "sched_1",
-            name = "Удалённая работа"
-        ),
-        description = "Разработка и поддержка Android-приложений компании.",
-        keySkills = listOf("Kotlin", "Jetpack Compose", "MVVM"),
-        contacts = Contacts(
-            name = "HR Анна",
-            email = "hr@eda.ru",
-            phones = listOf("+7 (999) 123-45-67")
-        ),
-        address = "Москва, ул. Ленина, 10",
-        url = "https://company.ru/vacancy/1",
-        isFavorite = false
-    )
-
+fun VacancyScreenDarkPreview(
+    @PreviewParameter(VacancyStateProvider::class) state: VacancyDetailState
+) {
     AppTheme {
         VacancyScreen(
-            state = VacancyDetailState.Success(
-                vacancy = mockVacancy,
-                isFavorite = true
-            ),
+            state = state,
             onBackClick = {},
             onShareClick = {},
             onFavoriteClick = {}
