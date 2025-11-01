@@ -12,6 +12,7 @@ import ru.practicum.android.diploma.data.dto.requests.VacancySearchRequest
 import ru.practicum.android.diploma.domain.api.SearchVacanciesUseCase
 import ru.practicum.android.diploma.domain.models.Vacancy
 
+// empty comment for PR
 /**
  * ViewModel для экрана поиска вакансий
  */
