@@ -9,7 +9,6 @@ import ru.practicum.android.diploma.domain.models.Salary
 import ru.practicum.android.diploma.domain.models.Schedule
 import ru.practicum.android.diploma.domain.models.Vacancy
 
-
 val mockVacancy = Vacancy(
     id = "1",
     name = "Android-разработчик",
