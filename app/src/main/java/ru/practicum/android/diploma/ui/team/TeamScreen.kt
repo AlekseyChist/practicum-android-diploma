@@ -9,7 +9,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.ui.theme.AppTheme
@@ -29,10 +28,7 @@ fun TeamScreen() {
                 top = Dimens.dp_56,
                 bottom = Dimens.dp_8
             ),
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = Dimens.sp_22,
-                fontWeight = FontWeight.Medium
-            ),
+            style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onBackground
         )
 
@@ -43,10 +39,7 @@ fun TeamScreen() {
                 top = Dimens.dp_32,
                 bottom = Dimens.dp_8
             ),
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = Dimens.sp_32,
-                fontWeight = FontWeight.Bold
-            ),
+            style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onBackground
         )
 
@@ -57,10 +50,7 @@ fun TeamScreen() {
                 top = Dimens.dp_32,
                 bottom = Dimens.dp_8
             ),
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = Dimens.sp_16,
-                fontWeight = FontWeight.Medium
-            ),
+            style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onBackground
         )
 
@@ -71,10 +61,7 @@ fun TeamScreen() {
                 top = Dimens.dp_8,
                 bottom = Dimens.dp_8
             ),
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = Dimens.sp_16,
-                fontWeight = FontWeight.Medium
-            ),
+            style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onBackground
         )
 
@@ -85,10 +72,7 @@ fun TeamScreen() {
                 top = Dimens.dp_8,
                 bottom = Dimens.dp_8
             ),
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = Dimens.sp_16,
-                fontWeight = FontWeight.Medium
-            ),
+            style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onBackground
         )
 
@@ -99,10 +83,7 @@ fun TeamScreen() {
                 top = Dimens.dp_8,
                 bottom = Dimens.dp_8
             ),
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = Dimens.sp_16,
-                fontWeight = FontWeight.Medium
-            ),
+            style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onBackground
         )
     }
