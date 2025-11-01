@@ -2,8 +2,6 @@ package ru.practicum.android.diploma.presentation.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,6 +9,7 @@ import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.data.dto.requests.VacancySearchRequest
 import ru.practicum.android.diploma.domain.api.SearchVacanciesUseCase
 import ru.practicum.android.diploma.domain.models.Vacancy
+import ru.practicum.android.diploma.util.debounce
 
 /**
  * ViewModel для экрана поиска вакансий
@@ -24,7 +23,22 @@ class SearchViewModel(
 
     private var currentSearchQuery: String = ""
     private var currentFilters: VacancySearchRequest? = null
-    private var searchJob: Job? = null
+
+    private val debouncedSearch = debounce<String>(
+        delayMillis = 500L,
+        coroutineScope = viewModelScope,
+        useLastParam = true
+    ) { query ->
+        viewModelScope.launch {
+            // ПРОВЕРКА: не выполнять поиск если query пустой
+            if (currentSearchQuery.isNotEmpty()) {
+                _state.value = SearchState.Loading
+                performSearch(page = 0)
+            } else {
+                _state.value = SearchState.Initial
+            }
+        }
+    }
 
     /**
      * Поиск вакансий с debounce
@@ -43,11 +57,9 @@ class SearchViewModel(
             return
         }
 
-        searchJob?.cancel()
-        searchJob = viewModelScope.launch {
-            delay(DEBOUNCE_DELAY_MS)
-            performSearch(page = 0)
-        }
+        _state.value = SearchState.Typing(currentSearchQuery)
+        // Вызываем debounce функцию
+        debouncedSearch(currentSearchQuery)
     }
 
     /**
@@ -154,7 +166,7 @@ class SearchViewModel(
      * Очистить поиск и вернуться к начальному состоянию
      */
     fun clearSearch() {
-        searchJob?.cancel()
+//        searchJob?.cancel()
         currentSearchQuery = ""
         currentFilters = null
         _state.value = SearchState.Initial
