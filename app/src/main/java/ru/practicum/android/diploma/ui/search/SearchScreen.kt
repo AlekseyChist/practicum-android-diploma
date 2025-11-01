@@ -37,7 +37,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,16 +56,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.delay
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.ui.search.UiSpec.BODY_FONT_SIZE
 import ru.practicum.android.diploma.ui.search.UiSpec.ICON_SIZE
-import ru.practicum.android.diploma.ui.search.UiSpec.ICON_SIZE1
 import ru.practicum.android.diploma.ui.search.UiSpec.PLACEHOLDER_VERTICAL_PADDING
 import ru.practicum.android.diploma.ui.search.UiSpec.SCREEN_PADDING_H
 import ru.practicum.android.diploma.ui.search.UiSpec.SEARCH_FIELD_HEIGHT
 import ru.practicum.android.diploma.ui.search.UiSpec.SEARCH_FIELD_VERTICAL_PADDING
-import ru.practicum.android.diploma.ui.search.UiSpec.SEARCH_LOADING_DELAY_MS
 import ru.practicum.android.diploma.ui.search.UiSpec.TITLE_FONT_SIZE
 import ru.practicum.android.diploma.ui.search.UiSpec.TOP_BAR_ACTION_END_PADDING
 import ru.practicum.android.diploma.ui.search.UiSpec.TOP_BAR_ACTION_TOUCH
@@ -117,17 +113,6 @@ fun SearchScreen(
     onVacancyClick: (VacancyUi) -> Unit,
 ) {
     var textState by remember { mutableStateOf(query) }
-    var currentState by remember { mutableStateOf<SearchUiState>(SearchUiState.Idle) }
-
-    LaunchedEffect(textState) {
-        if (textState.isNotEmpty()) {
-            currentState = SearchUiState.Typing
-            delay(SEARCH_LOADING_DELAY_MS)
-            currentState = SearchUiState.Loading
-        } else {
-            currentState = SearchUiState.Idle
-        }
-    }
 
     Scaffold(
         topBar = {
@@ -197,17 +182,34 @@ fun SearchScreen(
                 onSubmit = onSearchClick
             )
 
-            when (currentState) {
-                SearchUiState.Idle -> Placeholder(
-                    image = R.drawable.search_placeholder_euy
-                )
-
+            // Используем только переданный state
+            when (state) {
+                SearchUiState.Idle -> Placeholder(image = R.drawable.search_placeholder_euy)
                 SearchUiState.Typing -> {
-                    Spacer(Modifier.height(ICON_SIZE1))
+                    // ПУСТОЙ ЭКРАН - обложка исчезает
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        // Можно добавить текст "Печатаем..." или оставить пустым
+//                        Text("Начинайте ввод...")
+                    }
                 }
 
                 SearchUiState.Loading -> LoadingPlaceholder()
-                else -> {}
+                SearchUiState.NoInternet -> Placeholder(R.drawable.no_internet_placeholder)
+                is SearchUiState.Success -> VacancyList(
+                    items = state.items,
+                    onItemClick = onVacancyClick
+                )
+
+                SearchUiState.Typing -> {
+                    // Можно показать индикатор набора текста или оставить пустым
+                    Spacer(Modifier.height(UiSpec.ICON_SIZE1))
+                }
+
+                SearchUiState.EmptyResult -> Placeholder(R.drawable.search_placeholder_euy)
+                is SearchUiState.Error -> Placeholder(R.drawable.no_internet_placeholder)
             }
         }
     }
