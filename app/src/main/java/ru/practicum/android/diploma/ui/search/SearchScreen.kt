@@ -169,7 +169,6 @@ fun SearchScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
-
             SearchField(
                 value = textState,
                 onValueChange = {
@@ -196,6 +195,7 @@ fun SearchScreen(
 //                        Text("Начинайте ввод...")
                     }
                 }
+
                 SearchUiState.Loading -> LoadingPlaceholder()
                 SearchUiState.NoInternet -> Placeholder(R.drawable.no_internet_placeholder)
                 is SearchUiState.Success -> VacancyList(
