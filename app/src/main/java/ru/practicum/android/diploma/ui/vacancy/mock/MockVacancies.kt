@@ -1,6 +1,14 @@
 package ru.practicum.android.diploma.ui.vacancy.mock
 
-import ru.practicum.android.diploma.domain.models.*
+import ru.practicum.android.diploma.domain.models.Area
+import ru.practicum.android.diploma.domain.models.Contacts
+import ru.practicum.android.diploma.domain.models.Employer
+import ru.practicum.android.diploma.domain.models.Employment
+import ru.practicum.android.diploma.domain.models.Experience
+import ru.practicum.android.diploma.domain.models.Salary
+import ru.practicum.android.diploma.domain.models.Schedule
+import ru.practicum.android.diploma.domain.models.Vacancy
+
 
 val mockVacancy = Vacancy(
     id = "1",

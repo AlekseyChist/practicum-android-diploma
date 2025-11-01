@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.ui.vacancy.mock
 
-
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import ru.practicum.android.diploma.presentation.vacancy.VacancyDetailState
 

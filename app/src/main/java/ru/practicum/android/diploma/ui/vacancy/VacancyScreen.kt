@@ -291,7 +291,6 @@ fun ScrollableDetails(
         Column(
             modifier = Modifier.padding(bottom = 24.dp)
         ) {
-
             Text(
                 text = stringResource(R.string.vacancy_description),
                 style = MaterialTheme.typography.titleMedium,
