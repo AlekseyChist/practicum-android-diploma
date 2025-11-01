@@ -256,7 +256,6 @@ fun VacancyDetailView(
 fun ScrollableDetails(
     vacancy: Vacancy
 ) {
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -313,8 +312,8 @@ fun VacancyScreenPreview() {
             name = "Москва"
         ),
         salary = Salary(
-            from = 100000,
-            to = 200000,
+            from = 100_000,
+            to = 200_000,
             currency = "RUR"
         ),
         experience = Experience(
@@ -337,7 +336,7 @@ fun VacancyScreenPreview() {
             phones = listOf("+7 (999) 123-45-67")
         ),
         address = "Москва, ул. Ленина, 10",
-        url = "https://png.pngtree.com/thumb_back/fh260/background/20230610/pngtree-picture-of-a-blue-bird-on-a-black-background-image_2937385.jpg",
+        url = "https://company.ru/vacancy/1",
         isFavorite = false
     )
 
@@ -373,8 +372,8 @@ fun VacancyScreenDarkPreview() {
             name = "Белгород"
         ),
         salary = Salary(
-            from = 100000,
-            to = 200000,
+            from = 100_000,
+            to = 200_000,
             currency = "RUR"
         ),
         experience = Experience(
