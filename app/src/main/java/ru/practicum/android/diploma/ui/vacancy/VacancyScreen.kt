@@ -304,6 +304,48 @@ fun ScrollableDetails(
                 color = MaterialTheme.colorScheme.onBackground,
             )
         }
+        Column() {
+            Text(
+                text = stringResource(R.string.key_skills),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+            )
+            LabeledListSection(
+                items = vacancy.keySkills
+            )
+        }
+    }
+}
+
+@Composable
+fun LabeledListSection(
+    items: List<String>
+) {
+    Column(
+        modifier = Modifier.padding(bottom = 16.dp)
+    ) {
+        items.forEach { item ->
+            Row(
+                verticalAlignment = Alignment.Top,
+                modifier = Modifier.padding(bottom = 4.dp)
+            ) {
+                Text(
+                    text = "•",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+
+                Text(
+                    text = item,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
     }
 }
 
