@@ -7,27 +7,83 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.ui.theme.AppTheme
+import ru.practicum.android.diploma.ui.theme.Dimens
 
 @Composable
 fun TeamScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Text(
-            modifier = Modifier
-                .padding(top = 40.dp),
             text = stringResource(R.string.team),
+            modifier = Modifier.padding(
+                start = Dimens.dp_24,
+                top = Dimens.dp_56,
+                bottom = Dimens.dp_8
+            ),
             style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+
+        Text(
+            text = stringResource(R.string.list_of_developers),
+            modifier = Modifier.padding(
+                start = Dimens.dp_24,
+                top = Dimens.dp_32,
+                bottom = Dimens.dp_8
+            ),
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+
+        Text(
+            text = stringResource(R.string.AC),
+            modifier = Modifier.padding(
+                start = Dimens.dp_24,
+                top = Dimens.dp_32,
+                bottom = Dimens.dp_8
+            ),
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+
+        Text(
+            text = stringResource(R.string.ET),
+            modifier = Modifier.padding(
+                start = Dimens.dp_24,
+                top = Dimens.dp_8,
+                bottom = Dimens.dp_8
+            ),
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+
+        Text(
+            text = stringResource(R.string.IV),
+            modifier = Modifier.padding(
+                start = Dimens.dp_24,
+                top = Dimens.dp_8,
+                bottom = Dimens.dp_8
+            ),
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+
+        Text(
+            text = stringResource(R.string.KK),
+            modifier = Modifier.padding(
+                start = Dimens.dp_24,
+                top = Dimens.dp_8,
+                bottom = Dimens.dp_8
+            ),
+            style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onBackground
         )
     }
