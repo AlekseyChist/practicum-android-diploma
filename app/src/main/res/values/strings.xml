@@ -16,4 +16,5 @@
     <string name="clear">Очистить</string>
     <string name="experience">Требуемый опыт</string>
     <string name="vacancy_description">Описание вакансии</string>
+    <string name="key_skills">Ключевые навыки</string>
 </resources>
