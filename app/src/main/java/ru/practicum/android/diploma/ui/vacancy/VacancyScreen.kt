@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.ui.vacancy
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -40,6 +41,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.LayoutDirection
@@ -52,6 +54,7 @@ import ru.practicum.android.diploma.domain.models.formatForDisplay
 import ru.practicum.android.diploma.presentation.vacancy.VacancyDetailState
 import ru.practicum.android.diploma.ui.theme.AppTheme
 import ru.practicum.android.diploma.ui.vacancy.mock.VacancyStateProvider
+import androidx.core.net.toUri
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -316,32 +319,57 @@ fun ScrollableDetails(
                 items = vacancy.keySkills
             )
         }
-        vacancy.contacts?.let { contacts ->
-            Column(
-                modifier = Modifier.padding(bottom = 24.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.contacts),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier
-                        .padding(bottom = 16.dp)
-                )
-                val contactName = vacancy.contacts.name
-                val email = vacancy.contacts.email
+        val context = LocalContext.current
 
-                val contactsInfo = listOfNotNull(contactName, email).joinToString("\n")
-                Text(
-                    text = contactsInfo,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
-                )
-                vacancy.contacts.phones.forEach { phone ->
+        vacancy.contacts?.let { contacts ->
+            if (
+                !contacts.name.isNullOrBlank() ||
+                !contacts.email.isNullOrBlank() ||
+                contacts.phones.isNotEmpty()
+            ) {
+                Column(
+                    modifier = Modifier.padding(bottom = 24.dp)
+                ) {
                     Text(
-                        text = phone,
-                        style = MaterialTheme.typography.bodyLarge,
+                        text = stringResource(R.string.contacts),
+                        style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.padding(bottom = 16.dp)
                     )
+                    contacts.name?.takeIf { it.isNotBlank() }?.let { name ->
+                        Text(
+                            text = name,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                    contacts.email?.takeIf { it.isNotBlank() }?.let { email ->
+                        Text(
+                            text = email,
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                color = MaterialTheme.colorScheme.primary,
+                                textDecoration = TextDecoration.Underline
+                            ),
+                            modifier = Modifier.clickable {
+                                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                    data = "mailto:$email".toUri()
+                                }
+                                context.startActivity(
+                                    Intent.createChooser(
+                                        intent,
+                                        context.getString(R.string.email_app)
+                                    )
+                                )
+                            }
+                        )
+                    }
+                    contacts.phones.forEach { phone ->
+                        Text(
+                            text = phone,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
                 }
             }
         }

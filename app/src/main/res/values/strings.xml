@@ -18,4 +18,5 @@
     <string name="vacancy_description">Описание вакансии</string>
     <string name="key_skills">Ключевые навыки</string>
     <string name="contacts">Котакты</string>
+    <string name="email_app">Выберите почтовое приложение</string>
 </resources>
