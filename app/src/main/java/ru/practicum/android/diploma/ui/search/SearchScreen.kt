@@ -77,7 +77,8 @@ data class VacancyUi(
     val title: String,
     val city: String,
     val salary: String?,
-    val company: String?
+    val company: String?,
+    val logoUrl: String? = null // нужно соостветсвенно внести измы в прочих оъектах
 )
 
 sealed interface SearchUiState {
