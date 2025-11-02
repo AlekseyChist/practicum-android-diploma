@@ -56,10 +56,12 @@ import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.domain.models.Contacts
 import ru.practicum.android.diploma.domain.models.Vacancy
 import ru.practicum.android.diploma.domain.models.formatForDisplay
 import ru.practicum.android.diploma.presentation.vacancy.VacancyDetailState
 import ru.practicum.android.diploma.ui.theme.AppTheme
+import ru.practicum.android.diploma.ui.theme.Dimens
 import ru.practicum.android.diploma.ui.vacancy.mock.VacancyStateProvider
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,14 +69,14 @@ import ru.practicum.android.diploma.ui.vacancy.mock.VacancyStateProvider
 fun VacancyScreen(
     state: VacancyDetailState,
     onBackClick: () -> Unit,
-    onShareClick: () -> Unit,
+    onShareClick: (String) -> Unit,
     onFavoriteClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
             Row(
                 modifier = Modifier
-                    .heightIn(64.dp)
+                    .heightIn(Dimens.appBarHeight)
             ) {
                 TopAppBar(
                     colors = TopAppBarDefaults.topAppBarColors(
@@ -98,21 +100,27 @@ fun VacancyScreen(
                         )
                     },
                     actions = {
-                        Row(modifier = Modifier.padding(0.dp)) {
-                            Icon(
-                                painter = painterResource(R.drawable.share_icon),
-                                contentDescription = "Share",
-                                tint = MaterialTheme.colorScheme.onBackground,
-                                modifier = Modifier
-                                    .clickable { onShareClick() }
-                            )
-                            Icon(
-                                painter = painterResource(R.drawable.favorite_icon),
-                                contentDescription = "Favorite",
-                                tint = MaterialTheme.colorScheme.onBackground,
-                                modifier = Modifier
-                                    .clickable { onFavoriteClick() }
-                            )
+                        (state as? VacancyDetailState.Success)?.let { successState ->
+                            Row {
+                                Icon(
+                                    painter = painterResource(R.drawable.share_icon),
+                                    contentDescription = "Share",
+                                    tint = MaterialTheme.colorScheme.onBackground,
+                                    modifier = Modifier
+                                        .clickable { onShareClick(successState.vacancy.url) }
+                                )
+
+                                Icon(
+                                    painter = painterResource(
+                                        if (successState.isFavorite) R.drawable.favorite_icon_filled
+                                        else R.drawable.favorite_icon
+                                    ),
+                                    contentDescription = "Favorite",
+                                    tint = if (successState.isFavorite) Color.Red else MaterialTheme.colorScheme.onBackground,
+                                    modifier = Modifier
+                                        .clickable { onFavoriteClick() }
+                                )
+                            }
                         }
                     },
                     windowInsets = WindowInsets.statusBars
@@ -134,11 +142,7 @@ fun VacancyScreen(
                 )
         ) {
             when (state) {
-                is VacancyDetailState.Initial -> {
-                    // заглушка
-                }
-
-                is VacancyDetailState.Loading -> {
+                is VacancyDetailState.Loading, VacancyDetailState.Initial -> {
                     Box(
                         modifier = Modifier
                             .fillMaxSize(),
@@ -187,7 +191,7 @@ private fun VacancyCard(
     vacancy: Vacancy
 ) {
     Card(
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(Dimens.corner),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         )
@@ -195,16 +199,16 @@ private fun VacancyCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(Dimens.padding_16),
         ) {
             Box(
                 modifier = Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(12.dp))
+                    .size(Dimens.size_48)
+                    .clip(RoundedCornerShape(Dimens.corner))
                     .border(
                         width = 1.dp,
                         color = MaterialTheme.colorScheme.surface,
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(Dimens.corner),
                     ),
                 contentAlignment = Alignment.Center
             ) {
@@ -218,8 +222,8 @@ private fun VacancyCard(
                     error = painterResource(R.drawable.placeholder_32px),
                     fallback = painterResource(R.drawable.placeholder_32px),
                     modifier = Modifier
-                        .size(32.dp)
-                        .padding(end = 8.dp),
+                        .size(Dimens.icon_32)
+                        .padding(end = Dimens.padding_8),
                     contentScale = ContentScale.Crop
                 )
             }
@@ -247,7 +251,7 @@ fun VacancyDetailView(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp, horizontal = 16.dp)
+            .padding(vertical = Dimens.padding_8, horizontal = Dimens.padding_16)
     ) {
         Column() {
             Text(
@@ -267,7 +271,12 @@ fun VacancyDetailView(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 24.dp)
+            .padding(
+                top = Dimens.padding_16,
+                start = Dimens.padding_16,
+                end = Dimens.padding_16,
+                bottom = Dimens.padding_24
+            )
     ) {
         VacancyCard(vacancy)
     }
@@ -275,137 +284,129 @@ fun VacancyDetailView(
 }
 
 @Composable
-fun ScrollableDetails(
-    vacancy: Vacancy
-) {
+fun ScrollableDetails(vacancy: Vacancy) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(16.dp)
+            .padding(Dimens.padding_16)
     ) {
-        Column(
-            modifier = Modifier
-                .padding(bottom = 8.dp)
-        ) {
+        Column(modifier = Modifier.padding(bottom = Dimens.padding_8)) {
             Text(
                 text = stringResource(R.string.experience),
                 style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = MaterialTheme.colorScheme.onBackground
             )
             vacancy.experience?.name?.let {
                 Text(
                     text = it,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
-        Row(
-            modifier = Modifier
-                .padding(bottom = 32.dp)
-        ) {
-            val employmentName = vacancy.employment?.name
-            val scheduleName = vacancy.schedule?.name
 
-            val info = listOfNotNull(employmentName, scheduleName).joinToString(", ")
+        EmploymentScheduleSection(vacancy.employment?.name, vacancy.schedule?.name)
+        DescriptionSection(vacancy.description)
+        KeySkillsSection(vacancy.keySkills)
+        ContactsSection(vacancy.contacts)
+    }
+}
+
+@Composable
+private fun EmploymentScheduleSection(employmentName: String?, scheduleName: String?) {
+    Row(modifier = Modifier.padding(bottom = Dimens.padding_32)) {
+        val info = listOfNotNull(employmentName, scheduleName).joinToString(", ")
+        Text(
+            text = info,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+    }
+}
+
+@Composable
+private fun DescriptionSection(description: String) {
+    Column(modifier = Modifier.padding(bottom = Dimens.padding_24)) {
+        Text(
+            text = stringResource(R.string.vacancy_description),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.padding(bottom = Dimens.padding_16)
+        )
+        Text(
+            text = description,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+    }
+}
+
+@Composable
+private fun KeySkillsSection(keySkills: List<String>) {
+    if (keySkills.isNotEmpty()) {
+        Column {
             Text(
-                text = info,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-        }
-        Column(
-            modifier = Modifier.padding(bottom = 24.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.vacancy_description),
+                text = stringResource(R.string.key_skills),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier
-                    .padding(bottom = 16.dp)
+                modifier = Modifier.padding(bottom = Dimens.padding_16)
             )
-            Text(
-                text = vacancy.description,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
+            LabeledListSection(items = keySkills)
         }
-        if (!vacancy.keySkills.isEmpty()) {
-            Column() {
+    }
+}
+
+@Composable
+private fun ContactsSection(contacts: Contacts?) {
+    contacts?.let {
+        if (!it.email.isNullOrBlank() || it.phones.isNotEmpty()) {
+            val context = LocalContext.current
+            Column(modifier = Modifier.padding(bottom = Dimens.padding_24)) {
                 Text(
-                    text = stringResource(R.string.key_skills),
+                    text = stringResource(R.string.contacts),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier
-                        .padding(bottom = 16.dp)
+                    modifier = Modifier.padding(bottom = Dimens.padding_16)
                 )
-                LabeledListSection(
-                    items = vacancy.keySkills
-                )
-            }
-        }
-
-        val context = LocalContext.current
-        vacancy.contacts?.let { contacts ->
-            if (
-                !contacts.email.isNullOrBlank() ||
-                contacts.phones.isNotEmpty()
-            ) {
-                Column(
-                    modifier = Modifier.padding(bottom = 24.dp)
-                ) {
+                it.name?.takeIf(String::isNotBlank)?.let { name ->
                     Text(
-                        text = stringResource(R.string.contacts),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier.padding(bottom = 16.dp)
+                        text = name,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
-                    contacts.name?.takeIf { it.isNotBlank() }?.let { name ->
-                        Text(
-                            text = name,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                    contacts.email?.takeIf { it.isNotBlank() }?.let { email ->
-                        Text(
-                            text = email,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.primary,
-                            textDecoration = TextDecoration.Underline,
-                            modifier = Modifier.clickable {
-                                val intent = Intent(Intent.ACTION_SENDTO).apply {
-                                    data = "mailto:$email".toUri()
-                                }
-                                context.startActivity(
-                                    Intent.createChooser(
-                                        intent,
-                                        context.getString(R.string.email_app)
-                                    )
-                                )
+                }
+                it.email?.takeIf(String::isNotBlank)?.let { email ->
+                    Text(
+                        text = email,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                        textDecoration = TextDecoration.Underline,
+                        modifier = Modifier.clickable {
+                            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                data = "mailto:$email".toUri()
                             }
-                        )
-                    }
-                    contacts.phones.forEach { phone ->
-                        Text(
-                            text = phone,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.primary,
-                            textDecoration = TextDecoration.Underline,
-                            modifier = Modifier.clickable {
-                                val intent = Intent(Intent.ACTION_DIAL).apply {
-                                    data = "tel:$phone".toUri()
-                                }
-                                context.startActivity(
-                                    Intent.createChooser(
-                                        intent,
-                                        context.getString(R.string.call_app)
-                                    )
-                                )
+                            context.startActivity(
+                                Intent.createChooser(intent, context.getString(R.string.email_app))
+                            )
+                        }
+                    )
+                }
+                it.phones.forEach { phone ->
+                    Text(
+                        text = phone,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                        textDecoration = TextDecoration.Underline,
+                        modifier = Modifier.clickable {
+                            val intent = Intent(Intent.ACTION_DIAL).apply {
+                                data = "tel:$phone".toUri()
                             }
-                        )
-                    }
+                            context.startActivity(
+                                Intent.createChooser(intent, context.getString(R.string.call_app))
+                            )
+                        }
+                    )
                 }
             }
         }
@@ -417,18 +418,18 @@ fun LabeledListSection(
     items: List<String>
 ) {
     Column(
-        modifier = Modifier.padding(bottom = 16.dp)
+        modifier = Modifier.padding(bottom = Dimens.padding_16)
     ) {
         items.forEach { item ->
             Row(
                 verticalAlignment = Alignment.Top,
-                modifier = Modifier.padding(bottom = 4.dp)
+                modifier = Modifier.padding(bottom = Dimens.padding_4)
             ) {
                 Text(
                     text = "•",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(end = 8.dp)
+                    modifier = Modifier.padding(end = Dimens.padding_8)
                 )
 
                 Text(
@@ -450,7 +451,7 @@ fun ErrorSection(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(Dimens.padding_16),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -464,7 +465,7 @@ fun ErrorSection(
                 contentScale = ContentScale.Crop
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Dimens.padding_16))
 
             Text(
                 text = message,
