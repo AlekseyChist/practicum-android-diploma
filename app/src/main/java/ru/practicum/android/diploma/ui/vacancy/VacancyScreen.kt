@@ -172,10 +172,10 @@ fun VacancyScreen(
                 }
 
                 is VacancyDetailState.ServerError -> {
-                   ErrorSection(
-                       idRes = R.drawable.vacancy_server_error,
-                       message = stringResource(R.string.server_error)
-                   )
+                    ErrorSection(
+                        idRes = R.drawable.vacancy_server_error,
+                        message = stringResource(R.string.server_error)
+                    )
                 }
             }
         }
@@ -477,6 +477,7 @@ fun ErrorSection(
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun VacancyScreenPreview(
