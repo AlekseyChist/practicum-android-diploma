@@ -1,12 +1,5 @@
 package ru.practicum.android.diploma.ui.vacancy
 
-import ru.practicum.android.diploma.R
-import ru.practicum.android.diploma.domain.models.Vacancy
-import ru.practicum.android.diploma.domain.models.formatForDisplay
-import ru.practicum.android.diploma.presentation.vacancy.VacancyDetailState
-import ru.practicum.android.diploma.ui.theme.AppTheme
-import ru.practicum.android.diploma.ui.vacancy.mock.VacancyStateProvider
-import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -52,9 +45,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import android.content.Intent
 import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.domain.models.Vacancy
+import ru.practicum.android.diploma.domain.models.formatForDisplay
+import ru.practicum.android.diploma.presentation.vacancy.VacancyDetailState
+import ru.practicum.android.diploma.ui.theme.AppTheme
+import ru.practicum.android.diploma.ui.vacancy.mock.VacancyStateProvider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
