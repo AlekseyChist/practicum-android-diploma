@@ -26,14 +26,12 @@ class VacancyDetailViewModel(
     val state: StateFlow<VacancyDetailState> = _state.asStateFlow()
 
     private var currentVacancy: Vacancy? = null
-
     /**
      * Загрузить детальную информацию о вакансии
-     * @param vacancyId - идентификатор вакансии
      */
     fun loadVacancy(vacancyId: String) {
         if (vacancyId.isBlank()) {
-            _state.value = VacancyDetailState.Error("Некорректный ID вакансии")
+            _state.value = VacancyDetailState.ServerError("Некорректный ID вакансии")
             return
         }
 
@@ -85,18 +83,33 @@ class VacancyDetailViewModel(
     }
 
     /**
-     * Обработка ошибок
+     * Обработка ошибок с различением типов
      */
     private fun handleError(exception: Throwable) {
         val message = exception.message ?: "Неизвестная ошибка"
 
         _state.value = when {
-            isConnectionMessage(message) -> VacancyDetailState.NoConnection
-            else -> VacancyDetailState.Error(message)
-        }
-    }
+            // Нет интернета
+            message.contains("интернет", ignoreCase = true) || message.contains("connection", ignoreCase = true) -> {
+                VacancyDetailState.NoConnection
+            }
 
-    private fun isConnectionMessage(text: String): Boolean {
-        return text.contains("интернет", ignoreCase = true) || text.contains("connection", ignoreCase = true)
+            message.contains("VACANCY_NOT_FOUND") -> {
+                VacancyDetailState.NotFound
+            }
+
+            message.contains("AUTHORIZATION_ERROR") -> {
+                VacancyDetailState.ServerError("Ошибка авторизации")
+            }
+
+            message.startsWith("SERVER_ERROR:") -> {
+                val errorCode = message.substringAfter("SERVER_ERROR:")
+                VacancyDetailState.ServerError("Ошибка сервера: $errorCode")
+            }
+
+            else -> {
+                VacancyDetailState.ServerError(message)
+            }
+        }
     }
 }
