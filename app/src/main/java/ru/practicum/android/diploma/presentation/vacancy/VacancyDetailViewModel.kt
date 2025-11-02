@@ -12,6 +12,9 @@ import ru.practicum.android.diploma.domain.api.GetVacancyDetailsUseCase
 import ru.practicum.android.diploma.domain.api.RemoveVacancyFromFavoritesUseCase
 import ru.practicum.android.diploma.domain.models.Vacancy
 
+/**
+ * ViewModel для экрана деталей вакансии
+ */
 class VacancyDetailViewModel(
     private val getVacancyDetailsUseCase: GetVacancyDetailsUseCase,
     private val addVacancyToFavoritesUseCase: AddVacancyToFavoritesUseCase,
@@ -24,9 +27,12 @@ class VacancyDetailViewModel(
 
     private var currentVacancy: Vacancy? = null
 
+    /**
+     * Загрузить детальную информацию о вакансии
+     */
     fun loadVacancy(vacancyId: String) {
         if (vacancyId.isBlank()) {
-            _state.value = VacancyDetailState.ServerError("Некорректный ID вакансии")  // ✅ Исправлено
+            _state.value = VacancyDetailState.ServerError("Некорректный ID вакансии")
             return
         }
 
@@ -48,10 +54,16 @@ class VacancyDetailViewModel(
         }
     }
 
+    /**
+     * Повторить загрузку после ошибки
+     */
     fun retry(vacancyId: String) {
         loadVacancy(vacancyId)
     }
 
+    /**
+     * Переключить статус избранного для текущей вакансии
+     */
     fun toggleFavorite() {
         val vacancy = currentVacancy ?: return
         val currentState = _state.value as? VacancyDetailState.Success ?: return
