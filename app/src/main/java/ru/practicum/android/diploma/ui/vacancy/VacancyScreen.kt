@@ -366,8 +366,21 @@ fun ScrollableDetails(
                     contacts.phones.forEach { phone ->
                         Text(
                             text = phone,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onBackground
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                color = MaterialTheme.colorScheme.primary,
+                                textDecoration = TextDecoration.Underline
+                            ),
+                            modifier = Modifier.clickable {
+                                val intent = Intent(Intent.ACTION_DIAL).apply {
+                                    data = "tel:$phone".toUri()
+                                }
+                                context.startActivity(
+                                    Intent.createChooser(
+                                        intent,
+                                        context.getString(R.string.call_app)
+                                    )
+                                )
+                            }
                         )
                     }
                 }
