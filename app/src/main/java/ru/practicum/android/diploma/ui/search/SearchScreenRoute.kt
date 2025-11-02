@@ -23,7 +23,7 @@ fun SearchScreenRoute(
 
     SearchScreen(
         state = uiState,
-        query = "",  // TODO: добавить query из ViewModel если нужно
+        query = "",
         onQueryChange = { query ->
             viewModel.searchVacancies(query)
         },

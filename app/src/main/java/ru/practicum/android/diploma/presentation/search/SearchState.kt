@@ -31,18 +31,18 @@ sealed interface SearchState {
      * Успешная загрузка результатов
      */
     data class Success(
-        val vacancies: List<VacancyUi>,  // UI модели для отображения
-        val found: Int,                   // Общее количество найденных вакансий
-        val currentPage: Int,             // Текущая страница
-        val totalPages: Int,              // Общее количество страниц
-        val hasMorePages: Boolean         // Есть ли еще страницы для загрузки
+        val vacancies: List<VacancyUi>,
+        val found: Int,
+        val currentPage: Int,
+        val totalPages: Int,
+        val hasMorePages: Boolean
     ) : SearchState
 
     /**
      * Пустой результат (ничего не найдено)
      */
     data class EmptyResult(
-        val query: String  // Поисковый запрос для отображения
+        val query: String
     ) : SearchState
 
     /**
@@ -54,6 +54,6 @@ sealed interface SearchState {
      * Ошибка при поиске
      */
     data class Error(
-        val message: String  // Сообщение об ошибке
+        val message: String
     ) : SearchState
 }

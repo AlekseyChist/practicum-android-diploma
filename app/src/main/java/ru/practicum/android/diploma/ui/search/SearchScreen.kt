@@ -105,7 +105,7 @@ private object UiSpec {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-    state: SearchUiState,  // ← Приходит от ViewModel
+    state: SearchUiState,
     query: String,
     onQueryChange: (String) -> Unit,
     onClearClick: () -> Unit,
@@ -113,12 +113,8 @@ fun SearchScreen(
     onFilterClick: () -> Unit,
     onVacancyClick: (VacancyUi) -> Unit,
 ) {
-    // Локальный state ТОЛЬКО для текста в поле ввода
-    var textState by remember(query) { mutableStateOf(query) }
 
-    // ❌ УДАЛЕНО: var currentState by remember { ... }
-    // ❌ УДАЛЕНО: LaunchedEffect(textState) { ... }
-    // ✅ Теперь используем state из параметров!
+    var textState by remember(query) { mutableStateOf(query) }
 
     Scaffold(
         topBar = {
@@ -179,16 +175,15 @@ fun SearchScreen(
                 value = textState,
                 onValueChange = {
                     textState = it
-                    onQueryChange(it)  // Отправляем в ViewModel
+                    onQueryChange(it)
                 },
                 onClear = {
                     textState = ""
-                    onClearClick()  // Отправляем в ViewModel
+                    onClearClick()
                 },
-                onSubmit = onSearchClick  // Отправляем в ViewModel
+                onSubmit = onSearchClick
             )
 
-            // ✅ Используем state ИЗ ПАРАМЕТРОВ (от ViewModel)
             when (state) {
                 SearchUiState.Idle -> Placeholder(
                     imageRes = R.drawable.search_placeholder_euy,
