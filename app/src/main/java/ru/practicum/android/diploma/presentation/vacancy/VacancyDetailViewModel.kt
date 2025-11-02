@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.domain.api.AddVacancyToFavoritesUseCase
 import ru.practicum.android.diploma.domain.api.CheckIfVacancyFavoriteUseCase
+import ru.practicum.android.diploma.domain.api.ExternalNavigator
 import ru.practicum.android.diploma.domain.api.GetVacancyDetailsUseCase
 import ru.practicum.android.diploma.domain.api.RemoveVacancyFromFavoritesUseCase
 import ru.practicum.android.diploma.domain.models.Vacancy
@@ -19,13 +20,15 @@ class VacancyDetailViewModel(
     private val getVacancyDetailsUseCase: GetVacancyDetailsUseCase,
     private val addVacancyToFavoritesUseCase: AddVacancyToFavoritesUseCase,
     private val removeVacancyFromFavoritesUseCase: RemoveVacancyFromFavoritesUseCase,
-    private val checkIfVacancyFavoriteUseCase: CheckIfVacancyFavoriteUseCase
+    private val checkIfVacancyFavoriteUseCase: CheckIfVacancyFavoriteUseCase,
+    private val navigator: ExternalNavigator
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<VacancyDetailState>(VacancyDetailState.Initial)
     val state: StateFlow<VacancyDetailState> = _state.asStateFlow()
 
     private var currentVacancy: Vacancy? = null
+
     /**
      * Загрузить детальную информацию о вакансии
      */
@@ -111,5 +114,17 @@ class VacancyDetailViewModel(
                 VacancyDetailState.ServerError(message)
             }
         }
+    }
+
+    fun onShareClick(url: String) {
+        navigator.shareVacancy(url)
+    }
+
+    fun onEmailClick(email: String) {
+        navigator.sendEmail(email)
+    }
+
+    fun onPhoneClick(phone: String) {
+        navigator.dialPhone(phone)
     }
 }
