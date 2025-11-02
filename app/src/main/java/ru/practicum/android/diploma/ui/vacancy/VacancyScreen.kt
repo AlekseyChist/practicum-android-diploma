@@ -307,23 +307,24 @@ fun ScrollableDetails(
                 color = MaterialTheme.colorScheme.onBackground,
             )
         }
-        Column() {
-            Text(
-                text = stringResource(R.string.key_skills),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier
-                    .padding(bottom = 16.dp)
-            )
-            LabeledListSection(
-                items = vacancy.keySkills
-            )
+        if (!vacancy.keySkills.isEmpty()){
+            Column() {
+                Text(
+                    text = stringResource(R.string.key_skills),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                )
+                LabeledListSection(
+                    items = vacancy.keySkills
+                )
+            }
         }
-        val context = LocalContext.current
 
+        val context = LocalContext.current
         vacancy.contacts?.let { contacts ->
             if (
-                !contacts.name.isNullOrBlank() ||
                 !contacts.email.isNullOrBlank() ||
                 contacts.phones.isNotEmpty()
             ) {
