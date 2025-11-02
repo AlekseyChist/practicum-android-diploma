@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.practicum.android.diploma.presentation.vacancy.VacancyDetailViewModel
@@ -29,7 +30,9 @@ class VacancyFragment : Fragment() {
                         state = state,
                         onBackClick = { requireActivity().onBackPressedDispatcher.onBackPressed() },
                         onShareClick = { url -> shareVacancy(url) },
-                        onFavoriteClick = { viewModel.toggleFavorite() }
+                        onFavoriteClick = { viewModel.toggleFavorite() },
+                        onEmailClick = { email -> sendEmail(email) },
+                        onPhoneClick = { phone -> dialPhone(phone) }
                     )
                 }
             }
@@ -43,5 +46,19 @@ class VacancyFragment : Fragment() {
             putExtra(Intent.EXTRA_TEXT, url)
         }
         context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.share_vacancy)))
+    }
+
+    private fun sendEmail(email: String) {
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = "mailto:$email".toUri()
+        }
+        startActivity(Intent.createChooser(intent, getString(R.string.email_app)))
+    }
+
+    private fun dialPhone(phone: String) {
+        val intent = Intent(Intent.ACTION_DIAL).apply {
+            data = "tel:$phone".toUri()
+        }
+        startActivity(Intent.createChooser(intent, getString(R.string.call_app)))
     }
 }

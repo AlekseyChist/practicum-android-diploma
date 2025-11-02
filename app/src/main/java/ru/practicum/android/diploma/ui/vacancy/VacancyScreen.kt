@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.ui.vacancy
 
-import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -52,7 +51,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import ru.practicum.android.diploma.R
@@ -70,7 +68,9 @@ fun VacancyScreen(
     state: VacancyDetailState,
     onBackClick: () -> Unit,
     onShareClick: (String) -> Unit,
-    onFavoriteClick: () -> Unit
+    onFavoriteClick: () -> Unit,
+    onEmailClick: (String) -> Unit,
+    onPhoneClick: (String) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -112,11 +112,18 @@ fun VacancyScreen(
 
                                 Icon(
                                     painter = painterResource(
-                                        if (successState.isFavorite) R.drawable.favorite_icon_filled
-                                        else R.drawable.favorite_icon
+                                        if (successState.isFavorite) {
+                                            R.drawable.favorite_icon_filled
+                                        } else {
+                                            R.drawable.favorite_icon
+                                        }
                                     ),
                                     contentDescription = "Favorite",
-                                    tint = if (successState.isFavorite) Color.Red else MaterialTheme.colorScheme.onBackground,
+                                    tint = if (successState.isFavorite) {
+                                        Color.Red
+                                    } else {
+                                        MaterialTheme.colorScheme.onBackground
+                                    },
                                     modifier = Modifier
                                         .clickable { onFavoriteClick() }
                                 )
@@ -164,7 +171,9 @@ fun VacancyScreen(
 
                 is VacancyDetailState.Success -> {
                     VacancyDetailView(
-                        vacancy = state.vacancy
+                        vacancy = state.vacancy,
+                        onEmailClick = onEmailClick,
+                        onPhoneClick = onPhoneClick
                     )
                 }
 
@@ -246,7 +255,9 @@ private fun VacancyCard(
 
 @Composable
 fun VacancyDetailView(
-    vacancy: Vacancy
+    vacancy: Vacancy,
+    onEmailClick: (String) -> Unit,
+    onPhoneClick: (String) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -280,11 +291,19 @@ fun VacancyDetailView(
     ) {
         VacancyCard(vacancy)
     }
-    ScrollableDetails(vacancy)
+    ScrollableDetails(
+        vacancy,
+        onEmailClick,
+        onPhoneClick
+    )
 }
 
 @Composable
-fun ScrollableDetails(vacancy: Vacancy) {
+fun ScrollableDetails(
+    vacancy: Vacancy,
+    onEmailClick: (String) -> Unit,
+    onPhoneClick: (String) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -309,7 +328,11 @@ fun ScrollableDetails(vacancy: Vacancy) {
         EmploymentScheduleSection(vacancy.employment?.name, vacancy.schedule?.name)
         DescriptionSection(vacancy.description)
         KeySkillsSection(vacancy.keySkills)
-        ContactsSection(vacancy.contacts)
+        ContactsSection(
+            contacts = vacancy.contacts,
+            onEmailClick = onEmailClick,
+            onPhoneClick = onPhoneClick
+        )
     }
 }
 
@@ -358,10 +381,13 @@ private fun KeySkillsSection(keySkills: List<String>) {
 }
 
 @Composable
-private fun ContactsSection(contacts: Contacts?) {
+private fun ContactsSection(
+    contacts: Contacts?,
+    onEmailClick: (String) -> Unit,
+    onPhoneClick: (String) -> Unit
+) {
     contacts?.let {
         if (!it.email.isNullOrBlank() || it.phones.isNotEmpty()) {
-            val context = LocalContext.current
             Column(modifier = Modifier.padding(bottom = Dimens.padding_24)) {
                 Text(
                     text = stringResource(R.string.contacts),
@@ -382,14 +408,7 @@ private fun ContactsSection(contacts: Contacts?) {
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.primary,
                         textDecoration = TextDecoration.Underline,
-                        modifier = Modifier.clickable {
-                            val intent = Intent(Intent.ACTION_SENDTO).apply {
-                                data = "mailto:$email".toUri()
-                            }
-                            context.startActivity(
-                                Intent.createChooser(intent, context.getString(R.string.email_app))
-                            )
-                        }
+                        modifier = Modifier.clickable { onEmailClick(email) }
                     )
                 }
                 it.phones.forEach { phone ->
@@ -398,14 +417,7 @@ private fun ContactsSection(contacts: Contacts?) {
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.primary,
                         textDecoration = TextDecoration.Underline,
-                        modifier = Modifier.clickable {
-                            val intent = Intent(Intent.ACTION_DIAL).apply {
-                                data = "tel:$phone".toUri()
-                            }
-                            context.startActivity(
-                                Intent.createChooser(intent, context.getString(R.string.call_app))
-                            )
-                        }
+                        modifier = Modifier.clickable { onPhoneClick(phone) }
                     )
                 }
             }
@@ -489,7 +501,9 @@ fun VacancyScreenPreview(
             state = state,
             onBackClick = {},
             onShareClick = {},
-            onFavoriteClick = {}
+            onFavoriteClick = {},
+            onEmailClick = {},
+            onPhoneClick = {}
         )
     }
 }
@@ -507,7 +521,9 @@ fun VacancyScreenDarkPreview(
             state = state,
             onBackClick = {},
             onShareClick = {},
-            onFavoriteClick = {}
+            onFavoriteClick = {},
+            onEmailClick = {},
+            onPhoneClick = {}
         )
     }
 }
