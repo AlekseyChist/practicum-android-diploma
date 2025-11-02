@@ -316,6 +316,35 @@ fun ScrollableDetails(
                 items = vacancy.keySkills
             )
         }
+        vacancy.contacts?.let { contacts ->
+            Column(
+                modifier = Modifier.padding(bottom = 24.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.contacts),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                )
+                val contactName = vacancy.contacts.name
+                val email = vacancy.contacts.email
+
+                val contactsInfo = listOfNotNull(contactName, email).joinToString("\n")
+                Text(
+                    text = contactsInfo,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+                vacancy.contacts.phones.forEach { phone ->
+                    Text(
+                        text = phone,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onBackground,
+                    )
+                }
+            }
+        }
     }
 }
 
