@@ -307,7 +307,7 @@ fun ScrollableDetails(
                 color = MaterialTheme.colorScheme.onBackground,
             )
         }
-        if (!vacancy.keySkills.isEmpty()){
+        if (!vacancy.keySkills.isEmpty()) {
             Column() {
                 Text(
                     text = stringResource(R.string.key_skills),
@@ -347,10 +347,9 @@ fun ScrollableDetails(
                     contacts.email?.takeIf { it.isNotBlank() }?.let { email ->
                         Text(
                             text = email,
-                            style = MaterialTheme.typography.bodyLarge.copy(
-                                color = MaterialTheme.colorScheme.primary,
-                                textDecoration = TextDecoration.Underline
-                            ),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.primary,
+                            textDecoration = TextDecoration.Underline,
                             modifier = Modifier.clickable {
                                 val intent = Intent(Intent.ACTION_SENDTO).apply {
                                     data = "mailto:$email".toUri()
@@ -367,10 +366,9 @@ fun ScrollableDetails(
                     contacts.phones.forEach { phone ->
                         Text(
                             text = phone,
-                            style = MaterialTheme.typography.bodyLarge.copy(
-                                color = MaterialTheme.colorScheme.primary,
-                                textDecoration = TextDecoration.Underline
-                            ),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.primary,
+                            textDecoration = TextDecoration.Underline,
                             modifier = Modifier.clickable {
                                 val intent = Intent(Intent.ACTION_DIAL).apply {
                                     data = "tel:$phone".toUri()
