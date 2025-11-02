@@ -14,9 +14,14 @@
     <string name="placeholder_error">Не удалось получить список вакансий</string>
     <string name="search_hint">Введите запрос</string>
     <string name="clear">Очистить</string>
+    <string name="list_of_developers">Над приложением работали</string>
     <string name="experience">Требуемый опыт</string>
     <string name="vacancy_description">Описание вакансии</string>
     <string name="key_skills">Ключевые навыки</string>
+    <string name="AC">Алексей Чистяков</string>
+    <string name="ET">Евгений Токарев</string>
+    <string name="IV">Иван Васильев</string>
+    <string name="KK">Кермен Корнаев</string>
     <string name="placeholder_nothing_found">Не удалось получить\nсписок вакансий</string>
     <string name="contacts">Котакты</string>
     <string name="email_app">Выберите почтовое приложение</string>
