@@ -1,27 +1,32 @@
 package ru.practicum.android.diploma.ui.vacancy
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,14 +45,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import android.content.Intent
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.core.net.toUri
+import android.content.Intent
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import ru.practicum.android.diploma.R
@@ -56,6 +61,7 @@ import ru.practicum.android.diploma.domain.models.formatForDisplay
 import ru.practicum.android.diploma.presentation.vacancy.VacancyDetailState
 import ru.practicum.android.diploma.ui.theme.AppTheme
 import ru.practicum.android.diploma.ui.vacancy.mock.VacancyStateProvider
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -113,7 +119,6 @@ fun VacancyScreen(
                     windowInsets = WindowInsets.statusBars
                 )
             }
-
         },
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = remember { WindowInsets(0, 0, 0, 0) }
@@ -147,18 +152,31 @@ fun VacancyScreen(
                     }
                 }
 
-                is VacancyDetailState.Error -> {
-                    ErrorSection()
-                }
-
                 is VacancyDetailState.NoConnection -> {
-//                    NoConnectionView(onRetryClick = onShareClick)
+                    ErrorSection(
+                        idRes = R.drawable.no_internet_placeholder,
+                        message = "Нет интернета"
+                    )
                 }
 
                 is VacancyDetailState.Success -> {
                     VacancyDetailView(
                         vacancy = state.vacancy
                     )
+                }
+
+                is VacancyDetailState.NotFound -> {
+                    ErrorSection(
+                        idRes = R.drawable.vacancy_not_found_error,
+                        message = "Вакансия не найдена или удалена"
+                    )
+                }
+
+                is VacancyDetailState.ServerError -> {
+                   ErrorSection(
+                       idRes = R.drawable.vacancy_server_error,
+                       message = "Ошибка сервера"
+                   )
                 }
             }
         }
@@ -426,16 +444,40 @@ fun LabeledListSection(
 }
 
 @Composable
-fun ErrorSection() {
+fun ErrorSection(
+    idRes: Int,
+    message: String
+) {
     Box(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
-        // init
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(idRes),
+                contentDescription = "Ошибка загрузки",
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = message,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .widthIn(max = 268.dp)
+            )
+        }
     }
 }
-
 @Preview(showBackground = true)
 @Composable
 fun VacancyScreenPreview(
