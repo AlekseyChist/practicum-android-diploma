@@ -40,10 +40,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import android.content.Intent
+import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import ru.practicum.android.diploma.R
@@ -304,17 +307,83 @@ fun ScrollableDetails(
                 color = MaterialTheme.colorScheme.onBackground,
             )
         }
-        Column() {
-            Text(
-                text = stringResource(R.string.key_skills),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier
-                    .padding(bottom = 16.dp)
-            )
-            LabeledListSection(
-                items = vacancy.keySkills
-            )
+        if (!vacancy.keySkills.isEmpty()) {
+            Column() {
+                Text(
+                    text = stringResource(R.string.key_skills),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                )
+                LabeledListSection(
+                    items = vacancy.keySkills
+                )
+            }
+        }
+
+        val context = LocalContext.current
+        vacancy.contacts?.let { contacts ->
+            if (
+                !contacts.email.isNullOrBlank() ||
+                contacts.phones.isNotEmpty()
+            ) {
+                Column(
+                    modifier = Modifier.padding(bottom = 24.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.contacts),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                    contacts.name?.takeIf { it.isNotBlank() }?.let { name ->
+                        Text(
+                            text = name,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                    contacts.email?.takeIf { it.isNotBlank() }?.let { email ->
+                        Text(
+                            text = email,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.primary,
+                            textDecoration = TextDecoration.Underline,
+                            modifier = Modifier.clickable {
+                                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                    data = "mailto:$email".toUri()
+                                }
+                                context.startActivity(
+                                    Intent.createChooser(
+                                        intent,
+                                        context.getString(R.string.email_app)
+                                    )
+                                )
+                            }
+                        )
+                    }
+                    contacts.phones.forEach { phone ->
+                        Text(
+                            text = phone,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.primary,
+                            textDecoration = TextDecoration.Underline,
+                            modifier = Modifier.clickable {
+                                val intent = Intent(Intent.ACTION_DIAL).apply {
+                                    data = "tel:$phone".toUri()
+                                }
+                                context.startActivity(
+                                    Intent.createChooser(
+                                        intent,
+                                        context.getString(R.string.call_app)
+                                    )
+                                )
+                            }
+                        )
+                    }
+                }
+            }
         }
     }
 }
