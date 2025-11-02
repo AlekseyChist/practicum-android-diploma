@@ -298,29 +298,6 @@ internal fun VacancyList( // потом нужно будет вернуть п�
 }
 
 @Composable
-private fun VacancyListItem(item: VacancyUi, onClick: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(vertical = TOP_BAR_ACTION_END_PADDING)
-    ) {
-        Text(text = item.title, style = MaterialTheme.typography.titleMedium)
-        item.company?.let { Text(text = it, style = MaterialTheme.typography.bodyMedium) }
-        Row {
-            Text(text = item.city, style = MaterialTheme.typography.bodyMedium)
-            item.salary?.let {
-                Text(
-                    text = "  •  $it",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-        }
-    }
-}
-
-@Composable
 private fun LoadingPlaceholder() {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         CircularProgressIndicator()
