@@ -19,25 +19,20 @@ class SearchFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 AppTheme {
-                    val sampleItems = listOf(
-                        VacancyUi("1", "Android Developer", "Москва", "150 000 ₽", "VK"),
-                        VacancyUi("2", "Kotlin Engineer", "СПб", "200 000 ₽", "Яндекс")
-                    )
-
-                    SearchScreen(
-                        state = SearchUiState.Idle,
-                        query = "",
-                        onQueryChange = { },
-                        onClearClick = { },
-                        onSearchClick = { },
+                    SearchScreenRoute(
                         onFilterClick = {
                             findNavController().navigate(
                                 R.id.action_searchFragment_to_filtersSettingsFragment
                             )
                         },
-                        onVacancyClick = { _ ->
+                        onVacancyClick = { vacancyId ->
+                            // Передаем vacancyId в Bundle для VacancyFragment
+                            val bundle = Bundle().apply {
+                                putString("vacancyId", vacancyId)
+                            }
                             findNavController().navigate(
-                                R.id.action_searchFragment_to_vacancyFragment
+                                R.id.action_searchFragment_to_vacancyFragment,
+                                bundle
                             )
                         }
                     )
