@@ -20,4 +20,6 @@
     <string name="contacts">Котакты</string>
     <string name="email_app">Выберите почтовое приложение</string>
     <string name="call_app">Выберите приложение для звонка</string>
+    <string name="vacancy_not_found">Вакансия не найдена или удалена</string>
+    <string name="server_error">Ошибка сервера</string>
 </resources>

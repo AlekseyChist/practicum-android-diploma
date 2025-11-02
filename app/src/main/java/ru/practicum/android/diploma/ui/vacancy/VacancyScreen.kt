@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.ui.vacancy
 
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -52,7 +53,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import android.content.Intent
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import ru.practicum.android.diploma.R
@@ -61,7 +61,6 @@ import ru.practicum.android.diploma.domain.models.formatForDisplay
 import ru.practicum.android.diploma.presentation.vacancy.VacancyDetailState
 import ru.practicum.android.diploma.ui.theme.AppTheme
 import ru.practicum.android.diploma.ui.vacancy.mock.VacancyStateProvider
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -155,7 +154,7 @@ fun VacancyScreen(
                 is VacancyDetailState.NoConnection -> {
                     ErrorSection(
                         idRes = R.drawable.no_internet_placeholder,
-                        message = "Нет интернета"
+                        message = stringResource(R.string.placeholder_no_internet)
                     )
                 }
 
@@ -168,14 +167,14 @@ fun VacancyScreen(
                 is VacancyDetailState.NotFound -> {
                     ErrorSection(
                         idRes = R.drawable.vacancy_not_found_error,
-                        message = "Вакансия не найдена или удалена"
+                        message = stringResource(R.string.vacancy_not_found)
                     )
                 }
 
                 is VacancyDetailState.ServerError -> {
                    ErrorSection(
                        idRes = R.drawable.vacancy_server_error,
-                       message = "Ошибка сервера"
+                       message = stringResource(R.string.server_error)
                    )
                 }
             }
