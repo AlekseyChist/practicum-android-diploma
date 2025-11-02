@@ -17,6 +17,7 @@
     <string name="experience">Требуемый опыт</string>
     <string name="vacancy_description">Описание вакансии</string>
     <string name="key_skills">Ключевые навыки</string>
+    <string name="placeholder_nothing_found">Не удалось получить\nсписок вакансий</string>
     <string name="contacts">Котакты</string>
     <string name="email_app">Выберите почтовое приложение</string>
     <string name="call_app">Выберите приложение для звонка</string>
