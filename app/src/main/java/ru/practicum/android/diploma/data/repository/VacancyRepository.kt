@@ -31,7 +31,7 @@ class VacancyRepository(
             page = searchRequest.page
         )) {
             is NetworkResult.Success -> {
-                val vacancies = result.data.vacancies.map { dto ->
+                val vacancies = (result.data.vacancies ?: emptyList()).map { dto ->
                     VacancyDtoMapper.mapShortToDomain(dto)
                 }
                 Result.success(
