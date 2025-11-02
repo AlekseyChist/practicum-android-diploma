@@ -12,9 +12,6 @@ import ru.practicum.android.diploma.domain.api.GetVacancyDetailsUseCase
 import ru.practicum.android.diploma.domain.api.RemoveVacancyFromFavoritesUseCase
 import ru.practicum.android.diploma.domain.models.Vacancy
 
-/**
- * ViewModel для экрана деталей вакансии
- */
 class VacancyDetailViewModel(
     private val getVacancyDetailsUseCase: GetVacancyDetailsUseCase,
     private val addVacancyToFavoritesUseCase: AddVacancyToFavoritesUseCase,
@@ -27,13 +24,9 @@ class VacancyDetailViewModel(
 
     private var currentVacancy: Vacancy? = null
 
-    /**
-     * Загрузить детальную информацию о вакансии
-     * @param vacancyId - идентификатор вакансии
-     */
     fun loadVacancy(vacancyId: String) {
         if (vacancyId.isBlank()) {
-            _state.value = VacancyDetailState.Error("Некорректный ID вакансии")
+            _state.value = VacancyDetailState.ServerError("Некорректный ID вакансии")  // ✅ Исправлено
             return
         }
 
@@ -55,16 +48,10 @@ class VacancyDetailViewModel(
         }
     }
 
-    /**
-     * Повторить загрузку после ошибки
-     */
     fun retry(vacancyId: String) {
         loadVacancy(vacancyId)
     }
 
-    /**
-     * Переключить статус избранного для текущей вакансии
-     */
     fun toggleFavorite() {
         val vacancy = currentVacancy ?: return
         val currentState = _state.value as? VacancyDetailState.Success ?: return
@@ -85,18 +72,34 @@ class VacancyDetailViewModel(
     }
 
     /**
-     * Обработка ошибок
+     * Обработка ошибок с различением типов
      */
     private fun handleError(exception: Throwable) {
         val message = exception.message ?: "Неизвестная ошибка"
 
         _state.value = when {
-            isConnectionMessage(message) -> VacancyDetailState.NoConnection
-            else -> VacancyDetailState.Error(message)
+            // Нет интернета
+            message.contains("интернет", ignoreCase = true) ||
+                    message.contains("connection", ignoreCase = true) -> {
+                VacancyDetailState.NoConnection
+            }
+            // Вакансия не найдена (404)
+            message.contains("VACANCY_NOT_FOUND") -> {
+                VacancyDetailState.NotFound
+            }
+            // Нет авторизации (403)
+            message.contains("AUTHORIZATION_ERROR") -> {
+                VacancyDetailState.ServerError("Ошибка авторизации")
+            }
+            // Ошибки сервера (5xx и другие)
+            message.startsWith("SERVER_ERROR:") -> {
+                val errorCode = message.substringAfter("SERVER_ERROR:")
+                VacancyDetailState.ServerError("Ошибка сервера: $errorCode")
+            }
+            // Другие ошибки
+            else -> {
+                VacancyDetailState.ServerError(message)
+            }
         }
-    }
-
-    private fun isConnectionMessage(text: String): Boolean {
-        return text.contains("интернет", ignoreCase = true) || text.contains("connection", ignoreCase = true)
     }
 }

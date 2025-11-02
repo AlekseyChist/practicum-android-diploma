@@ -67,10 +67,21 @@ class VacancyRepository(
                 val vacancy = VacancyDtoMapper.mapDetailToDomain(result.data)
                 Result.success(vacancy)
             }
+
             is NetworkResult.Error -> {
                 Log.e(TAG, "Network error getting vacancy: $vacancyId, code: ${result.code}")
-                Result.failure(Exception("Ошибка сервера: ${result.code}"))
+
+                // Создаем разные текстовые маркеры для разных HTTP кодов
+                val errorMessage = when (result.code) {
+                    404 -> "VACANCY_NOT_FOUND"
+                    403 -> "AUTHORIZATION_ERROR"
+                    in 500..599 -> "SERVER_ERROR:${result.code}"
+                    else -> "SERVER_ERROR:${result.code}"
+                }
+
+                Result.failure(Exception(errorMessage))
             }
+
             is NetworkResult.NoConnection -> {
                 Log.w(TAG, "No internet connection when getting vacancy: $vacancyId")
                 Result.failure(Exception("Нет подключения к интернету"))
