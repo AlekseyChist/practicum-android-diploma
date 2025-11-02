@@ -37,7 +37,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,10 +53,10 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.delay
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.ui.search.UiSpec.BODY_FONT_SIZE
 import ru.practicum.android.diploma.ui.search.UiSpec.ICON_SIZE
@@ -66,7 +65,6 @@ import ru.practicum.android.diploma.ui.search.UiSpec.PLACEHOLDER_VERTICAL_PADDIN
 import ru.practicum.android.diploma.ui.search.UiSpec.SCREEN_PADDING_H
 import ru.practicum.android.diploma.ui.search.UiSpec.SEARCH_FIELD_HEIGHT
 import ru.practicum.android.diploma.ui.search.UiSpec.SEARCH_FIELD_VERTICAL_PADDING
-import ru.practicum.android.diploma.ui.search.UiSpec.SEARCH_LOADING_DELAY_MS
 import ru.practicum.android.diploma.ui.search.UiSpec.TITLE_FONT_SIZE
 import ru.practicum.android.diploma.ui.search.UiSpec.TOP_BAR_ACTION_END_PADDING
 import ru.practicum.android.diploma.ui.search.UiSpec.TOP_BAR_ACTION_TOUCH
@@ -92,7 +90,6 @@ sealed interface SearchUiState {
 }
 
 private object UiSpec {
-    const val SEARCH_LOADING_DELAY_MS = 2000L
     val TOP_BAR_HEIGHT = 64.dp
     val TOP_BAR_ACTION_TOUCH = 40.dp
     val ICON_SIZE = 24.dp
@@ -117,18 +114,7 @@ fun SearchScreen(
     onFilterClick: () -> Unit,
     onVacancyClick: (VacancyUi) -> Unit,
 ) {
-    var textState by remember { mutableStateOf(query) }
-    var currentState by remember { mutableStateOf<SearchUiState>(SearchUiState.Idle) }
-
-    LaunchedEffect(textState) {
-        if (textState.isNotEmpty()) {
-            currentState = SearchUiState.Typing
-            delay(SEARCH_LOADING_DELAY_MS)
-            currentState = SearchUiState.Loading
-        } else {
-            currentState = SearchUiState.Idle
-        }
-    }
+    var textState by remember(query) { mutableStateOf(query) }
 
     Scaffold(
         topBar = {
@@ -198,9 +184,10 @@ fun SearchScreen(
                 onSubmit = onSearchClick
             )
 
-            when (currentState) {
+            when (state) {
                 SearchUiState.Idle -> Placeholder(
-                    image = R.drawable.search_placeholder_euy
+                    imageRes = R.drawable.search_placeholder_euy,
+                    text = ""
                 )
 
                 SearchUiState.Typing -> {
@@ -208,7 +195,17 @@ fun SearchScreen(
                 }
 
                 SearchUiState.Loading -> LoadingPlaceholder()
-                else -> {}
+
+                SearchUiState.NoInternet -> NoInternetPlaceholder()
+
+                SearchUiState.EmptyResult -> EmptyResultPlaceholder()
+
+                is SearchUiState.Error -> ErrorPlaceholder(state.message)
+
+                is SearchUiState.Success -> VacancyList(
+                    items = state.items,
+                    onItemClick = onVacancyClick
+                )
             }
         }
     }
@@ -282,13 +279,17 @@ private fun SearchField(
 }
 
 @Composable
-internal fun VacancyList( // потом нужно будет вернуть приват!! не забыть
+internal fun VacancyList(
     items: List<VacancyUi>,
     onItemClick: (VacancyUi) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(start = SCREEN_PADDING_H, end = SCREEN_PADDING_H, bottom = SCREEN_PADDING_H)
+        contentPadding = PaddingValues(
+            start = SCREEN_PADDING_H,
+            end = SCREEN_PADDING_H,
+            bottom = SCREEN_PADDING_H
+        )
     ) {
         items(items, key = { it.id }) { item ->
             VacancyListItem(item = item, onClick = { onItemClick(item) })
@@ -297,32 +298,93 @@ internal fun VacancyList( // потом нужно будет вернуть п�
     }
 }
 
+/**
+ * Плейсхолдер загрузки
+ */
 @Composable
 private fun LoadingPlaceholder() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator()
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(
+            color = MaterialTheme.colorScheme.primary
+        )
     }
 }
 
+/**
+ * Плейсхолдер с картинкой и текстом
+ */
 @Composable
-private fun Placeholder(image: Int) {
+private fun Placeholder(
+    imageRes: Int,
+    text: String,
+    modifier: Modifier = Modifier
+) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(horizontal = SCREEN_PADDING_H),
         contentAlignment = Alignment.Center
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Image(
-                painter = painterResource(id = image),
+                painter = painterResource(id = imageRes),
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f),
                 contentScale = ContentScale.Fit
             )
+
+            if (text.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.titleMedium,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
         }
     }
+}
+
+/**
+ * Плейсхолдер "Нет интернета"
+ */
+@Composable
+private fun NoInternetPlaceholder() {
+    Placeholder(
+        imageRes = R.drawable.no_internet_placeholder,
+        text = stringResource(R.string.placeholder_no_internet)
+    )
+}
+
+/**
+ * Плейсхолдер "Ничего не найдено"
+ */
+@Composable
+private fun EmptyResultPlaceholder() {
+    Placeholder(
+        imageRes = R.drawable.no_vacanc_placeholder,
+        text = stringResource(R.string.placeholder_nothing_found)
+    )
+}
+
+/**
+ * Плейсхолдер "Ошибка сервера"
+ */
+@Composable
+private fun ErrorPlaceholder(message: String? = null) {
+    Placeholder(
+        imageRes = R.drawable.server_not_responding_placeholder,
+        text = message ?: stringResource(R.string.placeholder_error)
+    )
 }
 
 @Preview(name = "Idle", showBackground = true)

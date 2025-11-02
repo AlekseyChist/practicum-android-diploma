@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.domain.api.AddVacancyToFavoritesUseCase
 import ru.practicum.android.diploma.domain.api.CheckIfVacancyFavoriteUseCase
+import ru.practicum.android.diploma.domain.api.ExternalNavigator
 import ru.practicum.android.diploma.domain.api.GetVacancyDetailsUseCase
 import ru.practicum.android.diploma.domain.api.RemoveVacancyFromFavoritesUseCase
 import ru.practicum.android.diploma.domain.models.Vacancy
@@ -19,7 +20,8 @@ class VacancyDetailViewModel(
     private val getVacancyDetailsUseCase: GetVacancyDetailsUseCase,
     private val addVacancyToFavoritesUseCase: AddVacancyToFavoritesUseCase,
     private val removeVacancyFromFavoritesUseCase: RemoveVacancyFromFavoritesUseCase,
-    private val checkIfVacancyFavoriteUseCase: CheckIfVacancyFavoriteUseCase
+    private val checkIfVacancyFavoriteUseCase: CheckIfVacancyFavoriteUseCase,
+    private val navigator: ExternalNavigator
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<VacancyDetailState>(VacancyDetailState.Initial)
@@ -29,11 +31,10 @@ class VacancyDetailViewModel(
 
     /**
      * Загрузить детальную информацию о вакансии
-     * @param vacancyId - идентификатор вакансии
      */
     fun loadVacancy(vacancyId: String) {
         if (vacancyId.isBlank()) {
-            _state.value = VacancyDetailState.Error("Некорректный ID вакансии")
+            _state.value = VacancyDetailState.ServerError("Некорректный ID вакансии")
             return
         }
 
@@ -85,18 +86,45 @@ class VacancyDetailViewModel(
     }
 
     /**
-     * Обработка ошибок
+     * Обработка ошибок с различением типов
      */
     private fun handleError(exception: Throwable) {
         val message = exception.message ?: "Неизвестная ошибка"
 
         _state.value = when {
-            isConnectionMessage(message) -> VacancyDetailState.NoConnection
-            else -> VacancyDetailState.Error(message)
+            // Нет интернета
+            message.contains("интернет", ignoreCase = true) || message.contains("connection", ignoreCase = true) -> {
+                VacancyDetailState.NoConnection
+            }
+
+            message.contains("VACANCY_NOT_FOUND") -> {
+                VacancyDetailState.NotFound
+            }
+
+            message.contains("AUTHORIZATION_ERROR") -> {
+                VacancyDetailState.ServerError("Ошибка авторизации")
+            }
+
+            message.startsWith("SERVER_ERROR:") -> {
+                val errorCode = message.substringAfter("SERVER_ERROR:")
+                VacancyDetailState.ServerError("Ошибка сервера: $errorCode")
+            }
+
+            else -> {
+                VacancyDetailState.ServerError(message)
+            }
         }
     }
 
-    private fun isConnectionMessage(text: String): Boolean {
-        return text.contains("интернет", ignoreCase = true) || text.contains("connection", ignoreCase = true)
+    fun onShareClick(url: String) {
+        navigator.shareVacancy(url)
+    }
+
+    fun onEmailClick(email: String) {
+        navigator.sendEmail(email)
+    }
+
+    fun onPhoneClick(phone: String) {
+        navigator.dialPhone(phone)
     }
 }

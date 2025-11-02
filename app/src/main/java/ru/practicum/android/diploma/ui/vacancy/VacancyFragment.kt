@@ -8,9 +8,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.presentation.vacancy.VacancyDetailViewModel
 import ru.practicum.android.diploma.ui.theme.AppTheme
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 // empty comment for PR
 class VacancyFragment : Fragment() {
@@ -27,8 +27,10 @@ class VacancyFragment : Fragment() {
                     VacancyScreen(
                         state = state,
                         onBackClick = { requireActivity().onBackPressedDispatcher.onBackPressed() },
-                        onShareClick = {},
-                        onFavoriteClick = {}
+                        onShareClick = { url -> viewModel.onShareClick(url) },
+                        onFavoriteClick = { viewModel.toggleFavorite() },
+                        onEmailClick = { email -> viewModel.onEmailClick(email) },
+                        onPhoneClick = { phone -> viewModel.onPhoneClick(phone) }
                     )
                 }
             }

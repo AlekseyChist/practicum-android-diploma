@@ -8,7 +8,8 @@ class VacancyStateProvider : PreviewParameterProvider<VacancyDetailState> {
         get() = sequenceOf(
             VacancyDetailState.Loading,
             VacancyDetailState.NoConnection,
-            VacancyDetailState.Error("Произошла ошибка"),
+            VacancyDetailState.NotFound,
+            VacancyDetailState.ServerError("Ошибка сервера, попробуйте позже"),
             VacancyDetailState.Success(vacancy = mockVacancy, isFavorite = false)
         )
 }

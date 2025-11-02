@@ -10,10 +10,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.data.dto.requests.VacancySearchRequest
 import ru.practicum.android.diploma.domain.api.SearchVacanciesUseCase
-import ru.practicum.android.diploma.domain.models.Vacancy
+import ru.practicum.android.diploma.presentation.mappers.VacancyUiMapper
+import ru.practicum.android.diploma.ui.search.VacancyUi
 
 /**
  * ViewModel для экрана поиска вакансий
+ * Использует VacancyUiMapper для преобразования Domain → UI моделей
  */
 class SearchViewModel(
     private val searchVacanciesUseCase: SearchVacanciesUseCase
@@ -89,7 +91,8 @@ class SearchViewModel(
 
         searchVacanciesUseCase.execute(request)
             .onSuccess { result ->
-                handleSearchSuccess(result.vacancies, result.found, result.page, result.pages)
+                val vacanciesUi = VacancyUiMapper.mapToUi(result.vacancies)
+                handleSearchSuccess(vacanciesUi, result.found, result.page, result.pages)
             }
             .onFailure { exception ->
                 handleSearchFailure(exception)
@@ -108,7 +111,7 @@ class SearchViewModel(
     }
 
     private fun handleSearchSuccess(
-        vacancies: List<Vacancy>,
+        vacancies: List<VacancyUi>,
         found: Int,
         page: Int,
         totalPages: Int
