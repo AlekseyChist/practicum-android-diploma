@@ -26,8 +26,10 @@ class VacancyFragment : Fragment() {
                     VacancyScreen(
                         state = state,
                         onBackClick = { requireActivity().onBackPressedDispatcher.onBackPressed() },
-                        onShareClick = {},
-                        onFavoriteClick = {}
+                        onShareClick = { url -> viewModel.onShareClick(url) },
+                        onFavoriteClick = { viewModel.toggleFavorite() },
+                        onEmailClick = { email -> viewModel.onEmailClick(email) },
+                        onPhoneClick = { phone -> viewModel.onPhoneClick(phone) }
                     )
                 }
             }
