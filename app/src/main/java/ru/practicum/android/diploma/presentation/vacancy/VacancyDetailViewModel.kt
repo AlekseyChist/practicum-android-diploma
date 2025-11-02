@@ -95,19 +95,23 @@ class VacancyDetailViewModel(
                     message.contains("connection", ignoreCase = true) -> {
                 VacancyDetailState.NoConnection
             }
+
             // Вакансия не найдена (404)
             message.contains("VACANCY_NOT_FOUND") -> {
                 VacancyDetailState.NotFound
             }
+
             // Нет авторизации (403)
             message.contains("AUTHORIZATION_ERROR") -> {
                 VacancyDetailState.ServerError("Ошибка авторизации")
             }
+
             // Ошибки сервера (5xx и другие)
             message.startsWith("SERVER_ERROR:") -> {
                 val errorCode = message.substringAfter("SERVER_ERROR:")
                 VacancyDetailState.ServerError("Ошибка сервера: $errorCode")
             }
+
             // Другие ошибки
             else -> {
                 VacancyDetailState.ServerError(message)
