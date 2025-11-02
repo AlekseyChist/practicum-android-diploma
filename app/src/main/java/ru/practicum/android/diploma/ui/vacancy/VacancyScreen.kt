@@ -46,6 +46,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import android.content.Intent
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -134,14 +135,20 @@ fun VacancyScreen(
                 }
 
                 is VacancyDetailState.Loading -> {
-//                    LoadingView()
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.primary,
+                            strokeWidth = 4.dp
+                        )
+                    }
                 }
 
                 is VacancyDetailState.Error -> {
-//                    ErrorView(
-//                        message = state.message,
-//                        onRetryClick = onShareClick
-//                    )
+                    ErrorSection()
                 }
 
                 is VacancyDetailState.NoConnection -> {
@@ -415,6 +422,17 @@ fun LabeledListSection(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun ErrorSection() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        // init
     }
 }
 
