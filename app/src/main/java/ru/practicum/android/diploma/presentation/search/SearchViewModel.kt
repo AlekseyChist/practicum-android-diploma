@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.data.dto.requests.VacancySearchRequest
 import ru.practicum.android.diploma.domain.api.SearchVacanciesUseCase
-import ru.practicum.android.diploma.domain.models.Vacancy
 import ru.practicum.android.diploma.presentation.mappers.VacancyUiMapper
 import ru.practicum.android.diploma.ui.search.VacancyUi
 
@@ -92,7 +91,6 @@ class SearchViewModel(
 
         searchVacanciesUseCase.execute(request)
             .onSuccess { result ->
-                // Маппинг Domain моделей в UI модели
                 val vacanciesUi = VacancyUiMapper.mapToUi(result.vacancies)
                 handleSearchSuccess(vacanciesUi, result.found, result.page, result.pages)
             }
@@ -113,7 +111,7 @@ class SearchViewModel(
     }
 
     private fun handleSearchSuccess(
-        vacancies: List<VacancyUi>,  // Теперь работаем с UI моделями!
+        vacancies: List<VacancyUi>,
         found: Int,
         page: Int,
         totalPages: Int
@@ -151,8 +149,8 @@ class SearchViewModel(
 
     private fun isNoConnectionError(message: String): Boolean {
         return message.contains("интернет", ignoreCase = true) ||
-                message.contains("connection", ignoreCase = true) ||
-                message.contains("подключения", ignoreCase = true)
+            message.contains("connection", ignoreCase = true) ||
+            message.contains("подключения", ignoreCase = true)
     }
 
     /**

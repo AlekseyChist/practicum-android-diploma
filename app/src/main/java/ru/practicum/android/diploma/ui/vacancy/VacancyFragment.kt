@@ -8,9 +8,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.presentation.vacancy.VacancyDetailViewModel
 import ru.practicum.android.diploma.ui.theme.AppTheme
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class VacancyFragment : Fragment() {
     private val viewModel: VacancyDetailViewModel by viewModel()

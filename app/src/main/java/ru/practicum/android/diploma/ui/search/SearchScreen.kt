@@ -113,7 +113,6 @@ fun SearchScreen(
     onFilterClick: () -> Unit,
     onVacancyClick: (VacancyUi) -> Unit,
 ) {
-
     var textState by remember(query) { mutableStateOf(query) }
 
     Scaffold(
