@@ -150,7 +150,7 @@ fun SearchScreen(
                 is SearchState.Error -> {
                     Placeholder(
                         imageRes = R.drawable.server_not_responding_placeholder,
-                        text = state.message ?: stringResource(R.string.placeholder_error)
+                        text = stringResource(R.string.placeholder_error)
                     )
                 }
             }
@@ -236,7 +236,6 @@ internal fun VacancyList(
     ) {
         items(items, key = { it.id }) { item ->
             VacancyListItem(item = item, onClick = { onItemClick(item) })
-            Divider()
         }
     }
 }
