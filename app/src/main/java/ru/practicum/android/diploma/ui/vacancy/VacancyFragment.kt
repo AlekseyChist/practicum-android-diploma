@@ -8,17 +8,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.fragment.navArgs
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.presentation.vacancy.VacancyDetailViewModel
 import ru.practicum.android.diploma.ui.theme.AppTheme
 
 class VacancyFragment : Fragment() {
+    private val args: VacancyFragmentArgs by navArgs()
     private val viewModel: VacancyDetailViewModel by viewModel()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val vacancyId = args.vacancyId
+        viewModel.loadVacancy(vacancyId)
         return ComposeView(requireContext()).apply {
             setContent {
                 val state by viewModel.state.collectAsStateWithLifecycle()

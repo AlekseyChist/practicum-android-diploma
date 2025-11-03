@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.data.dto.requests.VacancySearchRequest
 import ru.practicum.android.diploma.domain.api.SearchVacanciesUseCase
+import ru.practicum.android.diploma.domain.models.VacancyUi
 import ru.practicum.android.diploma.presentation.mappers.VacancyUiMapper
-import ru.practicum.android.diploma.ui.search.VacancyUi
 
 /**
  * ViewModel для экрана поиска вакансий

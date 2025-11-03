@@ -1,6 +1,6 @@
 package ru.practicum.android.diploma.presentation.search
 
-import ru.practicum.android.diploma.ui.search.VacancyUi
+import ru.practicum.android.diploma.domain.models.VacancyUi
 
 /**
  * Состояния экрана поиска вакансий

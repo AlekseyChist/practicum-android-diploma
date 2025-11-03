@@ -24,16 +24,18 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.domain.models.VacancyUi
 import ru.practicum.android.diploma.ui.theme.AppTheme
+import ru.practicum.android.diploma.ui.theme.Dimens
 
 @Composable
-fun VacancyListItem(item: VacancyUi, onClick: () -> Unit) {
+fun VacancyListItem(item: VacancyUi, onClick: (String) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
-            .clickable(onClick = onClick)
-            .padding(vertical = 9.dp, horizontal = 16.dp)
+            .clickable { onClick(item.id) }
+            .padding(vertical = Dimens.padding_8, horizontal = Dimens.padding_16)
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -44,18 +46,18 @@ fun VacancyListItem(item: VacancyUi, onClick: () -> Unit) {
             placeholder = painterResource(R.drawable.placeholder2),
             error = painterResource(R.drawable.placeholder_32px),
             modifier = Modifier
-                .size(48.dp)
+                .size(Dimens.size_48)
                 .border(
                     width = 1.dp,
                     color = colorResource(R.color.light_gray),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(Dimens.corner)
                 )
                 .padding(0.dp)
-                .clip(RoundedCornerShape(12.dp)),
+                .clip(RoundedCornerShape(Dimens.corner)),
             contentScale = ContentScale.Crop
         )
 
-        Spacer(Modifier.size(12.dp))
+        Spacer(Modifier.size(Dimens.corner))
 
         Column {
             Text(
@@ -94,7 +96,8 @@ fun PreviewVacancyListItem() {
 //                title = "Android Developer",
                 city = "Москва",
                 salary = "150 000 ₽",
-                company = "VK"
+                company = "VK",
+                logoUrl = null
             ),
             onClick = {}
         )
