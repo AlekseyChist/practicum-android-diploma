@@ -7,8 +7,10 @@ object Dimens {
 
     val appBarHeight = 64.dp
     val corner = 12.dp
+    val padding_0 = 0.dp
     val padding_4 = 4.dp
     val padding_8 = 8.dp
+    val padding_12 = 12.dp
     val padding_16 = 16.dp
     val padding_24 = 24.dp
     val padding_32 = 32.dp

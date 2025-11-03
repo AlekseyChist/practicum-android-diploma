@@ -7,13 +7,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,7 +25,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -47,57 +47,20 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.models.VacancyUi
-import ru.practicum.android.diploma.ui.search.UiSpec.BODY_FONT_SIZE
-import ru.practicum.android.diploma.ui.search.UiSpec.ICON_SIZE
-import ru.practicum.android.diploma.ui.search.UiSpec.ICON_SIZE1
-import ru.practicum.android.diploma.ui.search.UiSpec.PLACEHOLDER_VERTICAL_PADDING
-import ru.practicum.android.diploma.ui.search.UiSpec.SCREEN_PADDING_H
-import ru.practicum.android.diploma.ui.search.UiSpec.SEARCH_FIELD_HEIGHT
-import ru.practicum.android.diploma.ui.search.UiSpec.SEARCH_FIELD_VERTICAL_PADDING
-import ru.practicum.android.diploma.ui.search.UiSpec.TITLE_FONT_SIZE
-import ru.practicum.android.diploma.ui.search.UiSpec.TOP_BAR_ACTION_END_PADDING
-import ru.practicum.android.diploma.ui.search.UiSpec.TOP_BAR_ACTION_TOUCH
-import ru.practicum.android.diploma.ui.search.UiSpec.TOP_BAR_HEIGHT
-
-sealed interface SearchUiState {
-    data object Idle : SearchUiState
-    data object Loading : SearchUiState
-    data object Typing : SearchUiState
-    data object NoInternet : SearchUiState
-    data object EmptyResult : SearchUiState
-    data class Success(val items: List<VacancyUi>) : SearchUiState
-    data class Error(val message: String? = null) : SearchUiState
-}
-
-private object UiSpec {
-    val TOP_BAR_HEIGHT = 64.dp
-    val TOP_BAR_ACTION_TOUCH = 40.dp
-    val ICON_SIZE = 24.dp
-    val SCREEN_PADDING_H = 16.dp
-    val TOP_BAR_ACTION_END_PADDING = 12.dp
-    val SEARCH_FIELD_HEIGHT = 56.dp
-    val SEARCH_FIELD_VERTICAL_PADDING = 4.dp
-    val PLACEHOLDER_VERTICAL_PADDING = 27.dp
-    val TITLE_FONT_SIZE = 22.sp
-    val BODY_FONT_SIZE = 16.sp
-    val ICON_SIZE1 = 0.dp
-}
+import ru.practicum.android.diploma.ui.theme.AppTheme
+import ru.practicum.android.diploma.ui.theme.Dimens
+import ru.practicum.android.diploma.presentation.search.SearchState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-    state: SearchUiState,
+    state: SearchState,
     query: String,
     onQueryChange: (String) -> Unit,
     onClearClick: () -> Unit,
@@ -108,52 +71,34 @@ fun SearchScreen(
     var textState by remember(query) { mutableStateOf(query) }
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = remember { WindowInsets(0, 0, 0, 0) },
         topBar = {
-            TopAppBar(
-                modifier = Modifier
-                    .height(TOP_BAR_HEIGHT),
-                title = {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxHeight(),
-                        contentAlignment = Alignment.CenterStart
-                    ) {
+            Row(modifier = Modifier.heightIn(Dimens.appBarHeight)) {
+                TopAppBar(
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.background,
+                        titleContentColor = MaterialTheme.colorScheme.onBackground
+                    ),
+                    title = {
                         Text(
                             text = stringResource(R.string.search_job),
-                            style = TextStyle(
-                                fontFamily = FontFamily(Font(R.font.ys_display_medium)),
-                                fontSize = TITLE_FONT_SIZE,
-                                color = colorResource(R.color.black_text)
-                            )
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onBackground
                         )
-                    }
-                },
-                actions = {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .padding(end = SEARCH_FIELD_VERTICAL_PADDING),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        IconButton(
-                            onClick = onFilterClick,
-                            modifier = Modifier.size(TOP_BAR_ACTION_TOUCH)
-                        ) {
+                    },
+                    actions = {
+                        IconButton(onClick = onFilterClick) {
                             Icon(
                                 imageVector = Icons.Outlined.FilterList,
                                 contentDescription = stringResource(R.string.filters_settings),
-                                modifier = Modifier.size(ICON_SIZE),
-                                tint = colorResource(R.color.black_text)
+                                tint = MaterialTheme.colorScheme.onBackground
                             )
                         }
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = colorResource(R.color.black_text),
-                    actionIconContentColor = colorResource(R.color.black_text)
+                    },
+                    windowInsets = WindowInsets.statusBars
                 )
-            )
+            }
         }
     ) { inner ->
         Column(
@@ -176,27 +121,36 @@ fun SearchScreen(
             )
 
             when (state) {
-                SearchUiState.Idle -> Placeholder(
-                    imageRes = R.drawable.search_placeholder_euy,
-                    text = ""
-                )
-
-                SearchUiState.Typing -> {
-                    Spacer(Modifier.height(ICON_SIZE1))
+                SearchState.Initial -> {
+                    Placeholder(imageRes = R.drawable.search_placeholder_euy, text = "")
                 }
 
-                SearchUiState.Loading -> LoadingPlaceholder()
+                SearchState.Loading -> LoadingPlaceholder()
+                is SearchState.Success -> {
+                    VacancyList(items = state.vacancies, onItemClick = onVacancyClick)
+                }
 
-                SearchUiState.NoInternet -> NoInternetPlaceholder()
+                is SearchState.LoadingNextPage -> {}
+                is SearchState.EmptyResult -> {
+                    Placeholder(
+                        imageRes = R.drawable.no_vacanc_placeholder,
+                        text = stringResource(R.string.placeholder_nothing_found)
+                    )
+                }
 
-                SearchUiState.EmptyResult -> EmptyResultPlaceholder()
+                SearchState.NoConnection -> {
+                    Placeholder(
+                        imageRes = R.drawable.no_internet_placeholder,
+                        text = stringResource(R.string.placeholder_no_internet)
+                    )
+                }
 
-                is SearchUiState.Error -> ErrorPlaceholder(state.message)
-
-                is SearchUiState.Success -> VacancyList(
-                    items = state.items,
-                    onItemClick = onVacancyClick
-                )
+                is SearchState.Error -> {
+                    Placeholder(
+                        imageRes = R.drawable.server_not_responding_placeholder,
+                        text = stringResource(R.string.placeholder_error)
+                    )
+                }
             }
         }
     }
@@ -212,24 +166,20 @@ private fun SearchField(
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = SCREEN_PADDING_H, vertical = PLACEHOLDER_VERTICAL_PADDING)
-            .height(SEARCH_FIELD_HEIGHT),
+            .padding(horizontal = Dimens.padding_16, vertical = Dimens.padding_8)
+            .height(Dimens.dp_56),
         value = value,
         onValueChange = onValueChange,
         singleLine = true,
         placeholder = {
             Text(
                 text = stringResource(R.string.search_hint),
-                fontSize = BODY_FONT_SIZE,
-                fontWeight = FontWeight.Normal,
-                color = colorResource(R.color.color_gray_search_placeholder)
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    color = colorResource(R.color.color_gray_search_placeholder)
+                )
             )
         },
-        textStyle = TextStyle(
-            fontSize = BODY_FONT_SIZE,
-            fontWeight = FontWeight.Normal,
-            color = Color.Black
-        ),
+        textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = colorResource(R.color.light_gray),
             unfocusedContainerColor = colorResource(R.color.light_gray),
@@ -238,15 +188,15 @@ private fun SearchField(
             unfocusedBorderColor = Color.Transparent,
             cursorColor = Color.Blue
         ),
-        shape = RoundedCornerShape(TOP_BAR_ACTION_END_PADDING),
+        shape = RoundedCornerShape(Dimens.padding_12),
         leadingIcon = null,
         trailingIcon = {
             Row(
-                modifier = Modifier.padding(end = SCREEN_PADDING_H),
+                modifier = Modifier.padding(end = Dimens.padding_16),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (value.isNotEmpty()) {
-                    IconButton(onClick = onClear, modifier = Modifier.size(ICON_SIZE)) {
+                    IconButton(onClick = onClear, modifier = Modifier.size(Dimens.padding_24)) {
                         Icon(
                             imageVector = Icons.Filled.Close,
                             contentDescription = stringResource(R.string.clear),
@@ -254,7 +204,7 @@ private fun SearchField(
                         )
                     }
                 } else {
-                    IconButton(onClick = onSubmit, modifier = Modifier.size(ICON_SIZE)) {
+                    IconButton(onClick = onSubmit, modifier = Modifier.size(Dimens.padding_24)) {
                         Icon(
                             imageVector = Icons.Filled.Search,
                             contentDescription = stringResource(R.string.search_hint),
@@ -277,14 +227,13 @@ internal fun VacancyList(
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(
-            start = SCREEN_PADDING_H,
-            end = SCREEN_PADDING_H,
-            bottom = SCREEN_PADDING_H
+            start = Dimens.padding_16,
+            end = Dimens.padding_16,
+            bottom = Dimens.padding_16
         )
     ) {
         items(items, key = { it.id }) { item ->
             VacancyListItem(item = item, onClick = { onItemClick(item) })
-            Divider()
         }
     }
 }
@@ -316,7 +265,7 @@ private fun Placeholder(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = SCREEN_PADDING_H),
+            .padding(horizontal = Dimens.padding_16),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -326,9 +275,8 @@ private fun Placeholder(
                 painter = painterResource(id = imageRes),
                 contentDescription = null,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f),
-                contentScale = ContentScale.Fit
+                    .fillMaxWidth(),
+                contentScale = ContentScale.Crop
             )
 
             if (text.isNotEmpty()) {
@@ -345,124 +293,82 @@ private fun Placeholder(
     }
 }
 
-/**
- * Плейсхолдер "Нет интернета"
- */
-@Composable
-private fun NoInternetPlaceholder() {
-    Placeholder(
-        imageRes = R.drawable.no_internet_placeholder,
-        text = stringResource(R.string.placeholder_no_internet)
-    )
-}
-
-/**
- * Плейсхолдер "Ничего не найдено"
- */
-@Composable
-private fun EmptyResultPlaceholder() {
-    Placeholder(
-        imageRes = R.drawable.no_vacanc_placeholder,
-        text = stringResource(R.string.placeholder_nothing_found)
-    )
-}
-
-/**
- * Плейсхолдер "Ошибка сервера"
- */
-@Composable
-private fun ErrorPlaceholder(message: String? = null) {
-    Placeholder(
-        imageRes = R.drawable.server_not_responding_placeholder,
-        text = message ?: stringResource(R.string.placeholder_error)
-    )
-}
-
 @Preview(name = "Idle", showBackground = true)
 @Composable
 fun PreviewSearchScreenIdle() {
-    SearchScreen(
-        state = SearchUiState.Idle,
-        query = "",
-        onQueryChange = {},
-        onClearClick = {},
-        onSearchClick = {},
-        onFilterClick = {},
-        onVacancyClick = {}
-    )
+    AppTheme {
+        SearchScreen(
+            state = SearchState.Initial,
+            query = "",
+            onQueryChange = {},
+            onClearClick = {},
+            onSearchClick = {},
+            onFilterClick = {},
+            onVacancyClick = {}
+        )
+    }
 }
 
 @Preview(name = "Loading", showBackground = true)
 @Composable
 fun PreviewSearchScreenLoading() {
-    SearchScreen(
-        state = SearchUiState.Loading,
-        query = "Android Developer",
-        onQueryChange = {},
-        onClearClick = {},
-        onSearchClick = {},
-        onFilterClick = {},
-        onVacancyClick = {}
-    )
+    AppTheme {
+        SearchScreen(
+            state = SearchState.Loading,
+            query = "Android Developer",
+            onQueryChange = {},
+            onClearClick = {},
+            onSearchClick = {},
+            onFilterClick = {},
+            onVacancyClick = {}
+        )
+    }
 }
 
 @Preview(name = "No Internet", showBackground = true)
 @Composable
 fun PreviewSearchScreenNoInternet() {
-    SearchScreen(
-        state = SearchUiState.NoInternet,
-        query = "Designer",
-        onQueryChange = {},
-        onClearClick = {},
-        onSearchClick = {},
-        onFilterClick = {},
-        onVacancyClick = {}
-    )
+    AppTheme {
+        SearchScreen(
+            state = SearchState.NoConnection,
+            query = "Designer",
+            onQueryChange = {},
+            onClearClick = {},
+            onSearchClick = {},
+            onFilterClick = {},
+            onVacancyClick = {}
+        )
+    }
 }
 
 @Preview(name = "Empty Result", showBackground = true)
 @Composable
 fun PreviewSearchScreenEmptyResult() {
-    SearchScreen(
-        state = SearchUiState.EmptyResult,
-        query = "Senior Kotlin Architect",
-        onQueryChange = {},
-        onClearClick = {},
-        onSearchClick = {},
-        onFilterClick = {},
-        onVacancyClick = {}
-    )
+    AppTheme {
+        SearchScreen(
+            state = SearchState.EmptyResult(query = "Senior Kotlin Architect"),
+            query = "Senior Kotlin Architect",
+            onQueryChange = {},
+            onClearClick = {},
+            onSearchClick = {},
+            onFilterClick = {},
+            onVacancyClick = {}
+        )
+    }
 }
 
 @Preview(name = "Error", showBackground = true)
 @Composable
 fun PreviewSearchScreenError() {
-    SearchScreen(
-        state = SearchUiState.Error("Ошибка загрузки данных"),
-        query = "QA Engineer",
-        onQueryChange = {},
-        onClearClick = {},
-        onSearchClick = {},
-        onFilterClick = {},
-        onVacancyClick = {}
-    )
-}
-
-@Preview(name = "Success", showBackground = true)
-@Composable
-fun PreviewSearchScreenSuccess() {
-    val sampleItems = listOf(
-        VacancyUi("1", "Android Developer", "Москва", "150 000 ₽", "VK", null),
-        VacancyUi("2", "Kotlin Engineer", "Санкт-Петербург", "200 000 ₽", "Яндекс", null),
-        VacancyUi("3", "QA Engineer", "Казань", null, "Сбер", null)
-    )
-    SearchScreen(
-        state = SearchUiState.Success(sampleItems),
-        query = "Developer",
-        onQueryChange = {},
-        onClearClick = {},
-        onSearchClick = {},
-        onFilterClick = {},
-        onVacancyClick = {}
-    )
+    AppTheme {
+        SearchScreen(
+            state = SearchState.Error("Ошибка сервера"),
+            query = "QA Engineer",
+            onQueryChange = {},
+            onClearClick = {},
+            onSearchClick = {},
+            onFilterClick = {},
+            onVacancyClick = {}
+        )
+    }
 }
