@@ -25,7 +25,6 @@ import coil.request.ImageRequest
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.ui.theme.AppTheme
 
-//цвета!
 @Composable
 fun VacancyListItem(item: VacancyUi, onClick: () -> Unit) {
     Row(
