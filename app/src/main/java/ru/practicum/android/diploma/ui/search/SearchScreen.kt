@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -51,28 +50,14 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.models.VacancyUi
 import ru.practicum.android.diploma.ui.theme.Dimens
-import ru.practicum.android.diploma.ui.search.UiSpec.BODY_FONT_SIZE
-import ru.practicum.android.diploma.ui.search.UiSpec.ICON_SIZE
-import ru.practicum.android.diploma.ui.search.UiSpec.ICON_SIZE1
-import ru.practicum.android.diploma.ui.search.UiSpec.PLACEHOLDER_VERTICAL_PADDING
-import ru.practicum.android.diploma.ui.search.UiSpec.SCREEN_PADDING_H
-import ru.practicum.android.diploma.ui.search.UiSpec.SEARCH_FIELD_HEIGHT
-import ru.practicum.android.diploma.ui.search.UiSpec.SEARCH_FIELD_VERTICAL_PADDING
-import ru.practicum.android.diploma.ui.search.UiSpec.TITLE_FONT_SIZE
-import ru.practicum.android.diploma.ui.search.UiSpec.TOP_BAR_ACTION_END_PADDING
-import ru.practicum.android.diploma.ui.search.UiSpec.TOP_BAR_ACTION_TOUCH
-import ru.practicum.android.diploma.ui.search.UiSpec.TOP_BAR_HEIGHT
 
 sealed interface SearchUiState {
     data object Idle : SearchUiState
@@ -82,20 +67,6 @@ sealed interface SearchUiState {
     data object EmptyResult : SearchUiState
     data class Success(val items: List<VacancyUi>) : SearchUiState
     data class Error(val message: String? = null) : SearchUiState
-}
-
-private object UiSpec {
-    val TOP_BAR_HEIGHT = 64.dp
-    val TOP_BAR_ACTION_TOUCH = 40.dp
-    val ICON_SIZE = 24.dp
-    val SCREEN_PADDING_H = 16.dp
-    val TOP_BAR_ACTION_END_PADDING = 12.dp
-    val SEARCH_FIELD_HEIGHT = 56.dp
-    val SEARCH_FIELD_VERTICAL_PADDING = 4.dp
-    val PLACEHOLDER_VERTICAL_PADDING = 27.dp
-    val TITLE_FONT_SIZE = 22.sp
-    val BODY_FONT_SIZE = 16.sp
-    val ICON_SIZE1 = 0.dp
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -168,7 +139,7 @@ fun SearchScreen(
                 )
 
                 SearchUiState.Typing -> {
-                    Spacer(Modifier.height(ICON_SIZE1))
+                    Spacer(Modifier.height(Dimens.padding_0))
                 }
 
                 SearchUiState.Loading -> LoadingPlaceholder()
@@ -198,24 +169,20 @@ private fun SearchField(
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = Dimens.padding_16, vertical = PLACEHOLDER_VERTICAL_PADDING)
-            .height(SEARCH_FIELD_HEIGHT),
+            .padding(horizontal = Dimens.padding_16, vertical = Dimens.padding_8)
+            .height(Dimens.dp_56),
         value = value,
         onValueChange = onValueChange,
         singleLine = true,
         placeholder = {
             Text(
                 text = stringResource(R.string.search_hint),
-                fontSize = BODY_FONT_SIZE,
-                fontWeight = FontWeight.Normal,
-                color = colorResource(R.color.color_gray_search_placeholder)
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    color = colorResource(R.color.color_gray_search_placeholder)
+                )
             )
         },
-        textStyle = TextStyle(
-            fontSize = BODY_FONT_SIZE,
-            fontWeight = FontWeight.Normal,
-            color = Color.Black
-        ),
+        textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = colorResource(R.color.light_gray),
             unfocusedContainerColor = colorResource(R.color.light_gray),
@@ -224,15 +191,15 @@ private fun SearchField(
             unfocusedBorderColor = Color.Transparent,
             cursorColor = Color.Blue
         ),
-        shape = RoundedCornerShape(TOP_BAR_ACTION_END_PADDING),
+        shape = RoundedCornerShape(Dimens.padding_12),
         leadingIcon = null,
         trailingIcon = {
             Row(
-                modifier = Modifier.padding(end = SCREEN_PADDING_H),
+                modifier = Modifier.padding(end = Dimens.padding_16),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (value.isNotEmpty()) {
-                    IconButton(onClick = onClear, modifier = Modifier.size(ICON_SIZE)) {
+                    IconButton(onClick = onClear, modifier = Modifier.size(Dimens.padding_24)) {
                         Icon(
                             imageVector = Icons.Filled.Close,
                             contentDescription = stringResource(R.string.clear),
@@ -240,7 +207,7 @@ private fun SearchField(
                         )
                     }
                 } else {
-                    IconButton(onClick = onSubmit, modifier = Modifier.size(ICON_SIZE)) {
+                    IconButton(onClick = onSubmit, modifier = Modifier.size(Dimens.padding_24)) {
                         Icon(
                             imageVector = Icons.Filled.Search,
                             contentDescription = stringResource(R.string.search_hint),
@@ -263,9 +230,9 @@ internal fun VacancyList(
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(
-            start = SCREEN_PADDING_H,
-            end = SCREEN_PADDING_H,
-            bottom = SCREEN_PADDING_H
+            start = Dimens.padding_16,
+            end = Dimens.padding_16,
+            bottom = Dimens.padding_16
         )
     ) {
         items(items, key = { it.id }) { item ->
@@ -302,7 +269,7 @@ private fun Placeholder(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = SCREEN_PADDING_H),
+            .padding(horizontal = Dimens.padding_16),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -322,7 +289,7 @@ private fun Placeholder(
 
                 Text(
                     text = text,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleSmall,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onBackground
                 )
