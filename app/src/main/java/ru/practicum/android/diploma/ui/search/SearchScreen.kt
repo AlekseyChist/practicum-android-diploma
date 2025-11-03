@@ -59,21 +59,12 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.models.VacancyUi
 import ru.practicum.android.diploma.ui.theme.AppTheme
 import ru.practicum.android.diploma.ui.theme.Dimens
-
-sealed interface SearchUiState {
-    data object Idle : SearchUiState
-    data object Loading : SearchUiState
-    data object Typing : SearchUiState
-    data object NoInternet : SearchUiState
-    data object EmptyResult : SearchUiState
-    data class Success(val items: List<VacancyUi>) : SearchUiState
-    data class Error(val message: String? = null) : SearchUiState
-}
+import ru.practicum.android.diploma.presentation.search.SearchState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-    state: SearchUiState,
+    state: SearchState,
     query: String,
     onQueryChange: (String) -> Unit,
     onClearClick: () -> Unit,
@@ -134,27 +125,33 @@ fun SearchScreen(
             )
 
             when (state) {
-                SearchUiState.Idle -> Placeholder(
-                    imageRes = R.drawable.search_placeholder_euy,
-                    text = ""
-                )
-
-                SearchUiState.Typing -> {
-                    Spacer(Modifier.height(Dimens.padding_0))
+                SearchState.Initial -> {
+                    Placeholder(imageRes = R.drawable.search_placeholder_euy, text = "")
                 }
 
-                SearchUiState.Loading -> LoadingPlaceholder()
+                SearchState.Loading -> LoadingPlaceholder()
 
-                SearchUiState.NoInternet -> NoInternetPlaceholder()
+                is SearchState.Success -> {
+                    VacancyList(
+                        items = state.vacancies,
+                        onItemClick = onVacancyClick
+                    )
+                }
 
-                SearchUiState.EmptyResult -> EmptyResultPlaceholder()
+                is SearchState.LoadingNextPage -> {
+                }
 
-                is SearchUiState.Error -> ErrorPlaceholder(state.message)
+                is SearchState.EmptyResult -> {
+                    EmptyResultPlaceholder()
+                }
 
-                is SearchUiState.Success -> VacancyList(
-                    items = state.items,
-                    onItemClick = onVacancyClick
-                )
+                SearchState.NoConnection -> {
+                    NoInternetPlaceholder()
+                }
+
+                is SearchState.Error -> {
+                    ErrorPlaceholder(state.message)
+                }
             }
         }
     }
@@ -337,7 +334,7 @@ private fun ErrorPlaceholder(message: String? = null) {
 fun PreviewSearchScreenIdle() {
     AppTheme {
         SearchScreen(
-            state = SearchUiState.Idle,
+            state = SearchState.Initial,
             query = "",
             onQueryChange = {},
             onClearClick = {},
@@ -353,7 +350,7 @@ fun PreviewSearchScreenIdle() {
 fun PreviewSearchScreenLoading() {
     AppTheme {
         SearchScreen(
-            state = SearchUiState.Loading,
+            state = SearchState.Loading,
             query = "Android Developer",
             onQueryChange = {},
             onClearClick = {},
@@ -369,7 +366,7 @@ fun PreviewSearchScreenLoading() {
 fun PreviewSearchScreenNoInternet() {
     AppTheme {
         SearchScreen(
-            state = SearchUiState.NoInternet,
+            state = SearchState.NoConnection,
             query = "Designer",
             onQueryChange = {},
             onClearClick = {},
@@ -385,7 +382,7 @@ fun PreviewSearchScreenNoInternet() {
 fun PreviewSearchScreenEmptyResult() {
     AppTheme {
         SearchScreen(
-            state = SearchUiState.EmptyResult,
+            state = SearchState.EmptyResult(query = "Senior Kotlin Architect"),
             query = "Senior Kotlin Architect",
             onQueryChange = {},
             onClearClick = {},
@@ -401,7 +398,7 @@ fun PreviewSearchScreenEmptyResult() {
 fun PreviewSearchScreenError() {
     AppTheme {
         SearchScreen(
-            state = SearchUiState.Error("Ошибка загрузки данных"),
+            state = SearchState.Error("Ошибка сервера"),
             query = "QA Engineer",
             onQueryChange = {},
             onClearClick = {},
@@ -410,23 +407,4 @@ fun PreviewSearchScreenError() {
             onVacancyClick = {}
         )
     }
-}
-
-@Preview(name = "Success", showBackground = true)
-@Composable
-fun PreviewSearchScreenSuccess() {
-    val sampleItems = listOf(
-        VacancyUi("1", "Android Developer", "Москва", "150 000 ₽", "VK", null),
-        VacancyUi("2", "Kotlin Engineer", "Санкт-Петербург", "200 000 ₽", "Яндекс", null),
-        VacancyUi("3", "QA Engineer", "Казань", null, "Сбер", null)
-    )
-    SearchScreen(
-        state = SearchUiState.Success(sampleItems),
-        query = "Developer",
-        onQueryChange = {},
-        onClearClick = {},
-        onSearchClick = {},
-        onFilterClick = {},
-        onVacancyClick = {}
-    )
 }

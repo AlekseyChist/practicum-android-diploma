@@ -19,10 +19,9 @@ fun SearchScreenRoute(
 ) {
     val state by viewModel.state.collectAsState()
 
-    val uiState = mapToUiState(state)
 
     SearchScreen(
-        state = uiState,
+        state = state,
         query = "",
         onQueryChange = { query ->
             viewModel.searchVacancies(query)
@@ -39,27 +38,4 @@ fun SearchScreenRoute(
     )
 }
 
-/**
- * Маппинг SearchState (от ViewModel) → SearchUiState (для UI)
- */
-private fun mapToUiState(state: SearchState): SearchUiState {
-    return when (state) {
-        is SearchState.Initial -> SearchUiState.Idle
 
-        is SearchState.Loading -> SearchUiState.Loading
-
-        is SearchState.LoadingNextPage -> {
-            SearchUiState.Success(items = state.currentVacancies)
-        }
-
-        is SearchState.Success -> {
-            SearchUiState.Success(items = state.vacancies)
-        }
-
-        is SearchState.EmptyResult -> SearchUiState.EmptyResult
-
-        is SearchState.NoConnection -> SearchUiState.NoInternet
-
-        is SearchState.Error -> SearchUiState.Error(message = state.message)
-    }
-}
