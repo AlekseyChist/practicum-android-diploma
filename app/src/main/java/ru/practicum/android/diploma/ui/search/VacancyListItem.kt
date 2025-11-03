@@ -1,6 +1,7 @@
 package ru.practicum.android.diploma.ui.search
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,8 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -30,9 +31,10 @@ fun VacancyListItem(item: VacancyUi, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(vertical = 8.dp)
             .background(MaterialTheme.colorScheme.background)
+            .clickable(onClick = onClick)
+            .padding(vertical = 9.dp)
+            .padding(horizontal = 16.dp)
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -40,11 +42,17 @@ fun VacancyListItem(item: VacancyUi, onClick: () -> Unit) {
                 .crossfade(true)
                 .build(),
             contentDescription = "company logo",
-            placeholder = painterResource(R.drawable.placeholder_32px),
+            placeholder = painterResource(R.drawable.placeholder2),
             error = painterResource(R.drawable.placeholder_32px),
             modifier = Modifier
                 .size(48.dp)
-                .clip(RoundedCornerShape(8.dp)),
+                .border(
+                    width = 1.dp,
+                    color = colorResource(R.color.light_gray),
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .padding(0.dp)
+                .clip(RoundedCornerShape(12.dp)),
             contentScale = ContentScale.Crop
         )
 
@@ -52,17 +60,8 @@ fun VacancyListItem(item: VacancyUi, onClick: () -> Unit) {
 
         Column {
             Text(
-                text = item.title,
+                text = "${item.title}, ${item.city}",
                 style = MaterialTheme.typography.titleMedium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Text(
-                text = item.city,
-                style = MaterialTheme.typography.titleMedium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colorScheme.onBackground
             )
 
@@ -70,8 +69,6 @@ fun VacancyListItem(item: VacancyUi, onClick: () -> Unit) {
                 Text(
                     text = item.company,
                     style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
                     color = MaterialTheme.colorScheme.onBackground
                 )
             }
@@ -80,8 +77,6 @@ fun VacancyListItem(item: VacancyUi, onClick: () -> Unit) {
                 Text(
                     text = item.salary,
                     style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
                     color = MaterialTheme.colorScheme.onBackground
                 )
             }
