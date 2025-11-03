@@ -18,8 +18,6 @@ class VacancyRepository(
 
     /**
      * Поиск вакансий с фильтрами и пагинацией
-     * @param searchRequest параметры поиска
-     * @return Result со списком вакансий, общим количеством и текущей страницей
      */
     suspend fun searchVacancies(
         searchRequest: VacancySearchRequest
@@ -33,7 +31,7 @@ class VacancyRepository(
             page = searchRequest.page
         )) {
             is NetworkResult.Success -> {
-                val vacancies = result.data.vacancies.map { dto ->
+                val vacancies = (result.data.vacancies ?: emptyList()).map { dto ->
                     VacancyDtoMapper.mapShortToDomain(dto)
                 }
                 Result.success(
@@ -51,15 +49,13 @@ class VacancyRepository(
             }
             is NetworkResult.NoConnection -> {
                 Log.w(TAG, "No internet connection when searching vacancies")
-                Result.failure(Exception("Нет подключения к интернету"))
+                Result.failure(Exception(NO_CONNECTION_MESSAGE))
             }
         }
     }
 
     /**
      * Получить детальную информацию о вакансии по ID
-     * @param vacancyId - идентификатор вакансии
-     * @return Result с вакансией или ошибкой
      */
     suspend fun getVacancyById(vacancyId: String): Result<Vacancy> {
         return when (val result = networkDataSource.getVacancyDetails(vacancyId)) {
@@ -67,18 +63,35 @@ class VacancyRepository(
                 val vacancy = VacancyDtoMapper.mapDetailToDomain(result.data)
                 Result.success(vacancy)
             }
+
             is NetworkResult.Error -> {
                 Log.e(TAG, "Network error getting vacancy: $vacancyId, code: ${result.code}")
-                Result.failure(Exception("Ошибка сервера: ${result.code}"))
+
+                val errorMessage = when (result.code) {
+                    HTTP_NOT_FOUND -> NOT_FOUND_MESSAGE
+                    HTTP_FORBIDDEN -> AUTHORIZATION_ERROR_MESSAGE
+                    in HTTP_SERVER_ERROR_START..HTTP_SERVER_ERROR_END -> "SERVER_ERROR:${result.code}"
+                    else -> "SERVER_ERROR:${result.code}"
+                }
+
+                Result.failure(Exception(errorMessage))
             }
+
             is NetworkResult.NoConnection -> {
                 Log.w(TAG, "No internet connection when getting vacancy: $vacancyId")
-                Result.failure(Exception("Нет подключения к интернету"))
+                Result.failure(Exception(NO_CONNECTION_MESSAGE))
             }
         }
     }
 
     companion object {
         private const val TAG = "VacancyRepository"
+        private const val HTTP_NOT_FOUND = 404
+        private const val HTTP_FORBIDDEN = 403
+        private const val HTTP_SERVER_ERROR_START = 500
+        private const val HTTP_SERVER_ERROR_END = 599
+        private const val NOT_FOUND_MESSAGE = "VACANCY_NOT_FOUND"
+        private const val AUTHORIZATION_ERROR_MESSAGE = "AUTHORIZATION_ERROR"
+        private const val NO_CONNECTION_MESSAGE = "Нет подключения к интернету"
     }
 }

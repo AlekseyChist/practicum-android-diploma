@@ -18,7 +18,8 @@ val presentationModule = module {
             getVacancyDetailsUseCase = get(),
             addVacancyToFavoritesUseCase = get(),
             removeVacancyFromFavoritesUseCase = get(),
-            checkIfVacancyFavoriteUseCase = get()
+            checkIfVacancyFavoriteUseCase = get(),
+            navigator = get()
         )
     }
 
