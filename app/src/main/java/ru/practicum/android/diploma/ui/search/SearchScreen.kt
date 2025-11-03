@@ -126,20 +126,32 @@ fun SearchScreen(
                 SearchState.Initial -> {
                     Placeholder(imageRes = R.drawable.search_placeholder_euy, text = "")
                 }
+
                 SearchState.Loading -> LoadingPlaceholder()
-                is SearchState.Success -> { VacancyList(items = state.vacancies, onItemClick = onVacancyClick) }
-                is SearchState.LoadingNextPage -> { }
+                is SearchState.Success -> {
+                    VacancyList(items = state.vacancies, onItemClick = onVacancyClick)
+                }
+
+                is SearchState.LoadingNextPage -> {}
                 is SearchState.EmptyResult -> {
-                    Placeholder(imageRes = R.drawable.no_vacanc_placeholder,
-                        text = stringResource(R.string.placeholder_nothing_found))
+                    Placeholder(
+                        imageRes = R.drawable.no_vacanc_placeholder,
+                        text = stringResource(R.string.placeholder_nothing_found)
+                    )
                 }
+
                 SearchState.NoConnection -> {
-                    Placeholder(imageRes = R.drawable.no_internet_placeholder,
-                        text = stringResource(R.string.placeholder_no_internet))
+                    Placeholder(
+                        imageRes = R.drawable.no_internet_placeholder,
+                        text = stringResource(R.string.placeholder_no_internet)
+                    )
                 }
+
                 is SearchState.Error -> {
-                    Placeholder(imageRes = R.drawable.server_not_responding_placeholder,
-                        text = state.message ?: stringResource(R.string.placeholder_error))
+                    Placeholder(
+                        imageRes = R.drawable.server_not_responding_placeholder,
+                        text = state.message ?: stringResource(R.string.placeholder_error)
+                    )
                 }
             }
         }
