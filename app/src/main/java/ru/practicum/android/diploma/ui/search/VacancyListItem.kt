@@ -1,6 +1,6 @@
 package ru.practicum.android.diploma.ui.search
 
-import androidx.compose.foundation.background
+import ru.practicum.android.diploma.R
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,11 +14,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import ru.practicum.android.diploma.ui.theme.AppTheme
 
 @Composable
@@ -30,12 +32,16 @@ fun VacancyListItem(item: VacancyUi, onClick: () -> Unit) {
             .padding(vertical = 20.dp)
     ) {
         AsyncImage(
-            model = item.logoUrl,
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(item.logoUrl)
+                .crossfade(true)
+                .build(),
             contentDescription = "company logo",
+            placeholder = painterResource(R.drawable.placeholder_32px),
+            error = painterResource(R.drawable.placeholder_32px),
             modifier = Modifier
                 .size(48.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(Color.LightGray),
+                .clip(RoundedCornerShape(8.dp)),
             contentScale = ContentScale.Crop
         )
 
@@ -46,12 +52,12 @@ fun VacancyListItem(item: VacancyUi, onClick: () -> Unit) {
             Text(text = item.city, style = MaterialTheme.typography.bodyMedium)
 
             item.company?.let {
-                Text(text = it, style = MaterialTheme.typography.bodyMedium)
+                Text(text = item.company, style = MaterialTheme.typography.bodyMedium)
             }
 
             item.salary?.let {
                 Text(
-                    text = it,
+                    text = item.salary,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
