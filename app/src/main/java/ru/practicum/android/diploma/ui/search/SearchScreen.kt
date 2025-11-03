@@ -126,29 +126,20 @@ fun SearchScreen(
                 SearchState.Initial -> {
                     Placeholder(imageRes = R.drawable.search_placeholder_euy, text = "")
                 }
-
                 SearchState.Loading -> LoadingPlaceholder()
-
-                is SearchState.Success -> {
-                    VacancyList(
-                        items = state.vacancies,
-                        onItemClick = onVacancyClick
-                    )
-                }
-
-                is SearchState.LoadingNextPage -> {
-                }
-
+                is SearchState.Success -> { VacancyList(items = state.vacancies, onItemClick = onVacancyClick) }
+                is SearchState.LoadingNextPage -> { }
                 is SearchState.EmptyResult -> {
-                    EmptyResultPlaceholder()
+                    Placeholder(imageRes = R.drawable.no_vacanc_placeholder,
+                        text = stringResource(R.string.placeholder_nothing_found))
                 }
-
                 SearchState.NoConnection -> {
-                    NoInternetPlaceholder()
+                    Placeholder(imageRes = R.drawable.no_internet_placeholder,
+                        text = stringResource(R.string.placeholder_no_internet))
                 }
-
                 is SearchState.Error -> {
-                    ErrorPlaceholder(state.message)
+                    Placeholder(imageRes = R.drawable.server_not_responding_placeholder,
+                        text = state.message ?: stringResource(R.string.placeholder_error))
                 }
             }
         }
@@ -291,39 +282,6 @@ private fun Placeholder(
             }
         }
     }
-}
-
-/**
- * Плейсхолдер "Нет интернета"
- */
-@Composable
-private fun NoInternetPlaceholder() {
-    Placeholder(
-        imageRes = R.drawable.no_internet_placeholder,
-        text = stringResource(R.string.placeholder_no_internet)
-    )
-}
-
-/**
- * Плейсхолдер "Ничего не найдено  "
- */
-@Composable
-private fun EmptyResultPlaceholder() {
-    Placeholder(
-        imageRes = R.drawable.no_vacanc_placeholder,
-        text = stringResource(R.string.placeholder_nothing_found)
-    )
-}
-
-/**
- * Плейсхолдер "Ошибка сервера"
- */
-@Composable
-private fun ErrorPlaceholder(message: String? = null) {
-    Placeholder(
-        imageRes = R.drawable.server_not_responding_placeholder,
-        text = message ?: stringResource(R.string.placeholder_error)
-    )
 }
 
 @Preview(name = "Idle", showBackground = true)
