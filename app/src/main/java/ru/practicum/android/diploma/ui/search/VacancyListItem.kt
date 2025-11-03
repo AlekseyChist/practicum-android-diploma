@@ -33,8 +33,7 @@ fun VacancyListItem(item: VacancyUi, onClick: () -> Unit) {
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
             .clickable(onClick = onClick)
-            .padding(vertical = 9.dp)
-            .padding(horizontal = 16.dp)
+            .padding(vertical = 9.dp, horizontal = 16.dp)
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -91,7 +90,8 @@ fun PreviewVacancyListItem() {
         VacancyListItem(
             item = VacancyUi(
                 id = "1",
-                title = "Android Developer",
+                title = "Андроид-разработчик",
+//                title = "Android Developer",
                 city = "Москва",
                 salary = "150 000 ₽",
                 company = "VK"
