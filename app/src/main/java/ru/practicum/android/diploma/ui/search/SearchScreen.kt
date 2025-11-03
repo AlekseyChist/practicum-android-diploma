@@ -7,13 +7,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -58,6 +61,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.models.VacancyUi
+import ru.practicum.android.diploma.ui.theme.Dimens
 import ru.practicum.android.diploma.ui.search.UiSpec.BODY_FONT_SIZE
 import ru.practicum.android.diploma.ui.search.UiSpec.ICON_SIZE
 import ru.practicum.android.diploma.ui.search.UiSpec.ICON_SIZE1
@@ -108,52 +112,34 @@ fun SearchScreen(
     var textState by remember(query) { mutableStateOf(query) }
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = remember { WindowInsets(0, 0, 0, 0) },
         topBar = {
-            TopAppBar(
-                modifier = Modifier
-                    .height(TOP_BAR_HEIGHT),
-                title = {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxHeight(),
-                        contentAlignment = Alignment.CenterStart
-                    ) {
+            Row(modifier = Modifier.heightIn(Dimens.appBarHeight)) {
+                TopAppBar(
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.background,
+                        titleContentColor = MaterialTheme.colorScheme.onBackground
+                    ),
+                    title = {
                         Text(
                             text = stringResource(R.string.search_job),
-                            style = TextStyle(
-                                fontFamily = FontFamily(Font(R.font.ys_display_medium)),
-                                fontSize = TITLE_FONT_SIZE,
-                                color = colorResource(R.color.black_text)
-                            )
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onBackground
                         )
-                    }
-                },
-                actions = {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .padding(end = SEARCH_FIELD_VERTICAL_PADDING),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        IconButton(
-                            onClick = onFilterClick,
-                            modifier = Modifier.size(TOP_BAR_ACTION_TOUCH)
-                        ) {
+                    },
+                    actions = {
+                        IconButton(onClick = onFilterClick) {
                             Icon(
                                 imageVector = Icons.Outlined.FilterList,
                                 contentDescription = stringResource(R.string.filters_settings),
-                                modifier = Modifier.size(ICON_SIZE),
-                                tint = colorResource(R.color.black_text)
+                                tint = MaterialTheme.colorScheme.onBackground
                             )
                         }
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = colorResource(R.color.black_text),
-                    actionIconContentColor = colorResource(R.color.black_text)
+                    },
+                    windowInsets = WindowInsets.statusBars
                 )
-            )
+            }
         }
     ) { inner ->
         Column(
@@ -212,7 +198,7 @@ private fun SearchField(
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = SCREEN_PADDING_H, vertical = PLACEHOLDER_VERTICAL_PADDING)
+            .padding(horizontal = Dimens.padding_16, vertical = PLACEHOLDER_VERTICAL_PADDING)
             .height(SEARCH_FIELD_HEIGHT),
         value = value,
         onValueChange = onValueChange,
