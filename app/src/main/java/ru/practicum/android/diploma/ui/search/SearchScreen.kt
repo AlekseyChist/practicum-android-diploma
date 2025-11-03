@@ -57,6 +57,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.models.VacancyUi
+import ru.practicum.android.diploma.ui.theme.AppTheme
 import ru.practicum.android.diploma.ui.theme.Dimens
 
 sealed interface SearchUiState {
@@ -334,71 +335,81 @@ private fun ErrorPlaceholder(message: String? = null) {
 @Preview(name = "Idle", showBackground = true)
 @Composable
 fun PreviewSearchScreenIdle() {
-    SearchScreen(
-        state = SearchUiState.Idle,
-        query = "",
-        onQueryChange = {},
-        onClearClick = {},
-        onSearchClick = {},
-        onFilterClick = {},
-        onVacancyClick = {}
-    )
+    AppTheme {
+        SearchScreen(
+            state = SearchUiState.Idle,
+            query = "",
+            onQueryChange = {},
+            onClearClick = {},
+            onSearchClick = {},
+            onFilterClick = {},
+            onVacancyClick = {}
+        )
+    }
 }
 
 @Preview(name = "Loading", showBackground = true)
 @Composable
 fun PreviewSearchScreenLoading() {
-    SearchScreen(
-        state = SearchUiState.Loading,
-        query = "Android Developer",
-        onQueryChange = {},
-        onClearClick = {},
-        onSearchClick = {},
-        onFilterClick = {},
-        onVacancyClick = {}
-    )
+    AppTheme {
+        SearchScreen(
+            state = SearchUiState.Loading,
+            query = "Android Developer",
+            onQueryChange = {},
+            onClearClick = {},
+            onSearchClick = {},
+            onFilterClick = {},
+            onVacancyClick = {}
+        )
+    }
 }
 
 @Preview(name = "No Internet", showBackground = true)
 @Composable
 fun PreviewSearchScreenNoInternet() {
-    SearchScreen(
-        state = SearchUiState.NoInternet,
-        query = "Designer",
-        onQueryChange = {},
-        onClearClick = {},
-        onSearchClick = {},
-        onFilterClick = {},
-        onVacancyClick = {}
-    )
+    AppTheme {
+        SearchScreen(
+            state = SearchUiState.NoInternet,
+            query = "Designer",
+            onQueryChange = {},
+            onClearClick = {},
+            onSearchClick = {},
+            onFilterClick = {},
+            onVacancyClick = {}
+        )
+    }
 }
 
 @Preview(name = "Empty Result", showBackground = true)
 @Composable
 fun PreviewSearchScreenEmptyResult() {
-    SearchScreen(
-        state = SearchUiState.EmptyResult,
-        query = "Senior Kotlin Architect",
-        onQueryChange = {},
-        onClearClick = {},
-        onSearchClick = {},
-        onFilterClick = {},
-        onVacancyClick = {}
-    )
+    AppTheme {
+        SearchScreen(
+            state = SearchUiState.EmptyResult,
+            query = "Senior Kotlin Architect",
+            onQueryChange = {},
+            onClearClick = {},
+            onSearchClick = {},
+            onFilterClick = {},
+            onVacancyClick = {}
+        )
+    }
 }
 
 @Preview(name = "Error", showBackground = true)
 @Composable
 fun PreviewSearchScreenError() {
-    SearchScreen(
-        state = SearchUiState.Error("Ошибка загрузки данных"),
-        query = "QA Engineer",
-        onQueryChange = {},
-        onClearClick = {},
-        onSearchClick = {},
-        onFilterClick = {},
-        onVacancyClick = {}
-    )
+    AppTheme {
+        SearchScreen(
+            state = SearchUiState.Error("Ошибка загрузки данных"),
+            query = "QA Engineer",
+            onQueryChange = {},
+            onClearClick = {},
+            onSearchClick = {},
+            onFilterClick = {},
+            onVacancyClick = {}
+        )
+    }
 }
 
 @Preview(name = "Success", showBackground = true)
