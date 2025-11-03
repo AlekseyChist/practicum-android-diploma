@@ -75,7 +75,8 @@ data class VacancyUi(
     val title: String,
     val city: String,
     val salary: String?,
-    val company: String?
+    val company: String?,
+    val logoUrl: String? = null // нужно соостветсвенно внести измы в прочих оъектах
 )
 
 sealed interface SearchUiState {
@@ -293,29 +294,6 @@ internal fun VacancyList(
         items(items, key = { it.id }) { item ->
             VacancyListItem(item = item, onClick = { onItemClick(item) })
             Divider()
-        }
-    }
-}
-
-@Composable
-private fun VacancyListItem(item: VacancyUi, onClick: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(vertical = TOP_BAR_ACTION_END_PADDING)
-    ) {
-        Text(text = item.title, style = MaterialTheme.typography.titleMedium)
-        item.company?.let { Text(text = it, style = MaterialTheme.typography.bodyMedium) }
-        Row {
-            Text(text = item.city, style = MaterialTheme.typography.bodyMedium)
-            item.salary?.let {
-                Text(
-                    text = "  •  $it",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
         }
     }
 }
