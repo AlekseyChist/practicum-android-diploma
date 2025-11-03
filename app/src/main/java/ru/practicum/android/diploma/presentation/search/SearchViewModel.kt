@@ -2,14 +2,15 @@ package ru.practicum.android.diploma.presentation.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.data.dto.requests.VacancySearchRequest
 import ru.practicum.android.diploma.domain.api.SearchVacanciesUseCase
+import ru.practicum.android.diploma.domain.models.Vacancy
+import ru.practicum.android.diploma.util.debounce
+import java.net.ConnectException
+import java.net.UnknownHostException
 import ru.practicum.android.diploma.domain.models.VacancyUi
 import ru.practicum.android.diploma.presentation.mappers.VacancyUiMapper
 
@@ -22,22 +23,31 @@ class SearchViewModel(
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<SearchState>(SearchState.Initial)
-    val state: StateFlow<SearchState> = _state.asStateFlow()
+    val state = _state.asStateFlow()
 
-    private var currentSearchQuery: String = ""
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery = _searchQuery.asStateFlow()
+
+    private var currentSearchQuery = ""
     private var currentFilters: VacancySearchRequest? = null
-    private var searchJob: Job? = null
 
-    /**
-     * Поиск вакансий с debounce
-     * @param query - поисковый запрос
-     * @param filters - фильтры поиска (регион, отрасль, зарплата)
-     */
-    fun searchVacancies(
-        query: String,
-        filters: VacancySearchRequest? = null
-    ) {
+    private val debouncedSearch = debounce<String>(
+        delayMillis = DEBOUNCE_DELAY_MS,
+        coroutineScope = viewModelScope
+    ) { query ->
+        val trimmedQuery = query.trim()
+
+        if (_searchQuery.value.isEmpty()) {
+            _state.value = SearchState.Initial
+        } else {
+            currentSearchQuery = trimmedQuery
+            startSearch()
+        }
+    }
+
+    fun searchVacancies(query: String, filters: VacancySearchRequest? = null) {
         currentSearchQuery = query.trim()
+        _searchQuery.value = currentSearchQuery
         currentFilters = filters
 
         if (currentSearchQuery.isEmpty()) {
@@ -45,21 +55,27 @@ class SearchViewModel(
             return
         }
 
-        searchJob?.cancel()
-        searchJob = viewModelScope.launch {
-            delay(DEBOUNCE_DELAY_MS)
+        _state.value = SearchState.Typing(currentSearchQuery)
+
+        debouncedSearch(currentSearchQuery)
+    }
+
+    fun retry() {
+        if (currentSearchQuery.isNotEmpty()) {
+            startSearch()
+        }
+    }
+
+    private fun startSearch() {
+        _state.value = SearchState.Loading
+        viewModelScope.launch {
             performSearch(page = 0)
         }
     }
 
-    /**
-     * Загрузить следующую страницу результатов
-     */
     fun loadNextPage() {
         val currentState = _state.value
-        if (currentState !is SearchState.Success || !currentState.hasMorePages) {
-            return
-        }
+        if (currentState !is SearchState.Success || !currentState.hasMorePages) return
 
         _state.value = SearchState.LoadingNextPage(
             currentVacancies = currentState.vacancies,
@@ -67,28 +83,12 @@ class SearchViewModel(
         )
 
         viewModelScope.launch {
-            performSearch(page = currentState.currentPage + 1)
+            performSearch(currentState.currentPage + 1)
         }
     }
 
-    /**
-     * Повторить последний поиск (при ошибке или отсутствии сети)
-     */
-    fun retry() {
-        if (currentSearchQuery.isNotEmpty()) {
-            _state.value = SearchState.Loading
-            viewModelScope.launch {
-                performSearch(page = 0)
-            }
-        }
-    }
-
-    /**
-     * Выполнить поиск вакансий
-     */
     private suspend fun performSearch(page: Int) {
         val request = createSearchRequest(page)
-
         searchVacanciesUseCase.execute(request)
             .onSuccess { result ->
                 val vacanciesUi = VacancyUiMapper.mapToUi(result.vacancies)
@@ -99,16 +99,14 @@ class SearchViewModel(
             }
     }
 
-    private fun createSearchRequest(page: Int): VacancySearchRequest {
-        return VacancySearchRequest(
-            text = currentSearchQuery,
-            area = currentFilters?.area,
-            industry = currentFilters?.industry,
-            salary = currentFilters?.salary,
-            onlyWithSalary = currentFilters?.onlyWithSalary,
-            page = page
-        )
-    }
+    private fun createSearchRequest(page: Int) = VacancySearchRequest(
+        text = currentSearchQuery,
+        area = currentFilters?.area,
+        industry = currentFilters?.industry,
+        salary = currentFilters?.salary,
+        onlyWithSalary = currentFilters?.onlyWithSalary,
+        page = page
+    )
 
     private fun handleSearchSuccess(
         vacancies: List<VacancyUi>,
@@ -117,7 +115,6 @@ class SearchViewModel(
         totalPages: Int
     ) {
         val currentState = _state.value
-
         if (vacancies.isEmpty() && page == 0) {
             _state.value = SearchState.EmptyResult(currentSearchQuery)
             return
@@ -141,10 +138,19 @@ class SearchViewModel(
     private fun handleSearchFailure(exception: Throwable) {
         val message = exception.message ?: "Неизвестная ошибка"
 
-        _state.value = when {
-            isNoConnectionError(message) -> SearchState.NoConnection
+        _state.value = when (exception) {
+            is UnknownHostException,
+            is ConnectException -> SearchState.NoConnection
+
             else -> SearchState.Error(message)
         }
+    }
+
+    fun clearSearch() {
+        currentSearchQuery = ""
+        _searchQuery.value = ""
+        currentFilters = null
+        _state.value = SearchState.Initial
     }
 
     private fun isNoConnectionError(message: String): Boolean {
@@ -153,17 +159,14 @@ class SearchViewModel(
             message.contains("подключения", ignoreCase = true)
     }
 
-    /**
-     * Очистить поиск и вернуться к начальному состоянию
-     */
-    fun clearSearch() {
-        searchJob?.cancel()
-        currentSearchQuery = ""
-        currentFilters = null
-        _state.value = SearchState.Initial
+    companion object {
+        private const val DEBOUNCE_DELAY_MS = 2000L
     }
 
-    companion object {
-        private const val DEBOUNCE_DELAY_MS = 500L
+    fun forceSearch() {
+        debouncedSearch.cancelPending()
+        if (currentSearchQuery.isNotEmpty()) {
+            startSearch()
+        }
     }
 }

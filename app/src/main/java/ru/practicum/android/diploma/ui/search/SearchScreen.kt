@@ -36,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,7 +61,6 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.models.VacancyUi
 import ru.practicum.android.diploma.ui.search.UiSpec.BODY_FONT_SIZE
 import ru.practicum.android.diploma.ui.search.UiSpec.ICON_SIZE
-import ru.practicum.android.diploma.ui.search.UiSpec.ICON_SIZE1
 import ru.practicum.android.diploma.ui.search.UiSpec.PLACEHOLDER_VERTICAL_PADDING
 import ru.practicum.android.diploma.ui.search.UiSpec.SCREEN_PADDING_H
 import ru.practicum.android.diploma.ui.search.UiSpec.SEARCH_FIELD_HEIGHT
@@ -101,11 +101,17 @@ fun SearchScreen(
     query: String,
     onQueryChange: (String) -> Unit,
     onClearClick: () -> Unit,
-    onSearchClick: () -> Unit,
+    onSubmit: () -> Unit,
     onFilterClick: () -> Unit,
     onVacancyClick: (VacancyUi) -> Unit,
 ) {
-    var textState by remember(query) { mutableStateOf(query) }
+    var localQuery by remember { mutableStateOf(query) }
+
+    LaunchedEffect(query) {
+        if (localQuery != query) {
+            localQuery = query
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -163,16 +169,17 @@ fun SearchScreen(
                 .background(MaterialTheme.colorScheme.background)
         ) {
             SearchField(
-                value = textState,
-                onValueChange = {
-                    textState = it
-                    onQueryChange(it)
+                value = localQuery,
+                onValueChange = { newQuery ->
+                    localQuery = newQuery // ← мгновенное обновление UI
+                    onQueryChange(newQuery) // ← передача в ViewModel
                 },
                 onClear = {
-                    textState = ""
+                    localQuery = ""
                     onClearClick()
                 },
-                onSubmit = onSearchClick
+//                onSubmit = { onSearchClick(localQuery) }
+                onSubmit = onSubmit
             )
 
             when (state) {
@@ -180,10 +187,6 @@ fun SearchScreen(
                     imageRes = R.drawable.search_placeholder_euy,
                     text = ""
                 )
-
-                SearchUiState.Typing -> {
-                    Spacer(Modifier.height(ICON_SIZE1))
-                }
 
                 SearchUiState.Loading -> LoadingPlaceholder()
 
@@ -197,6 +200,8 @@ fun SearchScreen(
                     items = state.items,
                     onItemClick = onVacancyClick
                 )
+
+                else -> {}
             }
         }
     }
@@ -270,7 +275,7 @@ private fun SearchField(
 }
 
 @Composable
-internal fun VacancyList(
+private fun VacancyList(
     items: List<VacancyUi>,
     onItemClick: (VacancyUi) -> Unit
 ) {
@@ -386,7 +391,7 @@ fun PreviewSearchScreenIdle() {
         query = "",
         onQueryChange = {},
         onClearClick = {},
-        onSearchClick = {},
+        onSubmit = {},
         onFilterClick = {},
         onVacancyClick = {}
     )
@@ -400,7 +405,7 @@ fun PreviewSearchScreenLoading() {
         query = "Android Developer",
         onQueryChange = {},
         onClearClick = {},
-        onSearchClick = {},
+        onSubmit = {},
         onFilterClick = {},
         onVacancyClick = {}
     )
@@ -414,7 +419,7 @@ fun PreviewSearchScreenNoInternet() {
         query = "Designer",
         onQueryChange = {},
         onClearClick = {},
-        onSearchClick = {},
+        onSubmit = {},
         onFilterClick = {},
         onVacancyClick = {}
     )
@@ -428,7 +433,7 @@ fun PreviewSearchScreenEmptyResult() {
         query = "Senior Kotlin Architect",
         onQueryChange = {},
         onClearClick = {},
-        onSearchClick = {},
+        onSubmit = {},
         onFilterClick = {},
         onVacancyClick = {}
     )
@@ -442,7 +447,7 @@ fun PreviewSearchScreenError() {
         query = "QA Engineer",
         onQueryChange = {},
         onClearClick = {},
-        onSearchClick = {},
+        onSubmit = {},
         onFilterClick = {},
         onVacancyClick = {}
     )
@@ -461,7 +466,7 @@ fun PreviewSearchScreenSuccess() {
         query = "Developer",
         onQueryChange = {},
         onClearClick = {},
-        onSearchClick = {},
+        onSubmit = {},
         onFilterClick = {},
         onVacancyClick = {}
     )

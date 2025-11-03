@@ -8,6 +8,7 @@ import org.koin.core.logger.Level
 import ru.practicum.android.diploma.di.dataModule
 import ru.practicum.android.diploma.di.domainModule
 import ru.practicum.android.diploma.di.presentationModule
+import ru.practicum.android.diploma.di.searchModule
 
 class App : Application() {
 
@@ -20,7 +21,8 @@ class App : Application() {
             modules(
                 dataModule,
                 presentationModule,
-                domainModule
+                domainModule,
+                searchModule
             )
         }
     }
