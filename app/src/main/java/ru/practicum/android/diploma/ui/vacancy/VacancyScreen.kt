@@ -74,65 +74,12 @@ fun VacancyScreen(
 ) {
     Scaffold(
         topBar = {
-            Row(
-                modifier = Modifier
-                    .heightIn(Dimens.appBarHeight)
-            ) {
-                TopAppBar(
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background,
-                        titleContentColor = MaterialTheme.colorScheme.onBackground
-                    ),
-                    navigationIcon = {
-                        IconButton(onClick = { onBackClick() }) {
-                            Icon(
-                                painter = painterResource(R.drawable.nav_icon),
-                                contentDescription = "Back",
-                                tint = MaterialTheme.colorScheme.onBackground
-                            )
-                        }
-                    },
-                    title = {
-                        Text(
-                            text = stringResource(R.string.vacancy),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onBackground,
-                        )
-                    },
-                    actions = {
-                        (state as? VacancyDetailState.Success)?.let { successState ->
-                            Row {
-                                Icon(
-                                    painter = painterResource(R.drawable.share_icon),
-                                    contentDescription = "Share",
-                                    tint = MaterialTheme.colorScheme.onBackground,
-                                    modifier = Modifier
-                                        .clickable { onShareClick(successState.vacancy.url) }
-                                )
-
-                                Icon(
-                                    painter = painterResource(
-                                        if (successState.isFavorite) {
-                                            R.drawable.favorite_icon_filled
-                                        } else {
-                                            R.drawable.favorite_icon
-                                        }
-                                    ),
-                                    contentDescription = "Favorite",
-                                    tint = if (successState.isFavorite) {
-                                        Color.Red
-                                    } else {
-                                        MaterialTheme.colorScheme.onBackground
-                                    },
-                                    modifier = Modifier
-                                        .clickable { onFavoriteClick() }
-                                )
-                            }
-                        }
-                    },
-                    windowInsets = WindowInsets.statusBars
-                )
-            }
+            TopBar(
+                state = state,
+                onBackClick = onBackClick,
+                onShareClick = onShareClick,
+                onFavoriteClick = onFavoriteClick
+            )
         },
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = remember { WindowInsets(0, 0, 0, 0) }
@@ -192,6 +139,75 @@ fun VacancyScreen(
                 }
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TopBar(
+    state: VacancyDetailState,
+    onBackClick: () -> Unit,
+    onShareClick: (String) -> Unit,
+    onFavoriteClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .heightIn(Dimens.appBarHeight)
+    ) {
+        TopAppBar(
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.background,
+                titleContentColor = MaterialTheme.colorScheme.onBackground
+            ),
+            navigationIcon = {
+                IconButton(onClick = { onBackClick() }) {
+                    Icon(
+                        painter = painterResource(R.drawable.nav_icon),
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            },
+            title = {
+                Text(
+                    text = stringResource(R.string.vacancy),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+            },
+            actions = {
+                (state as? VacancyDetailState.Success)?.let { successState ->
+                    Row {
+                        Icon(
+                            painter = painterResource(R.drawable.share_icon),
+                            contentDescription = "Share",
+                            tint = MaterialTheme.colorScheme.onBackground,
+                            modifier = Modifier
+                                .clickable { onShareClick(successState.vacancy.url) }
+                        )
+
+                        Icon(
+                            painter = painterResource(
+                                if (successState.isFavorite) {
+                                    R.drawable.favorite_icon_filled
+                                } else {
+                                    R.drawable.favorite_icon
+                                }
+                            ),
+                            contentDescription = "Favorite",
+                            tint = if (successState.isFavorite) {
+                                Color.Red
+                            } else {
+                                MaterialTheme.colorScheme.onBackground
+                            },
+                            modifier = Modifier
+                                .clickable { onFavoriteClick() }
+                        )
+                    }
+                }
+            },
+            windowInsets = WindowInsets.statusBars
+        )
     }
 }
 
