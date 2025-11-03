@@ -275,9 +275,8 @@ private fun Placeholder(
                 painter = painterResource(id = imageRes),
                 contentDescription = null,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f),
-                contentScale = ContentScale.Fit
+                    .fillMaxWidth(),
+                contentScale = ContentScale.Crop
             )
 
             if (text.isNotEmpty()) {
