@@ -32,6 +32,9 @@
         <action
             android:id="@+id/action_favoritesFragment_to_teamFragment"
             app:destination="@id/teamFragment" />
+        <action
+            android:id="@+id/action_favoritesFragment_to_vacancyFragment"
+            app:destination="@id/vacancyFragment" />
     </fragment>
     <fragment
         android:id="@+id/filtersSettingsFragment"
@@ -70,5 +73,10 @@
     <fragment
         android:id="@+id/vacancyFragment"
         android:name="ru.practicum.android.diploma.ui.vacancy.VacancyFragment"
-        android:label="VacancyFragment" />
+        android:label="VacancyFragment">
+        <argument
+            android:name="vacancyId"
+            app:argType="string"
+            app:nullable="false"/>
+    </fragment>
 </navigation>

@@ -3,6 +3,7 @@ package ru.practicum.android.diploma.di
 import androidx.room.Room
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
+import ru.practicum.android.diploma.data.ExternalNavigatorImpl
 import ru.practicum.android.diploma.data.db.AppDatabase
 import ru.practicum.android.diploma.data.network.NetworkClient
 import ru.practicum.android.diploma.data.network.RetrofitClient
@@ -12,6 +13,7 @@ import ru.practicum.android.diploma.data.repository.FavoritesRepository
 import ru.practicum.android.diploma.data.repository.VacancyRepository
 import ru.practicum.android.diploma.data.storage.LocalStorage
 import ru.practicum.android.diploma.data.storage.impl.LocalStorageImpl
+import ru.practicum.android.diploma.domain.api.ExternalNavigator
 import ru.practicum.android.diploma.domain.api.GetVacancyDetailsUseCase
 import ru.practicum.android.diploma.domain.impl.GetVacancyDetailsUseCaseImpl
 
@@ -81,6 +83,10 @@ val dataModule = module {
         GetVacancyDetailsUseCaseImpl(
             vacancyRepository = get()
         )
+    }
+
+    factory<ExternalNavigator> {
+        ExternalNavigatorImpl(androidContext())
     }
 
 }
