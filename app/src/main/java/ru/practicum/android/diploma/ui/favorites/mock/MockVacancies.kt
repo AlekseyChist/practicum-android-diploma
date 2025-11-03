@@ -1,4 +1,5 @@
 @file:Suppress("StringLiteralDuplication")
+
 package ru.practicum.android.diploma.ui.favorites.mock
 
 import ru.practicum.android.diploma.domain.models.Area
