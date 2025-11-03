@@ -357,7 +357,7 @@ private fun NoInternetPlaceholder() {
 }
 
 /**
- * Плейсхолдер "Ничего не найдено"
+ * Плейсхолдер "Ничего не найдено  "
  */
 @Composable
 private fun EmptyResultPlaceholder() {
