@@ -289,7 +289,7 @@ private fun Placeholder(
 
                 Text(
                     text = text,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.titleMedium,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onBackground
                 )
