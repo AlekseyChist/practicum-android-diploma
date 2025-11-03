@@ -12,7 +12,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.presentation.vacancy.VacancyDetailViewModel
 import ru.practicum.android.diploma.ui.theme.AppTheme
 
-// empty comment for PR
 class VacancyFragment : Fragment() {
     private val viewModel: VacancyDetailViewModel by viewModel()
     override fun onCreateView(

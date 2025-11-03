@@ -1,6 +1,6 @@
 package ru.practicum.android.diploma.ui.search
 
-import ru.practicum.android.diploma.R
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,19 +17,23 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.ui.theme.AppTheme
 
+//цвета!
 @Composable
 fun VacancyListItem(item: VacancyUi, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(vertical = 20.dp)
+            .padding(vertical = 8.dp)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -48,18 +52,38 @@ fun VacancyListItem(item: VacancyUi, onClick: () -> Unit) {
         Spacer(Modifier.size(12.dp))
 
         Column {
-            Text(text = item.title, style = MaterialTheme.typography.titleMedium)
-            Text(text = item.city, style = MaterialTheme.typography.bodyMedium)
+            Text(
+                text = item.title,
+                style = MaterialTheme.typography.titleMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Text(
+                text = item.city,
+                style = MaterialTheme.typography.titleMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onBackground
+            )
 
             item.company?.let {
-                Text(text = item.company, style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    text = item.company,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
             }
 
             item.salary?.let {
                 Text(
                     text = item.salary,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
