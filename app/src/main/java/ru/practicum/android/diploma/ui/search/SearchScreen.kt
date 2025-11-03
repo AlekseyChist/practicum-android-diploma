@@ -2,7 +2,6 @@ package ru.practicum.android.diploma.ui.search
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -58,6 +57,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.domain.models.VacancyUi
 import ru.practicum.android.diploma.ui.search.UiSpec.BODY_FONT_SIZE
 import ru.practicum.android.diploma.ui.search.UiSpec.ICON_SIZE
 import ru.practicum.android.diploma.ui.search.UiSpec.ICON_SIZE1
@@ -69,15 +69,6 @@ import ru.practicum.android.diploma.ui.search.UiSpec.TITLE_FONT_SIZE
 import ru.practicum.android.diploma.ui.search.UiSpec.TOP_BAR_ACTION_END_PADDING
 import ru.practicum.android.diploma.ui.search.UiSpec.TOP_BAR_ACTION_TOUCH
 import ru.practicum.android.diploma.ui.search.UiSpec.TOP_BAR_HEIGHT
-
-data class VacancyUi(
-    val id: String,
-    val title: String,
-    val city: String,
-    val salary: String?,
-    val company: String?,
-    val logoUrl: String? = null // нужно соостветсвенно внести измы в прочих оъектах
-)
 
 sealed interface SearchUiState {
     data object Idle : SearchUiState
@@ -461,9 +452,9 @@ fun PreviewSearchScreenError() {
 @Composable
 fun PreviewSearchScreenSuccess() {
     val sampleItems = listOf(
-        VacancyUi("1", "Android Developer", "Москва", "150 000 ₽", "VK"),
-        VacancyUi("2", "Kotlin Engineer", "Санкт-Петербург", "200 000 ₽", "Яндекс"),
-        VacancyUi("3", "QA Engineer", "Казань", null, "Сбер")
+        VacancyUi("1", "Android Developer", "Москва", "150 000 ₽", "VK", null),
+        VacancyUi("2", "Kotlin Engineer", "Санкт-Петербург", "200 000 ₽", "Яндекс", null),
+        VacancyUi("3", "QA Engineer", "Казань", null, "Сбер", null)
     )
     SearchScreen(
         state = SearchUiState.Success(sampleItems),

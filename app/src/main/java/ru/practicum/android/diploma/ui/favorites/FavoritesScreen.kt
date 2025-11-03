@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -39,14 +40,18 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.domain.models.Vacancy
 import ru.practicum.android.diploma.presentation.favorites.FavoritesState
+import ru.practicum.android.diploma.presentation.mappers.VacancyUiMapper
 import ru.practicum.android.diploma.ui.favorites.mock.FavoritesStateProvider
+import ru.practicum.android.diploma.ui.search.VacancyListItem
 import ru.practicum.android.diploma.ui.theme.AppTheme
 import ru.practicum.android.diploma.ui.theme.Dimens
 
 @Composable
 fun FavoritesScreen(
-    state: FavoritesState
+    state: FavoritesState,
+    onItemClick: (String) -> Unit,
 ) {
     Scaffold(
         topBar = { TopBar() },
@@ -66,7 +71,7 @@ fun FavoritesScreen(
         ) {
             when (state) {
                 is FavoritesState.Content -> {
-                    ContentSection()
+                    ContentSection(state.vacancies, onItemClick)
                 }
 
                 is FavoritesState.Empty -> {
@@ -125,13 +130,21 @@ private fun TopBar() {
 }
 
 @Composable
-private fun ContentSection() {
+private fun ContentSection(
+    vacancies: List<Vacancy>,
+    onItemClick: (String) -> Unit
+) {
+    val vacancyUiList = VacancyUiMapper.mapToUi(vacancies)
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(Dimens.padding_16)
     ) {
-        // list
+        items(vacancyUiList) { vacancy ->
+            VacancyListItem(vacancy) { vacancyId ->
+                onItemClick(vacancyId)
+            }
+        }
     }
 }
 
@@ -177,7 +190,10 @@ fun FavoritesScreenPreview(
     @PreviewParameter(FavoritesStateProvider::class) state: FavoritesState
 ) {
     AppTheme {
-        FavoritesScreen(state = state)
+        FavoritesScreen(
+            state = state,
+            onItemClick = {}
+        )
     }
 }
 
@@ -190,6 +206,9 @@ fun FavoritesScreenDarkPreview(
     @PreviewParameter(FavoritesStateProvider::class) state: FavoritesState
 ) {
     AppTheme {
-        FavoritesScreen(state = state)
+        FavoritesScreen(
+            state = state,
+            onItemClick = {}
+        )
     }
 }

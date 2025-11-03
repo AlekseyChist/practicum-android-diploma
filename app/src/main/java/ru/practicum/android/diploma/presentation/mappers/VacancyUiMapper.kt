@@ -1,8 +1,8 @@
 package ru.practicum.android.diploma.presentation.mappers
 
 import ru.practicum.android.diploma.domain.models.Vacancy
+import ru.practicum.android.diploma.domain.models.VacancyUi
 import ru.practicum.android.diploma.domain.models.formatForDisplay
-import ru.practicum.android.diploma.ui.search.VacancyUi
 
 /**
  * Маппер для преобразования Domain модели в UI модель
@@ -19,7 +19,8 @@ object VacancyUiMapper {
             title = vacancy.name,
             city = vacancy.area.name,
             salary = vacancy.salary?.formatForDisplay(),
-            company = vacancy.employer.name
+            company = vacancy.employer.name,
+            logoUrl = vacancy.employer.logoUrl
         )
     }
 
