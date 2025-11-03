@@ -13,6 +13,8 @@ sealed interface SearchState {
      */
     data object Initial : SearchState
 
+    data class Typing(val query: String) : SearchState
+
     /**
      * Загрузка первой страницы результатов
      */
