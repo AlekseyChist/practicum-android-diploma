@@ -73,7 +73,7 @@ fun VacancyListItem(item: VacancyUi, onClick: (String) -> Unit) {
                 )
                 .padding(0.dp)
                 .clip(RoundedCornerShape(Dimens.corner)),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Fit
         )
 
         Spacer(Modifier.size(Dimens.corner))
