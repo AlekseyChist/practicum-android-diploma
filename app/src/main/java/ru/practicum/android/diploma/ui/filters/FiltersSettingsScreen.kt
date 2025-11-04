@@ -172,12 +172,10 @@ fun FiltersSettingsScreen(
                             onApplyClick()
                         }, modifier = Modifier
                             .fillMaxWidth()
-                            .height(56.dp),
-                        shape = RoundedCornerShape(16.dp)
+                            .height(56.dp), shape = RoundedCornerShape(16.dp)
                     ) {
                         Text(
-                            stringResource(R.string.filters_apply),
-                            style = MaterialTheme.typography.bodyLarge
+                            stringResource(R.string.filters_apply), style = MaterialTheme.typography.bodyLarge
                         )
                     }
 
