@@ -77,6 +77,20 @@ fun SearchScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
+    LaunchedEffect(state) {
+        when (state) {
+            is SearchState.Success,
+            is SearchState.EmptyResult,
+            is SearchState.Loading,
+            is SearchState.NoConnection,
+            is SearchState.Error -> {
+                keyboardController?.hide()
+                focusManager.clearFocus()
+            }
+            else -> Unit
+        }
+    }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = remember { WindowInsets(0, 0, 0, 0) },
