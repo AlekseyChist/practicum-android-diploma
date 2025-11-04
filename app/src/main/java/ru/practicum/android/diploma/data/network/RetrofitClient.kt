@@ -17,7 +17,8 @@ object RetrofitClient {
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = if (BuildConfig.DEBUG) {
-            HttpLoggingInterceptor.Level.HEADERS
+            // ИЗМЕНЕНО: Теперь логируем BODY чтобы увидеть содержимое ответа
+            HttpLoggingInterceptor.Level.BODY
         } else {
             HttpLoggingInterceptor.Level.NONE
         }

@@ -12,6 +12,6 @@ data class VacancyResponse(
     @SerializedName("page")
     val page: Int,
 
-    @SerializedName("vacancies")
+    @SerializedName("items")
     val vacancies: List<VacancyDto>
 )

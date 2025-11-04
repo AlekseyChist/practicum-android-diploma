@@ -22,6 +22,8 @@ class VacancyRepository(
     suspend fun searchVacancies(
         searchRequest: VacancySearchRequest
     ): Result<SearchResult> {
+        Log.d(TAG, "searchVacancies: начинаем с request=$searchRequest")
+
         return when (val result = networkDataSource.searchVacancies(
             text = searchRequest.text,
             area = searchRequest.area,
@@ -31,9 +33,29 @@ class VacancyRepository(
             page = searchRequest.page
         )) {
             is NetworkResult.Success -> {
-                val vacancies = (result.data.vacancies ?: emptyList()).map { dto ->
+                Log.d(TAG, "searchVacancies: SUCCESS от networkDataSource")
+                Log.d(TAG, "searchVacancies: result.data = ${result.data}")
+                Log.d(TAG, "searchVacancies: result.data.found = ${result.data.found}")
+                Log.d(TAG, "searchVacancies: result.data.page = ${result.data.page}")
+                Log.d(TAG, "searchVacancies: result.data.pages = ${result.data.pages}")
+                Log.d(TAG, "searchVacancies: result.data.vacancies = ${result.data.vacancies}")
+                Log.d(TAG, "searchVacancies: result.data.vacancies?.size = ${result.data.vacancies?.size}")
+
+                val vacanciesList = result.data.vacancies ?: emptyList()
+                Log.d(TAG, "searchVacancies: vacanciesList.size = ${vacanciesList.size}")
+
+                if (vacanciesList.isEmpty()) {
+                    Log.w(TAG, "searchVacancies: ВНИМАНИЕ! vacancies список ПУСТОЙ, хотя found=${result.data.found}")
+                    Log.w(TAG, "searchVacancies: Это означает что либо API не вернул массив vacancies, либо он пришел пустым")
+                }
+
+                val vacancies = vacanciesList.map { dto ->
+                    Log.d(TAG, "searchVacancies: маппинг вакансии: id=${dto.id}, name=${dto.name}")
                     VacancyDtoMapper.mapShortToDomain(dto)
                 }
+
+                Log.d(TAG, "searchVacancies: маппинг завершен, итого вакансий=${vacancies.size}")
+
                 Result.success(
                     SearchResult(
                         vacancies = vacancies,
@@ -44,11 +66,11 @@ class VacancyRepository(
                 )
             }
             is NetworkResult.Error -> {
-                Log.e(TAG, "Network error searching vacancies: code ${result.code}")
+                Log.e(TAG, "searchVacancies: ERROR от networkDataSource: code=${result.code}, message=${result.message}")
                 Result.failure(Exception("Ошибка сервера: ${result.code}"))
             }
             is NetworkResult.NoConnection -> {
-                Log.w(TAG, "No internet connection when searching vacancies")
+                Log.w(TAG, "searchVacancies: NoConnection от networkDataSource")
                 Result.failure(Exception(NO_CONNECTION_MESSAGE))
             }
         }
@@ -58,14 +80,18 @@ class VacancyRepository(
      * Получить детальную информацию о вакансии по ID
      */
     suspend fun getVacancyById(vacancyId: String): Result<Vacancy> {
+        Log.d(TAG, "getVacancyById: начинаем для vacancyId=$vacancyId")
+
         return when (val result = networkDataSource.getVacancyDetails(vacancyId)) {
             is NetworkResult.Success -> {
+                Log.d(TAG, "getVacancyById: SUCCESS от networkDataSource")
                 val vacancy = VacancyDtoMapper.mapDetailToDomain(result.data)
+                Log.d(TAG, "getVacancyById: маппинг завершен, vacancy.id=${vacancy.id}")
                 Result.success(vacancy)
             }
 
             is NetworkResult.Error -> {
-                Log.e(TAG, "Network error getting vacancy: $vacancyId, code: ${result.code}")
+                Log.e(TAG, "getVacancyById: ERROR: vacancyId=$vacancyId, code=${result.code}")
 
                 val errorMessage = when (result.code) {
                     HTTP_NOT_FOUND -> NOT_FOUND_MESSAGE
@@ -78,7 +104,7 @@ class VacancyRepository(
             }
 
             is NetworkResult.NoConnection -> {
-                Log.w(TAG, "No internet connection when getting vacancy: $vacancyId")
+                Log.w(TAG, "getVacancyById: NoConnection для vacancyId=$vacancyId")
                 Result.failure(Exception(NO_CONNECTION_MESSAGE))
             }
         }
