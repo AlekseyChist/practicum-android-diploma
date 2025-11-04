@@ -139,14 +139,15 @@ fun FiltersSettingsScreen(
                 value = salaryText,
                 onValueChange = { digitsOnly -> onSalaryChange(digitsOnly) },
                 onClear = {
-                onClearSalary()
-                keyboard?.hide(); focus.clearFocus()
-            },
+                    onClearSalary()
+                    keyboard?.hide()
+                    focus.clearFocus()
+                },
                 onDone = {
-                keyboard?.hide(); focus.clearFocus()
-            }
+                    keyboard?.hide()
+                    focus.clearFocus()
+                },
             )
-
             Spacer(modifier = Modifier.height(24.dp))
 
             Row(
@@ -177,12 +178,14 @@ fun FiltersSettingsScreen(
                 ) {
                     Button(
                         onClick = {
-                            keyboard?.hide(); focus.clearFocus()
+                            keyboard?.hide()
+                            focus.clearFocus()
                             onApplyClick()
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(56.dp), shape = RoundedCornerShape(16.dp)
+                            .height(56.dp),
+                        shape = RoundedCornerShape(16.dp),
                     ) {
                         Text(
                             stringResource(R.string.filters_apply),
@@ -333,7 +336,11 @@ private fun SalaryField(
 
         if (value.isNotEmpty()) {
             IconButton(
-                onClick = { onClear(); keyboard?.hide() }, modifier = Modifier.align(Alignment.CenterEnd)
+                onClick = {
+                    onClear()
+                    keyboard?.hide()
+                },
+                modifier = Modifier.align(Alignment.CenterEnd),
             ) {
                 Icon(
                     imageVector = Icons.Filled.Close,
@@ -360,7 +367,8 @@ fun Preview_Filters_Empty_Light() {
             onClearIndustry = {},
             onApplyClick = {},
             onResetClick = {},
-            onBackClick = {})
+            onBackClick = {},
+        )
     }
 }
 
@@ -379,6 +387,7 @@ fun Preview_Filters_Filled_Light() {
             onClearIndustry = {},
             onApplyClick = {},
             onResetClick = {},
-            onBackClick = {})
+            onBackClick = {},
+        )
     }
 }
