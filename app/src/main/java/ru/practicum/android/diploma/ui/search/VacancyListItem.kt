@@ -46,8 +46,8 @@ fun VacancyListItem(item: VacancyUi, onClick: (String) -> Unit) {
                 .build(),
             contentDescription = "company logo",
             placeholder = painterResource(R.drawable.placeholder2),
-            error = painterResource(R.drawable.placeholder_32px),
-            fallback = painterResource(R.drawable.placeholder_32px),
+            error = painterResource(R.drawable.placeholder2),
+            fallback = painterResource(R.drawable.placeholder2),
             modifier = Modifier
                 .size(Dimens.size_48)
                 .border(
