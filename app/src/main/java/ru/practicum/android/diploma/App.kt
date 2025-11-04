@@ -35,7 +35,6 @@ class App : Application(), ImageLoaderFactory {
         return ImageLoader.Builder(this)
             .okHttpClient {
                 OkHttpClient.Builder()
-                    // Добавляем User-Agent чтобы Wikipedia не блокировала запросы
                     .addInterceptor { chain ->
                         val request = chain.request().newBuilder()
                             .addHeader("User-Agent", "JobSearchApp/1.0 (Android)")
@@ -46,17 +45,22 @@ class App : Application(), ImageLoaderFactory {
             }
             .memoryCache {
                 MemoryCache.Builder(this)
-                    .maxSizePercent(0.25)
+                    .maxSizePercent(MEMORY_CACHE_PERCENT)
                     .build()
             }
             .diskCache {
                 DiskCache.Builder()
                     .directory(cacheDir.resolve("image_cache"))
-                    .maxSizeBytes(50 * 1024 * 1024)
+                    .maxSizeBytes(DISK_CACHE_SIZE_BYTES)
                     .build()
             }
             .respectCacheHeaders(false)
             .logger(DebugLogger())
             .build()
+    }
+
+    companion object {
+        private const val MEMORY_CACHE_PERCENT = 0.25
+        private const val DISK_CACHE_SIZE_BYTES = 50L * 1024 * 1024 // 50 MB
     }
 }

@@ -46,7 +46,10 @@ class VacancyRepository(
 
                 if (vacanciesList.isEmpty()) {
                     Log.w(TAG, "searchVacancies: ВНИМАНИЕ! vacancies список ПУСТОЙ, хотя found=${result.data.found}")
-                    Log.w(TAG, "searchVacancies: Это означает что либо API не вернул массив vacancies, либо он пришел пустым")
+                    Log.w(
+                        TAG,
+                        "searchVacancies: Это означает что либо API не вернул массив vacancies, либо он пришел пустым"
+                    )
                 }
 
                 val vacancies = vacanciesList.map { dto ->
@@ -66,7 +69,10 @@ class VacancyRepository(
                 )
             }
             is NetworkResult.Error -> {
-                Log.e(TAG, "searchVacancies: ERROR от networkDataSource: code=${result.code}, message=${result.message}")
+                Log.e(
+                    TAG,
+                    "searchVacancies: ERROR от networkDataSource: code=${result.code}, message=${result.message}"
+                )
                 Result.failure(Exception("Ошибка сервера: ${result.code}"))
             }
             is NetworkResult.NoConnection -> {
