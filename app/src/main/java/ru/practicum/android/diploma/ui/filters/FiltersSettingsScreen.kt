@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.ui.filters
 
-import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -113,8 +112,8 @@ fun FiltersSettingsScreen(
                     windowInsets = WindowInsets.statusBars,
                 )
             }
-        })
-    { inner ->
+        }
+    ) { inner ->
         Column(
             modifier = Modifier
                 .padding(
@@ -126,21 +125,27 @@ fun FiltersSettingsScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
-
             Spacer(modifier = Modifier.height(36.dp))
 
             IndustryRow(
-                value = industryName, onClick = onIndustryClick, onClear = onClearIndustry
+                value = industryName,
+                onClick = onIndustryClick,
+                onClear = onClearIndustry,
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            SalaryField(value = salaryText, onValueChange = { digitsOnly -> onSalaryChange(digitsOnly) }, onClear = {
+            SalaryField(
+                value = salaryText,
+                onValueChange = { digitsOnly -> onSalaryChange(digitsOnly) },
+                onClear = {
                 onClearSalary()
                 keyboard?.hide(); focus.clearFocus()
-            }, onDone = {
+            },
+                onDone = {
                 keyboard?.hide(); focus.clearFocus()
-            })
+            }
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -157,10 +162,10 @@ fun FiltersSettingsScreen(
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Checkbox(
-                    checked = onlyWithSalary, onCheckedChange = onToggleOnlyWithSalary
+                    checked = onlyWithSalary,
+                    onCheckedChange = onToggleOnlyWithSalary
                 )
             }
-
             Spacer(modifier = Modifier.weight(1f))
 
             if (hasAnyFilter) {
@@ -174,17 +179,21 @@ fun FiltersSettingsScreen(
                         onClick = {
                             keyboard?.hide(); focus.clearFocus()
                             onApplyClick()
-                        }, modifier = Modifier
+                        },
+                        modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp), shape = RoundedCornerShape(16.dp)
                     ) {
                         Text(
-                            stringResource(R.string.filters_apply), style = MaterialTheme.typography.bodyLarge
+                            stringResource(R.string.filters_apply),
+                            style = MaterialTheme.typography.bodyLarge
                         )
                     }
 
                     TextButton(
-                        onClick = onResetClick, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp)
+                        onClick = onResetClick,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp)
                     ) {
                         Text(
                             text = stringResource(R.string.filters_reset),
@@ -200,7 +209,9 @@ fun FiltersSettingsScreen(
 
 @Composable
 private fun IndustryRow(
-    value: String?, onClick: () -> Unit, onClear: () -> Unit
+    value: String?,
+    onClick: () -> Unit,
+    onClear: () -> Unit,
 ) {
     val isSelected = !value.isNullOrBlank()
 
@@ -259,7 +270,10 @@ private fun IndustryRow(
 
 @Composable
 private fun SalaryField(
-    value: String, onValueChange: (String) -> Unit, onClear: () -> Unit, onDone: () -> Unit
+    value: String,
+    onValueChange: (String) -> Unit,
+    onClear: () -> Unit,
+    onDone: () -> Unit
 ) {
     val keyboard = LocalSoftwareKeyboardController.current
     var isFocused by remember { mutableStateOf(false) }
@@ -270,7 +284,8 @@ private fun SalaryField(
             .padding(horizontal = Dimens.padding_16, vertical = Dimens.padding_8)
             .height(Dimens.dp_56)
             .background(
-                color = colorResource(R.color.light_gray), shape = RoundedCornerShape(Dimens.padding_12)
+                color = colorResource(R.color.light_gray),
+                shape = RoundedCornerShape(Dimens.padding_12)
             )
     ) {
         val labelColor = when {
