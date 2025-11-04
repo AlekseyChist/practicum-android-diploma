@@ -64,29 +64,24 @@ fun VacancyListItem(item: VacancyUi, onClick: (String) -> Unit) {
 
         Column {
             Text(
-                text = item.title,
+                text = "${item.title}, ${item.city}",
                 style = MaterialTheme.typography.titleMedium,
-                maxLines = 2
+                color = MaterialTheme.colorScheme.onBackground
             )
 
             if (item.company != null) {
                 Text(
                     text = item.company,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
-
-            Text(
-                text = item.city,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
 
             if (item.salary != null) {
                 Text(
                     text = item.salary,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }

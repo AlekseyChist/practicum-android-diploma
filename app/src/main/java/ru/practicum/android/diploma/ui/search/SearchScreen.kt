@@ -4,19 +4,25 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -24,6 +30,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.FilterList
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -38,6 +46,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -49,11 +58,14 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.models.VacancyUi
 import ru.practicum.android.diploma.presentation.search.SearchState
@@ -87,6 +99,7 @@ fun SearchScreen(
                 keyboardController?.hide()
                 focusManager.clearFocus()
             }
+
             else -> Unit
         }
     }
@@ -124,7 +137,12 @@ fun SearchScreen(
     ) { inner ->
         Column(
             modifier = Modifier
-                .padding(inner)
+                .padding(
+                    top = inner.calculateTopPadding(),
+                    start = inner.calculateStartPadding(LayoutDirection.Ltr),
+                    end = inner.calculateEndPadding(LayoutDirection.Ltr),
+                    bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+                )
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
@@ -145,11 +163,21 @@ fun SearchScreen(
                 }
             )
 
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
             ) {
+                val initialCount = remember {
+                    mutableIntStateOf(0)
+                }
+                LaunchedEffect(state) {
+                    if (state is SearchState.Success) {
+                        initialCount.intValue = state.found
+                    }
+                }
+                val listState = rememberLazyListState()
+
                 when (state) {
                     SearchState.Initial -> {
                         Placeholder(imageRes = R.drawable.search_placeholder_euy, text = "")
@@ -162,7 +190,9 @@ fun SearchScreen(
                             items = state.vacancies,
                             onItemClick = onVacancyClick,
                             onLoadMore = onLoadNextPage,
-                            hasMorePages = state.hasMorePages
+                            hasMorePages = state.hasMorePages,
+                            count = initialCount.intValue,
+                            listState = listState
                         )
                     }
 
@@ -170,9 +200,11 @@ fun SearchScreen(
                         VacancyList(
                             items = state.currentVacancies,
                             onItemClick = onVacancyClick,
-                            onLoadMore = {},
+                            onLoadMore = onLoadNextPage,
                             hasMorePages = true,
-                            isLoadingMore = true
+                            isLoadingMore = true,
+                            count = initialCount.intValue,
+                            listState = listState
                         )
                     }
 
@@ -271,50 +303,87 @@ internal fun VacancyList(
     onItemClick: (VacancyUi) -> Unit,
     onLoadMore: () -> Unit = {},
     hasMorePages: Boolean = false,
-    isLoadingMore: Boolean = false
+    isLoadingMore: Boolean = false,
+    count: Int,
+    listState: LazyListState
 ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(
-            start = Dimens.padding_16,
-            end = Dimens.padding_16,
-            bottom = Dimens.padding_16
-        )
-    ) {
-        items(items, key = { it.id }) { item ->
-            VacancyListItem(item = item, onClick = { onItemClick(item) })
-        }
-
-        if (isLoadingMore) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            state = listState,
+            modifier = Modifier.fillMaxSize()
+        ) {
             item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(Dimens.padding_16),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(32.dp),
-                        color = MaterialTheme.colorScheme.primary
+                Spacer(modifier = Modifier.height(35.dp))
+            }
+
+            items(items, key = { it.id }) { item ->
+                VacancyListItem(item = item, onClick = { onItemClick(item) })
+            }
+
+            if (isLoadingMore) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(Dimens.padding_16),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(32.dp),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            }
+
+            if (hasMorePages && !isLoadingMore && items.isNotEmpty()) {
+                item {
+                    LaunchedEffect(Unit) {
+                        onLoadMore()
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
                     )
                 }
             }
         }
-
-        if (hasMorePages && !isLoadingMore && items.isNotEmpty()) {
-            item {
-                LaunchedEffect(Unit) {
-                    onLoadMore()
-                }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = Dimens.padding_4)
+                .zIndex(1f),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Card(
+                modifier = Modifier
+                    .width(184.dp)
+                    .height(27.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                ),
+                shape = RoundedCornerShape(Dimens.corner),
+            ) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                )
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = pluralStringResource(
+                            id = R.plurals.jobs_found,
+                            count = count,
+                            count
+                        ),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.White
+                    )
+                }
             }
         }
     }
 }
+
 
 @Composable
 private fun LoadingPlaceholder() {
