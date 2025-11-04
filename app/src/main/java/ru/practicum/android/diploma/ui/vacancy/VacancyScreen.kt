@@ -226,32 +226,27 @@ private fun VacancyCard(
                 .fillMaxWidth()
                 .padding(Dimens.padding_16),
         ) {
-            Box(
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(vacancy.employer.logoUrl)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = "company logo",
+                placeholder = painterResource(R.drawable.placeholder2),
+                error = painterResource(R.drawable.placeholder2),
                 modifier = Modifier
                     .size(Dimens.size_48)
-                    .clip(RoundedCornerShape(Dimens.corner))
                     .border(
                         width = 1.dp,
-                        color = MaterialTheme.colorScheme.surface,
-                        shape = RoundedCornerShape(Dimens.corner),
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(vacancy.url)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = "vacancy image",
-                    placeholder = painterResource(R.drawable.placeholder_32px),
-                    error = painterResource(R.drawable.placeholder_32px),
-                    fallback = painterResource(R.drawable.placeholder_32px),
-                    modifier = Modifier
-                        .size(Dimens.icon_32)
-                        .padding(end = Dimens.padding_8),
-                    contentScale = ContentScale.Crop
-                )
-            }
+                        color = Color.LightGray,
+                        shape = RoundedCornerShape(Dimens.corner)
+                    )
+                    .padding(end = 0.dp)
+                    .clip(RoundedCornerShape(Dimens.corner)),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(Modifier.size(Dimens.padding_8))
 
             Column() {
                 Text(
