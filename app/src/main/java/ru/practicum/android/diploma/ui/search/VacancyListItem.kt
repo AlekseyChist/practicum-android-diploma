@@ -120,7 +120,7 @@ fun VacancyListItemPreview() {
                 city = "Москва",
                 salary = "от 100 000 ₽",
                 company = "Яндекс",
-                logoUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Yandex_logo_2021_Russian.svg/1024px-Yandex_logo_2021_Russian.svg.png"
+                logoUrl = ""
             ),
             onClick = {}
         )
