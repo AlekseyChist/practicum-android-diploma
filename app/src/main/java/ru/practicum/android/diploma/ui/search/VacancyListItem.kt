@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.ui.search
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -28,8 +29,12 @@ import ru.practicum.android.diploma.domain.models.VacancyUi
 import ru.practicum.android.diploma.ui.theme.AppTheme
 import ru.practicum.android.diploma.ui.theme.Dimens
 
+private const val TAG = "VacancyListItem"
+
 @Composable
 fun VacancyListItem(item: VacancyUi, onClick: (String) -> Unit) {
+    Log.d(TAG, "Рендерим: ${item.title}, logoUrl=${item.logoUrl}")
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -37,14 +42,28 @@ fun VacancyListItem(item: VacancyUi, onClick: (String) -> Unit) {
             .clickable { onClick(item.id) }
             .padding(vertical = Dimens.padding_8, horizontal = Dimens.padding_16)
     ) {
+        val context = LocalContext.current
+
         AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
+            model = ImageRequest.Builder(context)
                 .data(item.logoUrl)
                 .crossfade(true)
+                .listener(
+                    onStart = {
+                        Log.d(TAG, "Начало загрузки: ${item.logoUrl}")
+                    },
+                    onSuccess = { _, _ ->
+                        Log.d(TAG, "Успешно: ${item.logoUrl}")
+                    },
+                    onError = { _, error ->
+                        Log.e(TAG, "Ошибка: ${item.logoUrl}", error.throwable)
+                    }
+                )
                 .build(),
             contentDescription = "company logo",
             placeholder = painterResource(R.drawable.placeholder2),
             error = painterResource(R.drawable.placeholder_32px),
+            fallback = painterResource(R.drawable.placeholder_32px),
             modifier = Modifier
                 .size(Dimens.size_48)
                 .border(
@@ -61,43 +80,47 @@ fun VacancyListItem(item: VacancyUi, onClick: (String) -> Unit) {
 
         Column {
             Text(
-                text = "${item.title}, ${item.city}",
+                text = item.title,
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onBackground
+                maxLines = 2
             )
 
-            item.company?.let {
+            if (item.company != null) {
                 Text(
                     text = item.company,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
-            item.salary?.let {
+            Text(
+                text = item.city,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            if (item.salary != null) {
                 Text(
                     text = item.salary,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onBackground
+                    style = MaterialTheme.typography.titleSmall
                 )
             }
         }
     }
 }
 
-@Preview(name = "Basic Vacancy", showBackground = true)
+@Preview(showBackground = true)
 @Composable
-fun PreviewVacancyListItem() {
+fun VacancyListItemPreview() {
     AppTheme {
         VacancyListItem(
             item = VacancyUi(
                 id = "1",
-                title = "Андроид-разработчик",
-//                title = "Android Developer",
+                title = "Android Developer",
                 city = "Москва",
-                salary = "150 000 ₽",
-                company = "VK",
-                logoUrl = null
+                salary = "от 100 000 ₽",
+                company = "Яндекс",
+                logoUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Yandex_logo_2021_Russian.svg/1024px-Yandex_logo_2021_Russian.svg.png"
             ),
             onClick = {}
         )

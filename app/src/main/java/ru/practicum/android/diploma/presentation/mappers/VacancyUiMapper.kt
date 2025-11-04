@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.presentation.mappers
 
+import android.util.Log
 import ru.practicum.android.diploma.domain.models.Vacancy
 import ru.practicum.android.diploma.domain.models.VacancyUi
 import ru.practicum.android.diploma.domain.models.formatForDisplay
@@ -10,11 +11,17 @@ import ru.practicum.android.diploma.domain.models.formatForDisplay
  */
 object VacancyUiMapper {
 
+    private const val TAG = "VacancyUiMapper"
+
     /**
      * Преобразует Domain вакансию в UI модель для списка
      */
     fun mapToUi(vacancy: Vacancy): VacancyUi {
-        return VacancyUi(
+        Log.d(TAG, "mapToUi: id=${vacancy.id}, name=${vacancy.name}")
+        Log.d(TAG, "mapToUi: employer.name=${vacancy.employer.name}")
+        Log.d(TAG, "mapToUi: employer.logoUrl=${vacancy.employer.logoUrl}")
+
+        val result = VacancyUi(
             id = vacancy.id,
             title = vacancy.name,
             city = vacancy.area.name,
@@ -22,12 +29,16 @@ object VacancyUiMapper {
             company = vacancy.employer.name,
             logoUrl = vacancy.employer.logoUrl
         )
+
+        Log.d(TAG, "mapToUi: result.logoUrl=${result.logoUrl}")
+        return result
     }
 
     /**
      * Преобразует список вакансий
      */
     fun mapToUi(vacancies: List<Vacancy>): List<VacancyUi> {
+        Log.d(TAG, "mapToUi: маппинг ${vacancies.size} вакансий")
         return vacancies.map { mapToUi(it) }
     }
 }
