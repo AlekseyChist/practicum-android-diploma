@@ -91,26 +91,30 @@ fun FiltersSettingsScreen(
             Row(modifier = Modifier.heightIn(Dimens.appBarHeight)) {
                 TopAppBar(
                     title = {
-                    Text(
-                        text = stringResource(R.string.filters_settings_title),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                }, navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onBackground
+                        Text(
+                            text = stringResource(R.string.filters_settings_title),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onBackground,
                         )
-                    }
-                }, colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    titleContentColor = MaterialTheme.colorScheme.onBackground
-                ), windowInsets = WindowInsets.statusBars
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = onBackClick) {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowBack,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onBackground,
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.background,
+                        titleContentColor = MaterialTheme.colorScheme.onBackground,
+                    ),
+                    windowInsets = WindowInsets.statusBars,
                 )
             }
-        }) { inner ->
+        })
+    { inner ->
         Column(
             modifier = Modifier
                 .padding(

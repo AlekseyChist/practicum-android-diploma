@@ -30,10 +30,18 @@ class FiltersSettingsFragment : Fragment() {
                         onSalaryChange = { salary = it },
                         onClearSalary = { salary = "" },
                         onToggleOnlyWithSalary = { onlyWith = it },
-                        onIndustryClick = { findNavController().navigate(R.id.action_filtersSettingsFragment_to_industryFragment) },
+                        onIndustryClick = {
+                            findNavController().navigate(
+                                R.id.action_filtersSettingsFragment_to_industryFragment
+                            )
+                        },
                         onClearIndustry = { industry = null },
                         onApplyClick = { findNavController().popBackStack() },
-                        onResetClick = { salary = ""; onlyWith = false; industry = null },
+                        onResetClick = {
+                            salary = ""
+                            onlyWith = false
+                            industry = null
+                        },
                         onBackClick = { findNavController().popBackStack() },
                     )
                 }
