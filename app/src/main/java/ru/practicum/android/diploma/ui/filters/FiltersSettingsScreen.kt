@@ -314,7 +314,8 @@ private fun SalaryField(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number, imeAction = ImeAction.Done
             ),
-            keyboardActions = KeyboardActions(onDone = { keyboard?.hide(); onDone() }),
+            keyboardActions = KeyboardActions(onDone = { keyboard?.hide(); onDone() }
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.CenterStart)
@@ -332,7 +333,8 @@ private fun SalaryField(
                     }
                     innerTextField()
                 }
-            })
+            },
+        )
 
         if (value.isNotEmpty()) {
             IconButton(
