@@ -23,6 +23,7 @@ fun IndustryScreen() {
             .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        //init
         Text(
             modifier = Modifier
                 .padding(top = 40.dp),
