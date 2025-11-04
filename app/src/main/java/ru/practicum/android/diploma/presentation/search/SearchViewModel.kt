@@ -54,7 +54,12 @@ class SearchViewModel(
         Log.d(TAG, "searchVacancies: запускаем debounce на $DEBOUNCE_DELAY_MS мс")
         searchJob = viewModelScope.launch {
             delay(DEBOUNCE_DELAY_MS)
-            Log.d(TAG, "searchVacancies: debounce завершен, запускаем performSearch")
+            Log.d(TAG, "searchVacancies: debounce завершен")
+
+            // Устанавливаем Loading ПЕРЕД запросом!
+            _state.value = SearchState.Loading
+            Log.d(TAG, "searchVacancies: установлено состояние Loading")
+
             performSearch(page = 0)
         }
     }
