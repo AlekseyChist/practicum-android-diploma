@@ -91,23 +91,23 @@ fun FiltersSettingsScreen(
             Row(modifier = Modifier.heightIn(Dimens.appBarHeight)) {
                 TopAppBar(
                     title = {
-                        Text(
-                            text = stringResource(R.string.filters_settings_title),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onBackground
+                    Text(
+                        text = stringResource(R.string.filters_settings_title),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }, navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onBackground
                         )
-                    }, navigationIcon = {
-                        IconButton(onClick = onBackClick) {
-                            Icon(
-                                imageVector = Icons.Filled.ArrowBack,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onBackground
-                            )
-                        }
-                    }, colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background,
-                        titleContentColor = MaterialTheme.colorScheme.onBackground
-                    ), windowInsets = WindowInsets.statusBars
+                    }
+                }, colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    titleContentColor = MaterialTheme.colorScheme.onBackground
+                ), windowInsets = WindowInsets.statusBars
                 )
             }
         }) { inner ->
@@ -348,56 +348,6 @@ fun Preview_Filters_Empty_Light() {
 @Preview(name = "Filters • Filled (Light)", showBackground = true, showSystemUi = true, device = Devices.PIXEL_5)
 @Composable
 fun Preview_Filters_Filled_Light() {
-    AppTheme {
-        FiltersSettingsScreen(
-            salaryText = "40000",
-            onlyWithSalary = true,
-            industryName = "IT",
-            onSalaryChange = {},
-            onClearSalary = {},
-            onToggleOnlyWithSalary = {},
-            onIndustryClick = {},
-            onClearIndustry = {},
-            onApplyClick = {},
-            onResetClick = {},
-            onBackClick = {})
-    }
-}
-
-@Preview(
-    name = "Filters • Empty (Dark)",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    showBackground = true,
-    showSystemUi = true,
-    device = Devices.PIXEL_5
-)
-@Composable
-fun Preview_Filters_Empty_Dark() {
-    AppTheme {
-        FiltersSettingsScreen(
-            salaryText = "",
-            onlyWithSalary = false,
-            industryName = null,
-            onSalaryChange = {},
-            onClearSalary = {},
-            onToggleOnlyWithSalary = {},
-            onIndustryClick = {},
-            onClearIndustry = {},
-            onApplyClick = {},
-            onResetClick = {},
-            onBackClick = {})
-    }
-}
-
-@Preview(
-    name = "Filters • Filled (Dark)",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    showBackground = true,
-    showSystemUi = true,
-    device = Devices.PIXEL_5
-)
-@Composable
-fun Preview_Filters_Filled_Dark() {
     AppTheme {
         FiltersSettingsScreen(
             salaryText = "40000",

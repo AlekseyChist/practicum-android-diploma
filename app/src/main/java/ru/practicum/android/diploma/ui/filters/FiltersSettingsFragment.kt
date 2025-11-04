@@ -34,7 +34,7 @@ class FiltersSettingsFragment : Fragment() {
                         onClearIndustry = { industry = null },
                         onApplyClick = { findNavController().popBackStack() },
                         onResetClick = { salary = ""; onlyWith = false; industry = null },
-                        onBackClick = { findNavController().popBackStack() }
+                        onBackClick = { findNavController().popBackStack() },
                     )
                 }
             }
