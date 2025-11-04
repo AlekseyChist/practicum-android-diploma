@@ -18,6 +18,8 @@ sealed interface SearchState {
      */
     data object Loading : SearchState
 
+    data class Typing(val query: String) : SearchState
+
     /**
      * Загрузка следующей страницы (пагинация)
      * Показывает текущие результаты + индикатор загрузки внизу

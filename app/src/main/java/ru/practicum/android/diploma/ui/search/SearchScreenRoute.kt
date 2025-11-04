@@ -18,24 +18,17 @@ fun SearchScreenRoute(
     viewModel: SearchViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsState()
-
     val uiState = mapToUiState(state)
+    val query by viewModel.query.collectAsState()
 
     SearchScreen(
         state = uiState,
-        query = "",
-        onQueryChange = { query ->
-            viewModel.searchVacancies(query)
-        },
-        onClearClick = {
-            viewModel.clearSearch()
-        },
-        onSearchClick = {
-        },
+        query = query,
+        onQueryChange = { q -> viewModel.searchVacancies(q) },
+        onClearClick = { viewModel.clearSearch() },
+        onSearchClick = { viewModel.searchNow(query) },
         onFilterClick = onFilterClick,
-        onVacancyClick = { vacancy ->
-            onVacancyClick(vacancy.id)
-        }
+        onVacancyClick = { vacancy -> onVacancyClick(vacancy.id) }
     )
 }
 
@@ -61,5 +54,7 @@ private fun mapToUiState(state: SearchState): SearchUiState {
         is SearchState.NoConnection -> SearchUiState.NoInternet
 
         is SearchState.Error -> SearchUiState.Error(message = state.message)
+
+        is SearchState.Typing -> SearchUiState.Typing
     }
 }

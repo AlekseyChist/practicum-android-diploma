@@ -21,33 +21,38 @@ class SearchViewModel(
     private val searchVacanciesUseCase: SearchVacanciesUseCase
 ) : ViewModel() {
 
+    private val _query = MutableStateFlow("")
+    val query: StateFlow<String> = _query.asStateFlow()
     private val _state = MutableStateFlow<SearchState>(SearchState.Initial)
     val state: StateFlow<SearchState> = _state.asStateFlow()
-
     private var currentSearchQuery: String = ""
     private var currentFilters: VacancySearchRequest? = null
-    private var searchJob: Job? = null
+    private var debouncedSearchJob: Job? = null
 
     /**
      * Поиск вакансий с debounce
      * @param query - поисковый запрос
      * @param filters - фильтры поиска (регион, отрасль, зарплата)
      */
-    fun searchVacancies(
-        query: String,
-        filters: VacancySearchRequest? = null
-    ) {
-        currentSearchQuery = query.trim()
-        currentFilters = filters
 
-        if (currentSearchQuery.isEmpty()) {
+    fun searchVacancies(query: String, filters: VacancySearchRequest? = null) {
+        val trimmed = query.trim()
+        currentSearchQuery = trimmed
+        currentFilters = filters
+        _query.value = trimmed
+
+        if (trimmed.isEmpty()) {
             _state.value = SearchState.Initial
             return
         }
 
-        searchJob?.cancel()
-        searchJob = viewModelScope.launch {
+        _state.value = SearchState.Typing(trimmed)
+
+        // Отменяем старый дебаунс и создаём новый
+        debouncedSearchJob?.cancel()
+        debouncedSearchJob = viewModelScope.launch {
             delay(DEBOUNCE_DELAY_MS)
+            _state.value = SearchState.Loading
             performSearch(page = 0)
         }
     }
@@ -97,6 +102,23 @@ class SearchViewModel(
             .onFailure { exception ->
                 handleSearchFailure(exception)
             }
+    }
+
+    fun searchNow(query: String? = null) {
+        // Отменяем дебаунс перед мгновенным поиском
+        debouncedSearchJob?.cancel()
+
+        val q = query?.trim() ?: currentSearchQuery
+        if (q.isEmpty()) {
+            _state.value = SearchState.Initial
+            return
+        }
+
+        currentSearchQuery = q
+        _state.value = SearchState.Loading
+        viewModelScope.launch {
+            performSearch(page = 0)
+        }
     }
 
     private fun createSearchRequest(page: Int): VacancySearchRequest {
@@ -157,13 +179,13 @@ class SearchViewModel(
      * Очистить поиск и вернуться к начальному состоянию
      */
     fun clearSearch() {
-        searchJob?.cancel()
         currentSearchQuery = ""
         currentFilters = null
+        _query.value = ""
         _state.value = SearchState.Initial
     }
 
     companion object {
-        private const val DEBOUNCE_DELAY_MS = 500L
+        private const val DEBOUNCE_DELAY_MS = 2000L
     }
 }

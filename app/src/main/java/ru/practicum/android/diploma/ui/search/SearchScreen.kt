@@ -36,10 +36,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -56,8 +52,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ru.practicum.android.diploma.R
-import ru.practicum.android.diploma.domain.models.VacancyUi
 import ru.practicum.android.diploma.ui.search.UiSpec.BODY_FONT_SIZE
 import ru.practicum.android.diploma.ui.search.UiSpec.ICON_SIZE
 import ru.practicum.android.diploma.ui.search.UiSpec.ICON_SIZE1
@@ -69,6 +63,8 @@ import ru.practicum.android.diploma.ui.search.UiSpec.TITLE_FONT_SIZE
 import ru.practicum.android.diploma.ui.search.UiSpec.TOP_BAR_ACTION_END_PADDING
 import ru.practicum.android.diploma.ui.search.UiSpec.TOP_BAR_ACTION_TOUCH
 import ru.practicum.android.diploma.ui.search.UiSpec.TOP_BAR_HEIGHT
+import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.domain.models.VacancyUi
 
 sealed interface SearchUiState {
     data object Idle : SearchUiState
@@ -105,7 +101,6 @@ fun SearchScreen(
     onFilterClick: () -> Unit,
     onVacancyClick: (VacancyUi) -> Unit,
 ) {
-    var textState by remember(query) { mutableStateOf(query) }
 
     Scaffold(
         topBar = {
@@ -163,15 +158,9 @@ fun SearchScreen(
                 .background(MaterialTheme.colorScheme.background)
         ) {
             SearchField(
-                value = textState,
-                onValueChange = {
-                    textState = it
-                    onQueryChange(it)
-                },
-                onClear = {
-                    textState = ""
-                    onClearClick()
-                },
+                value = query,
+                onValueChange = onQueryChange,
+                onClear = onClearClick,
                 onSubmit = onSearchClick
             )
 
