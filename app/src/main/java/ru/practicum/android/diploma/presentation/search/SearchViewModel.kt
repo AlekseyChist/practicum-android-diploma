@@ -29,6 +29,7 @@ class SearchViewModel(
     private var searchJob: Job? = null
 
     /**
+     *
      * Поиск вакансий с debounce
      * @param query - поисковый запрос
      * @param filters - фильтры поиска (регион, отрасль, зарплата)
