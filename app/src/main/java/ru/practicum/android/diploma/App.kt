@@ -1,6 +1,12 @@
 package ru.practicum.android.diploma
 
 import android.app.Application
+import coil.ImageLoader
+import coil.ImageLoaderFactory
+import coil.disk.DiskCache
+import coil.memory.MemoryCache
+import coil.util.DebugLogger
+import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -9,7 +15,7 @@ import ru.practicum.android.diploma.di.dataModule
 import ru.practicum.android.diploma.di.domainModule
 import ru.practicum.android.diploma.di.presentationModule
 
-class App : Application() {
+class App : Application(), ImageLoaderFactory {
 
     override fun onCreate() {
         super.onCreate()
@@ -23,5 +29,38 @@ class App : Application() {
                 domainModule
             )
         }
+    }
+
+    override fun newImageLoader(): ImageLoader {
+        return ImageLoader.Builder(this)
+            .okHttpClient {
+                OkHttpClient.Builder()
+                    .addInterceptor { chain ->
+                        val request = chain.request().newBuilder()
+                            .addHeader("User-Agent", "JobSearchApp/1.0 (Android)")
+                            .build()
+                        chain.proceed(request)
+                    }
+                    .build()
+            }
+            .memoryCache {
+                MemoryCache.Builder(this)
+                    .maxSizePercent(MEMORY_CACHE_PERCENT)
+                    .build()
+            }
+            .diskCache {
+                DiskCache.Builder()
+                    .directory(cacheDir.resolve("image_cache"))
+                    .maxSizeBytes(DISK_CACHE_SIZE_BYTES)
+                    .build()
+            }
+            .respectCacheHeaders(false)
+            .logger(DebugLogger())
+            .build()
+    }
+
+    companion object {
+        private const val MEMORY_CACHE_PERCENT = 0.25
+        private const val DISK_CACHE_SIZE_BYTES = 50L * 1024 * 1024 // 50 MB
     }
 }

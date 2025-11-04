@@ -19,15 +19,8 @@ import ru.practicum.android.diploma.domain.models.Salary
 import ru.practicum.android.diploma.domain.models.Schedule
 import ru.practicum.android.diploma.domain.models.Vacancy
 
-/**
- * Конвертер из DTO (от API) в Domain модели
- * DTO → Domain: от внешнего API к нашей бизнес-логике
- */
 object VacancyDtoMapper {
 
-    /**
-     * Преобразовать полную информацию о вакансии (VacancyDetailDto) в Domain
-     */
     fun mapDetailToDomain(dto: VacancyDetailDto): Vacancy {
         return Vacancy(
             id = dto.id,
@@ -42,15 +35,11 @@ object VacancyDtoMapper {
             keySkills = dto.skills,
             contacts = dto.contacts?.let { mapContacts(it) },
             address = buildAddress(dto.address),
-            url = dto.url,
-            isFavorite = false // По умолчанию не в избранном
+            url = fixUrl(dto.url),
+            isFavorite = false
         )
     }
 
-    /**
-     * Преобразовать краткую информацию о вакансии (VacancyDto) в Domain
-     * Используется для списка вакансий
-     */
     fun mapShortToDomain(dto: VacancyDto): Vacancy {
         return Vacancy(
             id = dto.id,
@@ -72,8 +61,6 @@ object VacancyDtoMapper {
         )
     }
 
-    // Вспомогательные функции для преобразования вложенных объектов
-
     private fun mapEmployer(dto: EmployerDto): Employer {
         return Employer(
             id = dto.id,
@@ -90,7 +77,6 @@ object VacancyDtoMapper {
     }
 
     private fun mapSalary(dto: SalaryDto): Salary? {
-        // Если и from и to null - зарплаты нет
         if (dto.from == null && dto.to == null) return null
 
         return Salary(
@@ -122,7 +108,6 @@ object VacancyDtoMapper {
     }
 
     private fun mapContacts(dto: ContactsDto): Contacts? {
-        // Если все поля пустые - контактов нет
         if (dto.name == null && dto.email == null && dto.phone.isNullOrEmpty()) {
             return null
         }
@@ -143,6 +128,16 @@ object VacancyDtoMapper {
                     .filter { it.isNotBlank() }
                 parts.takeIf { it.isNotEmpty() }?.joinToString(", ")
             }
+        }
+    }
+
+    // Добавляем схему если URL пришел без неё
+    private fun fixUrl(url: String?): String {
+        if (url.isNullOrBlank()) return ""
+        return if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            "https://$url"
+        } else {
+            url
         }
     }
 }

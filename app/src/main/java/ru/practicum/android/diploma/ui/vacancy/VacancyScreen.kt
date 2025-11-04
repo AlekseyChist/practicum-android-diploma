@@ -109,13 +109,6 @@ fun VacancyScreen(
                     }
                 }
 
-                is VacancyDetailState.NoConnection -> {
-                    ErrorSection(
-                        idRes = R.drawable.no_internet_placeholder,
-                        message = stringResource(R.string.placeholder_no_internet)
-                    )
-                }
-
                 is VacancyDetailState.Success -> {
                     VacancyDetailView(
                         vacancy = state.vacancy,

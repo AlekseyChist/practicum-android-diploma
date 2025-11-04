@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.data.repository
 
-import android.util.Log
 import ru.practicum.android.diploma.data.dto.requests.VacancySearchRequest
 import ru.practicum.android.diploma.data.mappers.VacancyDtoMapper
 import ru.practicum.android.diploma.data.network.NetworkResult
@@ -31,9 +30,12 @@ class VacancyRepository(
             page = searchRequest.page
         )) {
             is NetworkResult.Success -> {
-                val vacancies = (result.data.vacancies ?: emptyList()).map { dto ->
+                val vacanciesList = result.data.vacancies ?: emptyList()
+
+                val vacancies = vacanciesList.map { dto ->
                     VacancyDtoMapper.mapShortToDomain(dto)
                 }
+
                 Result.success(
                     SearchResult(
                         vacancies = vacancies,
@@ -44,11 +46,9 @@ class VacancyRepository(
                 )
             }
             is NetworkResult.Error -> {
-                Log.e(TAG, "Network error searching vacancies: code ${result.code}")
                 Result.failure(Exception("Ошибка сервера: ${result.code}"))
             }
             is NetworkResult.NoConnection -> {
-                Log.w(TAG, "No internet connection when searching vacancies")
                 Result.failure(Exception(NO_CONNECTION_MESSAGE))
             }
         }
@@ -65,8 +65,6 @@ class VacancyRepository(
             }
 
             is NetworkResult.Error -> {
-                Log.e(TAG, "Network error getting vacancy: $vacancyId, code: ${result.code}")
-
                 val errorMessage = when (result.code) {
                     HTTP_NOT_FOUND -> NOT_FOUND_MESSAGE
                     HTTP_FORBIDDEN -> AUTHORIZATION_ERROR_MESSAGE
@@ -78,14 +76,12 @@ class VacancyRepository(
             }
 
             is NetworkResult.NoConnection -> {
-                Log.w(TAG, "No internet connection when getting vacancy: $vacancyId")
                 Result.failure(Exception(NO_CONNECTION_MESSAGE))
             }
         }
     }
 
     companion object {
-        private const val TAG = "VacancyRepository"
         private const val HTTP_NOT_FOUND = 404
         private const val HTTP_FORBIDDEN = 403
         private const val HTTP_SERVER_ERROR_START = 500

@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.domain.api.AddVacancyToFavoritesUseCase
 import ru.practicum.android.diploma.domain.api.CheckIfVacancyFavoriteUseCase
 import ru.practicum.android.diploma.domain.api.ExternalNavigator
+import ru.practicum.android.diploma.domain.api.GetFavoriteVacancyByIdUseCase
 import ru.practicum.android.diploma.domain.api.GetVacancyDetailsUseCase
 import ru.practicum.android.diploma.domain.api.RemoveVacancyFromFavoritesUseCase
 import ru.practicum.android.diploma.domain.models.Vacancy
@@ -21,6 +22,7 @@ class VacancyDetailViewModel(
     private val addVacancyToFavoritesUseCase: AddVacancyToFavoritesUseCase,
     private val removeVacancyFromFavoritesUseCase: RemoveVacancyFromFavoritesUseCase,
     private val checkIfVacancyFavoriteUseCase: CheckIfVacancyFavoriteUseCase,
+    private val getFavoriteVacancyByIdUseCase: GetFavoriteVacancyByIdUseCase,
     private val navigator: ExternalNavigator
 ) : ViewModel() {
 
@@ -51,7 +53,24 @@ class VacancyDetailViewModel(
                     )
                 }
                 .onFailure { exception ->
-                    handleError(exception)
+                    val message = exception.message ?: "Неизвестная ошибка"
+
+                    // при ошибке сети пытаемся загрузить из локальной БД
+                    if (message.contains("интернет", ignoreCase = true) ||
+                        message.contains("connection", ignoreCase = true)) {
+                        val vacancy = getFavoriteVacancyByIdUseCase.execute(vacancyId)
+                        if (vacancy != null) {
+                            currentVacancy = vacancy
+                            _state.value = VacancyDetailState.Success(
+                                vacancy = vacancy,
+                                isFavorite = vacancy.isFavorite
+                            )
+                        } else {
+                            handleError(exception)
+                        }
+                    } else {
+                        handleError(exception)
+                    }
                 }
         }
     }
@@ -92,11 +111,6 @@ class VacancyDetailViewModel(
         val message = exception.message ?: "Неизвестная ошибка"
 
         _state.value = when {
-            // Нет интернета
-            message.contains("интернет", ignoreCase = true) || message.contains("connection", ignoreCase = true) -> {
-                VacancyDetailState.NoConnection
-            }
-
             message.contains("VACANCY_NOT_FOUND") -> {
                 VacancyDetailState.NotFound
             }

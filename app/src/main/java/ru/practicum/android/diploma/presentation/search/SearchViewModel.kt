@@ -27,6 +27,9 @@ class SearchViewModel(
     private var currentSearchQuery: String = ""
     private var currentFilters: VacancySearchRequest? = null
     private var searchJob: Job? = null
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
 
     /**
      * Поиск вакансий с debounce
@@ -38,16 +41,19 @@ class SearchViewModel(
         filters: VacancySearchRequest? = null
     ) {
         currentSearchQuery = query.trim()
+        _searchQuery.value = query
         currentFilters = filters
 
         if (currentSearchQuery.isEmpty()) {
             _state.value = SearchState.Initial
             return
         }
-
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
             delay(DEBOUNCE_DELAY_MS)
+            // Устанавливаем Loading ПЕРЕД запросом!
+            _state.value = SearchState.Loading
+
             performSearch(page = 0)
         }
     }
@@ -57,7 +63,12 @@ class SearchViewModel(
      */
     fun loadNextPage() {
         val currentState = _state.value
-        if (currentState !is SearchState.Success || !currentState.hasMorePages) {
+
+        if (currentState !is SearchState.Success) {
+            return
+        }
+
+        if (!currentState.hasMorePages) {
             return
         }
 
@@ -88,10 +99,11 @@ class SearchViewModel(
      */
     private suspend fun performSearch(page: Int) {
         val request = createSearchRequest(page)
-
         searchVacanciesUseCase.execute(request)
             .onSuccess { result ->
+
                 val vacanciesUi = VacancyUiMapper.mapToUi(result.vacancies)
+
                 handleSearchSuccess(vacanciesUi, result.found, result.page, result.pages)
             }
             .onFailure { exception ->
@@ -100,7 +112,7 @@ class SearchViewModel(
     }
 
     private fun createSearchRequest(page: Int): VacancySearchRequest {
-        return VacancySearchRequest(
+        val request = VacancySearchRequest(
             text = currentSearchQuery,
             area = currentFilters?.area,
             industry = currentFilters?.industry,
@@ -108,6 +120,7 @@ class SearchViewModel(
             onlyWithSalary = currentFilters?.onlyWithSalary,
             page = page
         )
+        return request
     }
 
     private fun handleSearchSuccess(
@@ -129,12 +142,14 @@ class SearchViewModel(
             vacancies
         }
 
+        val hasMorePages = page < totalPages - 1
+
         _state.value = SearchState.Success(
             vacancies = allVacancies,
             found = found,
             currentPage = page,
             totalPages = totalPages,
-            hasMorePages = page < totalPages - 1
+            hasMorePages = hasMorePages
         )
     }
 
@@ -142,15 +157,20 @@ class SearchViewModel(
         val message = exception.message ?: "Неизвестная ошибка"
 
         _state.value = when {
-            isNoConnectionError(message) -> SearchState.NoConnection
-            else -> SearchState.Error(message)
+            isNoConnectionError(message) -> {
+                SearchState.NoConnection
+            }
+            else -> {
+                SearchState.Error(message)
+            }
         }
     }
 
     private fun isNoConnectionError(message: String): Boolean {
-        return message.contains("интернет", ignoreCase = true) ||
+        val isNoConnection = message.contains("интернет", ignoreCase = true) ||
             message.contains("connection", ignoreCase = true) ||
             message.contains("подключения", ignoreCase = true)
+        return isNoConnection
     }
 
     /**
@@ -159,11 +179,12 @@ class SearchViewModel(
     fun clearSearch() {
         searchJob?.cancel()
         currentSearchQuery = ""
+        _searchQuery.value = ""
         currentFilters = null
         _state.value = SearchState.Initial
     }
 
     companion object {
-        private const val DEBOUNCE_DELAY_MS = 500L
+        private const val DEBOUNCE_DELAY_MS = 2000L // 2 секунды согласно ТЗ
     }
 }

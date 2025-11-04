@@ -7,7 +7,6 @@ class VacancyStateProvider : PreviewParameterProvider<VacancyDetailState> {
     override val values: Sequence<VacancyDetailState>
         get() = sequenceOf(
             VacancyDetailState.Loading,
-            VacancyDetailState.NoConnection,
             VacancyDetailState.NotFound,
             VacancyDetailState.ServerError("Ошибка сервера, попробуйте позже"),
             VacancyDetailState.Success(vacancy = mockVacancy, isFavorite = false)
