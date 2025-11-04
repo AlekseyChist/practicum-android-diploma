@@ -30,7 +30,6 @@ class SearchViewModel(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-
     /**
      * Поиск вакансий с debounce
      * @param query - поисковый запрос

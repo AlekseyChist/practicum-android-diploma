@@ -99,7 +99,6 @@ fun SearchScreen(
                 keyboardController?.hide()
                 focusManager.clearFocus()
             }
-
             else -> Unit
         }
     }
