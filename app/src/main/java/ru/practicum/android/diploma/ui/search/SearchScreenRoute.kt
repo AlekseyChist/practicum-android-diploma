@@ -16,7 +16,8 @@ fun SearchScreenRoute(
     viewModel: SearchViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsState()
-    var currentQuery by remember { mutableStateOf("") }
+    val vmQuery by viewModel.searchQuery.collectAsState()
+    var currentQuery by remember(vmQuery) { mutableStateOf(vmQuery) }
 
     SearchScreen(
         state = state,

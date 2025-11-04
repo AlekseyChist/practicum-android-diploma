@@ -28,6 +28,9 @@ class SearchViewModel(
     private var currentSearchQuery: String = ""
     private var currentFilters: VacancySearchRequest? = null
     private var searchJob: Job? = null
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
 
     /**
      * Поиск вакансий с debounce
@@ -40,6 +43,7 @@ class SearchViewModel(
     ) {
         Log.d(TAG, "searchVacancies: вызван с query='$query'")
         currentSearchQuery = query.trim()
+        _searchQuery.value = query
         currentFilters = filters
 
         if (currentSearchQuery.isEmpty()) {
@@ -218,6 +222,7 @@ class SearchViewModel(
         Log.d(TAG, "clearSearch: очищаем поиск")
         searchJob?.cancel()
         currentSearchQuery = ""
+        _searchQuery.value = ""
         currentFilters = null
         _state.value = SearchState.Initial
         Log.d(TAG, "clearSearch: state сброшен в Initial")
