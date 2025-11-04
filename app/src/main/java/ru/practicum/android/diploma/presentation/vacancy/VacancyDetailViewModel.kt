@@ -30,7 +30,6 @@ class VacancyDetailViewModel(
     val state: StateFlow<VacancyDetailState> = _state.asStateFlow()
 
     private var currentVacancy: Vacancy? = null
-
     /**
      * Загрузить детальную информацию о вакансии
      */
@@ -57,7 +56,8 @@ class VacancyDetailViewModel(
 
                     // при ошибке сети пытаемся загрузить из локальной БД
                     if (message.contains("интернет", ignoreCase = true) ||
-                        message.contains("connection", ignoreCase = true)) {
+                        message.contains("connection", ignoreCase = true)
+                    ) {
                         val vacancy = getFavoriteVacancyByIdUseCase.execute(vacancyId)
                         if (vacancy != null) {
                             currentVacancy = vacancy
