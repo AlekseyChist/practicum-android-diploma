@@ -312,7 +312,8 @@ private fun SalaryField(
             singleLine = true,
             textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number, imeAction = ImeAction.Done
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(onDone = { keyboard?.hide(); onDone() }),
             modifier = Modifier
