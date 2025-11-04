@@ -234,9 +234,8 @@ private fun VacancyCard(
                         color = Color.LightGray,
                         shape = RoundedCornerShape(Dimens.corner)
                     )
-                    .padding(end = 0.dp)
                     .clip(RoundedCornerShape(Dimens.corner)),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Fit
             )
 
             Spacer(Modifier.size(Dimens.padding_8))
@@ -312,7 +311,7 @@ fun ScrollableDetails(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(Dimens.padding_16)
+            .padding(horizontal = Dimens.padding_16)
     ) {
         Column(modifier = Modifier.padding(bottom = Dimens.padding_8)) {
             Text(
