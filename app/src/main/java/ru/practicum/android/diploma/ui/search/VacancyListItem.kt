@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.ui.search
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -29,12 +28,8 @@ import ru.practicum.android.diploma.domain.models.VacancyUi
 import ru.practicum.android.diploma.ui.theme.AppTheme
 import ru.practicum.android.diploma.ui.theme.Dimens
 
-private const val TAG = "VacancyListItem"
-
 @Composable
 fun VacancyListItem(item: VacancyUi, onClick: (String) -> Unit) {
-    Log.d(TAG, "Рендерим: ${item.title}, logoUrl=${item.logoUrl}")
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -48,17 +43,6 @@ fun VacancyListItem(item: VacancyUi, onClick: (String) -> Unit) {
             model = ImageRequest.Builder(context)
                 .data(item.logoUrl)
                 .crossfade(true)
-                .listener(
-                    onStart = {
-                        Log.d(TAG, "Начало загрузки: ${item.logoUrl}")
-                    },
-                    onSuccess = { _, _ ->
-                        Log.d(TAG, "Успешно: ${item.logoUrl}")
-                    },
-                    onError = { _, error ->
-                        Log.e(TAG, "Ошибка: ${item.logoUrl}", error.throwable)
-                    }
-                )
                 .build(),
             contentDescription = "company logo",
             placeholder = painterResource(R.drawable.placeholder2),
