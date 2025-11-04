@@ -151,7 +151,10 @@ class SearchViewModel(
         page: Int,
         totalPages: Int
     ) {
-        Log.d(TAG, "handleSearchSuccess: vacancies.size=${vacancies.size}, found=$found, page=$page, totalPages=$totalPages")
+        Log.d(
+            TAG,
+            "handleSearchSuccess: vacancies.size=${vacancies.size}, found=$found, page=$page, totalPages=$totalPages"
+        )
 
         val currentState = _state.value
 
@@ -202,8 +205,8 @@ class SearchViewModel(
 
     private fun isNoConnectionError(message: String): Boolean {
         val isNoConnection = message.contains("интернет", ignoreCase = true) ||
-                message.contains("connection", ignoreCase = true) ||
-                message.contains("подключения", ignoreCase = true)
+            message.contains("connection", ignoreCase = true) ||
+            message.contains("подключения", ignoreCase = true)
         Log.d(TAG, "isNoConnectionError: message='$message', result=$isNoConnection")
         return isNoConnection
     }
