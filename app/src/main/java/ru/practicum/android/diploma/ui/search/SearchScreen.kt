@@ -384,7 +384,6 @@ internal fun VacancyList(
     }
 }
 
-
 @Composable
 private fun LoadingPlaceholder() {
     Box(
