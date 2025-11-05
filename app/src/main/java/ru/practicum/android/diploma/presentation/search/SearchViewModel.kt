@@ -211,8 +211,8 @@ class SearchViewModel(
 
     private fun isNoConnectionError(message: String): Boolean {
         val isNoConnection = message.contains("интернет", ignoreCase = true) ||
-                message.contains("connection", ignoreCase = true) ||
-                message.contains("подключения", ignoreCase = true)
+            message.contains("connection", ignoreCase = true) ||
+            message.contains("подключения", ignoreCase = true)
         return isNoConnection
     }
 
