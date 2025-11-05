@@ -10,10 +10,12 @@ import ru.practicum.android.diploma.data.network.RetrofitClient
 import ru.practicum.android.diploma.data.network.VacancyNetworkDataSource
 import ru.practicum.android.diploma.data.network.api.VacancyApi
 import ru.practicum.android.diploma.data.repository.FavoritesRepository
+import ru.practicum.android.diploma.data.repository.FiltersRepositoryImpl
 import ru.practicum.android.diploma.data.repository.VacancyRepository
 import ru.practicum.android.diploma.data.storage.LocalStorage
 import ru.practicum.android.diploma.data.storage.impl.LocalStorageImpl
 import ru.practicum.android.diploma.domain.api.ExternalNavigator
+import ru.practicum.android.diploma.domain.api.FiltersRepository
 import ru.practicum.android.diploma.domain.api.GetVacancyDetailsUseCase
 import ru.practicum.android.diploma.domain.impl.GetVacancyDetailsUseCaseImpl
 
@@ -40,7 +42,6 @@ val dataModule = module {
     }
 
     // DAO
-    // get<AppDatabase>() - Koin сам найдёт и передаст базу данных
     single {
         get<AppDatabase>().vacancyDao()
     }
@@ -64,7 +65,6 @@ val dataModule = module {
     }
 
     // Repository для избранного
-    // vacancyDao = get() - Koin найдёт DAO и передаст его в конструктор
     single {
         FavoritesRepository(
             vacancyDao = get()
@@ -74,6 +74,13 @@ val dataModule = module {
     // Repository для вакансий
     single {
         VacancyRepository(
+            networkDataSource = get()
+        )
+    }
+
+    // Repository для фильтров
+    single<FiltersRepository> {
+        FiltersRepositoryImpl(
             networkDataSource = get()
         )
     }
