@@ -10,11 +10,13 @@ import ru.practicum.android.diploma.data.network.RetrofitClient
 import ru.practicum.android.diploma.data.network.VacancyNetworkDataSource
 import ru.practicum.android.diploma.data.network.api.VacancyApi
 import ru.practicum.android.diploma.data.repository.FavoritesRepository
+import ru.practicum.android.diploma.data.repository.FilterSettingsRepositoryImpl
 import ru.practicum.android.diploma.data.repository.FiltersRepositoryImpl
 import ru.practicum.android.diploma.data.repository.VacancyRepository
 import ru.practicum.android.diploma.data.storage.LocalStorage
 import ru.practicum.android.diploma.data.storage.impl.LocalStorageImpl
 import ru.practicum.android.diploma.domain.api.ExternalNavigator
+import ru.practicum.android.diploma.domain.api.FilterSettingsRepository
 import ru.practicum.android.diploma.domain.api.FiltersRepository
 import ru.practicum.android.diploma.domain.api.GetVacancyDetailsUseCase
 import ru.practicum.android.diploma.domain.impl.GetVacancyDetailsUseCaseImpl
@@ -82,6 +84,13 @@ val dataModule = module {
     single<FiltersRepository> {
         FiltersRepositoryImpl(
             networkDataSource = get()
+        )
+    }
+
+    // Repository для настроек фильтров (SharedPreferences)
+    single<FilterSettingsRepository> {
+        FilterSettingsRepositoryImpl(
+            localStorage = get()
         )
     }
 
