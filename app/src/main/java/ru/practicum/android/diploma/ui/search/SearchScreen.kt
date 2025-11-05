@@ -1,5 +1,10 @@
 package ru.practicum.android.diploma.ui.search
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -15,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
@@ -50,6 +56,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -105,164 +112,161 @@ fun SearchScreen(
         }
     }
 
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.background,
-        contentWindowInsets = remember { WindowInsets(0, 0, 0, 0) },
-        topBar = {
-            Row(modifier = Modifier.heightIn(Dimens.appBarHeight)) {
-                TopAppBar(
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background,
-                        titleContentColor = MaterialTheme.colorScheme.onBackground
-                    ),
-                    title = {
-                        Text(
-                            text = stringResource(R.string.search_job),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    },
-                    actions = {
-                        IconButton(onClick = onFilterClick) {
-                            Icon(
-                                imageVector = Icons.Outlined.FilterList,
-                                contentDescription = stringResource(R.string.filters_settings),
-                                tint = MaterialTheme.colorScheme.onBackground
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            containerColor = MaterialTheme.colorScheme.background,
+            contentWindowInsets = remember { WindowInsets(0, 0, 0, 0) },
+            topBar = {
+                Row(modifier = Modifier.heightIn(Dimens.appBarHeight)) {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.background,
+                            titleContentColor = MaterialTheme.colorScheme.onBackground
+                        ),
+                        title = {
+                            Text(
+                                text = stringResource(R.string.search_job),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onBackground
                             )
-                        }
-                    },
-                    windowInsets = WindowInsets.statusBars
-                )
-            }
-        }
-    ) { inner ->
-        Column(
-            modifier = Modifier
-                .padding(
-                    top = inner.calculateTopPadding(),
-                    start = inner.calculateStartPadding(LayoutDirection.Ltr),
-                    end = inner.calculateEndPadding(LayoutDirection.Ltr),
-                    bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-                )
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            SearchField(
-                value = textState,
-                onValueChange = {
-                    textState = it
-                    onQueryChange(it)
-                },
-                onClear = {
-                    textState = ""
-                    onClearClick()
-                },
-                onSubmit = {
-                    keyboardController?.hide()
-                    focusManager.clearFocus()
-                    onSearchClick()
+                        },
+                        actions = {
+                            IconButton(onClick = onFilterClick) {
+                                Icon(
+                                    imageVector = Icons.Outlined.FilterList,
+                                    contentDescription = stringResource(R.string.filters_settings),
+                                    tint = MaterialTheme.colorScheme.onBackground
+                                )
+                            }
+                        },
+                        windowInsets = WindowInsets.statusBars
+                    )
                 }
-            )
-
+            }
+        ) { inner ->
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
+                    .padding(
+                        top = inner.calculateTopPadding(),
+                        start = inner.calculateStartPadding(LayoutDirection.Ltr),
+                        end = inner.calculateEndPadding(LayoutDirection.Ltr),
+                        bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+                    )
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
             ) {
-                val initialCount = remember {
-                    mutableIntStateOf(0)
-                }
-                LaunchedEffect(state) {
-                    if (state is SearchState.Success) {
-                        initialCount.intValue = state.found
+                SearchField(
+                    value = textState,
+                    onValueChange = {
+                        textState = it
+                        onQueryChange(it)
+                    },
+                    onClear = {
+                        textState = ""
+                        onClearClick()
+                    },
+                    onSubmit = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                        onSearchClick()
                     }
-                }
-                val listState = rememberLazyListState()
+                )
 
-                when (state) {
-                    SearchState.Initial -> {
-                        Placeholder(imageRes = R.drawable.search_placeholder_euy, text = "")
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    val initialCount = remember {
+                        mutableIntStateOf(0)
                     }
-
-                    SearchState.Loading -> LoadingPlaceholder()
-
-                    is SearchState.Success -> {
-                        VacancyList(
-                            items = state.vacancies,
-                            onItemClick = onVacancyClick,
-                            onLoadMore = onLoadNextPage,
-                            hasMorePages = state.hasMorePages,
-                            count = initialCount.intValue,
-                            listState = listState
-                        )
+                    LaunchedEffect(state) {
+                        if (state is SearchState.Success) {
+                            initialCount.intValue = state.found
+                        }
                     }
+                    val listState = rememberLazyListState()
 
-                    is SearchState.LoadingNextPage -> {
-                        VacancyList(
-                            items = state.currentVacancies,
-                            onItemClick = onVacancyClick,
-                            onLoadMore = onLoadNextPage,
-                            hasMorePages = true,
-                            isLoadingMore = true,
-                            count = initialCount.intValue,
-                            listState = listState
-                        )
-                    }
-
-                    is SearchState.PaginationError -> {
-                        val context = LocalContext.current
-
-                        // Показываем Toast с ошибкой
-                        LaunchedEffect(state) {
-                            val message = when (state.errorType) {
-                                SearchState.PaginationError.ErrorType.NO_CONNECTION ->
-                                    context.getString(R.string.toast_check_internet)
-                                SearchState.PaginationError.ErrorType.SERVER_ERROR ->
-                                    context.getString(R.string.toast_error_occurred)
-                            }
-                            android.widget.Toast.makeText(
-                                context,
-                                message,
-                                android.widget.Toast.LENGTH_SHORT
-                            ).show()
-
-                            // Автоматически возвращаемся к Success после показа Toast
-                            onDismissPaginationError()
+                    when (state) {
+                        SearchState.Initial -> {
+                            Placeholder(imageRes = R.drawable.search_placeholder_euy, text = "")
                         }
 
-                        // Показываем текущие вакансии
-                        VacancyList(
-                            items = state.currentVacancies,
-                            onItemClick = onVacancyClick,
-                            onLoadMore = onLoadNextPage,
-                            hasMorePages = state.currentPage < state.totalPages - 1,
-                            count = initialCount.intValue,
-                            listState = listState
-                        )
-                    }
+                        SearchState.Loading -> LoadingPlaceholder()
 
-                    is SearchState.EmptyResult -> {
-                        Placeholder(
-                            imageRes = R.drawable.no_vacanc_placeholder,
-                            text = stringResource(R.string.placeholder_nothing_found)
-                        )
-                    }
+                        is SearchState.Success -> {
+                            VacancyList(
+                                items = state.vacancies,
+                                onItemClick = onVacancyClick,
+                                onLoadMore = onLoadNextPage,
+                                hasMorePages = state.hasMorePages,
+                                count = initialCount.intValue,
+                                listState = listState
+                            )
+                        }
 
-                    SearchState.NoConnection -> {
-                        Placeholder(
-                            imageRes = R.drawable.no_internet_placeholder,
-                            text = stringResource(R.string.placeholder_no_internet)
-                        )
-                    }
+                        is SearchState.LoadingNextPage -> {
+                            VacancyList(
+                                items = state.currentVacancies,
+                                onItemClick = onVacancyClick,
+                                onLoadMore = onLoadNextPage,
+                                hasMorePages = true,
+                                isLoadingMore = true,
+                                count = initialCount.intValue,
+                                listState = listState
+                            )
+                        }
 
-                    is SearchState.Error -> {
-                        Placeholder(
-                            imageRes = R.drawable.server_not_responding_placeholder,
-                            text = stringResource(R.string.placeholder_error)
-                        )
+                        is SearchState.PaginationError -> {
+                            // Показываем список вакансий (Toast показывается снаружи)
+                            VacancyList(
+                                items = state.currentVacancies,
+                                onItemClick = onVacancyClick,
+                                onLoadMore = onLoadNextPage,
+                                hasMorePages = state.currentPage < state.totalPages - 1,
+                                count = initialCount.intValue,
+                                listState = listState
+                            )
+                        }
+
+                        is SearchState.EmptyResult -> {
+                            Placeholder(
+                                imageRes = R.drawable.no_vacanc_placeholder,
+                                text = stringResource(R.string.placeholder_nothing_found)
+                            )
+                        }
+
+                        SearchState.NoConnection -> {
+                            Placeholder(
+                                imageRes = R.drawable.no_internet_placeholder,
+                                text = stringResource(R.string.placeholder_no_internet)
+                            )
+                        }
+
+                        is SearchState.Error -> {
+                            Placeholder(
+                                imageRes = R.drawable.server_not_responding_placeholder,
+                                text = stringResource(R.string.placeholder_error)
+                            )
+                        }
                     }
                 }
             }
+        }
+
+        // Показываем кастомный Toast поверх всего контента
+        if (state is SearchState.PaginationError) {
+            val message = when (state.errorType) {
+                SearchState.PaginationError.ErrorType.NO_CONNECTION ->
+                    stringResource(R.string.toast_check_internet)
+                SearchState.PaginationError.ErrorType.SERVER_ERROR ->
+                    stringResource(R.string.toast_error_occurred)
+            }
+
+            CustomToast(
+                message = message,
+                onDismiss = onDismissPaginationError
+            )
         }
     }
 }
@@ -465,6 +469,63 @@ private fun Placeholder(
     }
 }
 
+@Composable
+private fun CustomToast(
+    message: String,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var visible by remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        delay(2000L) // Показываем 2 секунды
+        visible = false
+        delay(300L) // Ждем окончания анимации
+        onDismiss()
+    }
+
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.BottomCenter
+    ) {
+        AnimatedVisibility(
+            visible = visible,
+            enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+            exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
+        ) {
+            Card(
+                modifier = Modifier
+                    .width(328.dp)
+                    .height(56.dp)
+                    .padding(bottom = 16.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xFFF56B6C)
+                )
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(
+                            top = 4.dp,
+                            bottom = 4.dp,
+                            start = 8.dp,
+                            end = 8.dp
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = message,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.White,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+    }
+}
+
 @Preview(name = "Idle", showBackground = true)
 @Composable
 fun PreviewSearchScreenIdle() {
@@ -538,7 +599,7 @@ fun PreviewSearchScreenEmptyResult() {
 fun PreviewSearchScreenError() {
     AppTheme {
         SearchScreen(
-            state = SearchState.Error("ÐžÑˆÐ¸Ð±ÐºÐ° ÑÐµÑ€Ð²ÐµÑ€Ð°"),
+            state = SearchState.Error(""),
             query = "QA Engineer",
             onQueryChange = {},
             onClearClick = {},
