@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -60,7 +59,7 @@ import ru.practicum.android.diploma.ui.theme.AppTheme
 import ru.practicum.android.diploma.ui.theme.Dimens
 
 @Composable
-fun IndustryScreen(
+fun IndustryScreen (
 
     //state: IndustryState
 
@@ -131,7 +130,10 @@ fun IndustryScreen(
                 }
             )
             Spacer(Modifier.size(Dimens.padding_8))
-
+            ListElement(
+                text = stringResource(R.string.select_industry),
+                onRadioButtonClick = {}
+            )
         }
     }
 }
@@ -274,20 +276,18 @@ private fun ListElement(
     }
 }
 
-@Composable
-private fun Content(
-
+//@Composable
+//private fun Content(
 //    items: Industry
-) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
-    ) {
-
+//) {
+//    LazyColumn(
+//        modifier = Modifier.fillMaxSize()
+//    ) {
 //        items.forEach {
 //
 //        }
-    }
-}
+//    }
+//}
 
 @Preview(showBackground = true)
 @Composable
