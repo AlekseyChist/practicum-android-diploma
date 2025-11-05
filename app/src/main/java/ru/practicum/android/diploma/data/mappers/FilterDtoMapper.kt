@@ -57,12 +57,13 @@ object FilterDtoMapper {
      * Рекурсивный поиск региона в списке
      */
     private fun findRegionInList(regions: List<Region>, regionId: String): Region? {
-        regions.forEach { region ->
-            if (region.id == regionId) return region
-            val found = findRegionInList(region.subRegions, regionId)
-            if (found != null) return found
+        return regions.firstNotNullOfOrNull { region ->
+            if (region.id == regionId) {
+                region
+            } else {
+                findRegionInList(region.subRegions, regionId)
+            }
         }
-        return null
     }
 
     /**

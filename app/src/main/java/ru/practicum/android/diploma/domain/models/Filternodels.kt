@@ -38,28 +38,28 @@ data class FilterSettings(
     val industry: Industry? = null,
     val expectedSalary: Int? = null,
     val onlyWithSalary: Boolean = false
-) {
-    /**
-     * Проверяет, есть ли активные фильтры
-     * Нужно для подсветки кнопки фильтра на главном экране
-     */
-    fun hasActiveFilters(): Boolean {
-        return region != null || industry != null ||
-            expectedSalary != null || onlyWithSalary
-    }
+)
 
-    /**
-     * Преобразует настройки фильтра в параметры для API запроса
-     * area передается как Int (конвертируется из String)
-     */
-    fun toApiParams(): FilterApiParams {
-        return FilterApiParams(
-            area = region?.id?.toIntOrNull(),
-            industry = industry?.id,
-            salary = expectedSalary,
-            onlyWithSalary = if (onlyWithSalary) true else null
-        )
-    }
+/**
+ * Проверяет, есть ли активные фильтры
+ * Нужно для подсветки кнопки фильтра на главном экране
+ */
+fun FilterSettings.hasActiveFilters(): Boolean {
+    return region != null || industry != null ||
+        expectedSalary != null || onlyWithSalary
+}
+
+/**
+ * Преобразует настройки фильтра в параметры для API запроса
+ * area передается как Int (конвертируется из String)
+ */
+fun FilterSettings.toApiParams(): FilterApiParams {
+    return FilterApiParams(
+        area = region?.id?.toIntOrNull(),
+        industry = industry?.id,
+        salary = expectedSalary,
+        onlyWithSalary = if (onlyWithSalary) true else null
+    )
 }
 
 /**
