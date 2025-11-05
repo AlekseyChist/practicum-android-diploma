@@ -2,8 +2,10 @@ package ru.practicum.android.diploma.ui.filters
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -16,24 +18,29 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -54,7 +61,9 @@ import ru.practicum.android.diploma.ui.theme.Dimens
 
 @Composable
 fun IndustryScreen(
+
     //state: IndustryState
+
     query: String,
     onBackClick: () -> Unit,
     onQueryChange: (String) -> Unit,
@@ -62,13 +71,37 @@ fun IndustryScreen(
     onSearchClick: () -> Unit,
 ) {
     var textState by remember(query) { mutableStateOf(query) }
-
+    var selectedIndex by remember { mutableIntStateOf(-1) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     Scaffold(
         topBar = { TopBar(onBackClick = onBackClick) },
         containerColor = MaterialTheme.colorScheme.background,
-        contentWindowInsets = remember { WindowInsets(0, 0, 0, 0) }
+        contentWindowInsets = remember { WindowInsets(0, 0, 0, 0) },
+        bottomBar = {
+            if (selectedIndex != -1) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(Dimens.padding_16)
+                ) {
+                    Button(
+                        onClick = {},
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(Dimens.size_60),
+                        shape = RoundedCornerShape(Dimens.corner)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.choose),
+                            style = MaterialTheme.typography.titleSmall,
+                            color = Color.White
+                        )
+                    }
+                }
+            }
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -81,7 +114,7 @@ fun IndustryScreen(
                     bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
                 )
         ) {
-            SearchField(
+            SearchIndustryField(
                 value = textState,
                 onValueChange = {
                     textState = it
@@ -95,7 +128,10 @@ fun IndustryScreen(
                     keyboardController?.hide()
                     focusManager.clearFocus()
                     onSearchClick()
-                })
+                }
+            )
+            Spacer(Modifier.size(Dimens.padding_8))
+
         }
     }
 }
@@ -136,7 +172,7 @@ private fun TopBar(
 }
 
 @Composable
-private fun SearchField(
+private fun SearchIndustryField(
     value: String,
     onValueChange: (String) -> Unit,
     onClear: () -> Unit,
@@ -152,7 +188,7 @@ private fun SearchField(
         singleLine = true,
         placeholder = {
             Text(
-                text = stringResource(R.string.search_hint),
+                text = stringResource(R.string.indostry_hint),
                 style = MaterialTheme.typography.bodyLarge.copy(
                     color = colorResource(R.color.color_gray_search_placeholder)
                 )
@@ -198,6 +234,61 @@ private fun SearchField(
     )
 }
 
+@Composable
+private fun ListElement(
+    text: String,
+    onRadioButtonClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = Dimens.padding_16, end = Dimens.padding_4)
+            .height(Dimens.size_60),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier
+                .weight(1f)
+        )
+        Spacer(Modifier.size(Dimens.padding_16))
+        Box(
+            modifier = Modifier
+                .size(Dimens.size_48),
+            contentAlignment = Alignment.Center
+        ) {
+            RadioButton(
+                onClick = onRadioButtonClick,
+                selected = false,
+                colors = RadioButtonDefaults.colors(
+                    selectedColor = Color.Blue,
+                    unselectedColor = Color.Blue,
+                    disabledSelectedColor = Color.Blue.copy(alpha = 0.5f),
+                    disabledUnselectedColor = Color.Blue.copy(alpha = 0.5f)
+                ),
+            )
+        }
+
+    }
+}
+
+@Composable
+private fun Content(
+
+//    items: Industry
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+    ) {
+
+//        items.forEach {
+//
+//        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun IndustryScreenPreview() {
@@ -224,6 +315,7 @@ fun IndustryScreenDarkPreview() {
             onBackClick = {},
             onQueryChange = {},
             onClearClick = {},
-            onSearchClick = {})
+            onSearchClick = {}
+        )
     }
 }

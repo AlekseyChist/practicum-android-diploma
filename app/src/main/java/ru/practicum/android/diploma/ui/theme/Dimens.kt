@@ -16,6 +16,7 @@ object Dimens {
     val padding_32 = 32.dp
     val icon_32 = 32.dp
     val size_48 = 48.dp
+    val size_60 = 60.dp
 
     val dp_8 = 8.dp
     val dp_16 = 16.dp

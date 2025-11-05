@@ -13,7 +13,13 @@ class IndustryFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 AppTheme {
-                    IndustryScreen()
+                    IndustryScreen(
+                        query = "",
+                        onBackClick = {},
+                        onQueryChange = {},
+                        onClearClick = {},
+                        onSearchClick = {}
+                    )
                 }
             }
         }
