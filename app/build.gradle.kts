@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("ru.practicum.android.diploma.plugins.developproperties")
     id("com.google.devtools.ksp") version "1.9.21-1.0.15"
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -52,6 +53,7 @@ dependencies {
     // UI layer libraries
     implementation(libs.ui.material)
     implementation(libs.ui.constraintLayout)
+    implementation(libs.lifecycle.runtime.compose)
 
     // region Unit tests
     testImplementation(libs.unitTests.junit)
@@ -63,14 +65,15 @@ dependencies {
     // endregion
 
     // Compose
-    val composeBom = platform("androidx.compose:compose-bom:2024.02.00")
-    implementation(composeBom)
+    implementation(platform("androidx.compose:compose-bom:2024.10.00"))
     implementation(libs.ui)
     implementation(libs.material3)
     implementation(libs.ui.tooling.preview)
     debugImplementation(libs.ui.tooling)
     implementation(libs.activity.compose)
     implementation(libs.lifecycle.viewmodel.compose)
+    androidTestImplementation(platform("androidx.compose:compose-bom:2024.10.00"))
+    implementation("androidx.compose.material:material-icons-extended")
 
     // Coil
     implementation(libs.coil.compose)

@@ -10,4 +10,30 @@
     <string name="select_region">Выбор региона</string>
     <string name="select_industry">Выбор отрасли</string>
     <string name="main">Главная</string>
+    <string name="placeholder_no_internet">Нет интернета</string>
+    <string name="placeholder_error">Не удалось получить список вакансий</string>
+    <string name="search_hint">Введите запрос</string>
+    <string name="clear">Очистить</string>
+    <string name="list_of_developers">Над приложением работали</string>
+    <string name="experience">Требуемый опыт</string>
+    <string name="vacancy_description">Описание вакансии</string>
+    <string name="key_skills">Ключевые навыки</string>
+    <string name="AC">Алексей Чистяков - Team lead</string>
+    <string name="ET">Евгений Токарев</string>
+    <string name="IV">Иван Васильев</string>
+    <string name="KK">Кермен Корнаев</string>
+    <string name="placeholder_nothing_found">Не удалось получить\nсписок вакансий</string>
+    <string name="contacts">Котакты</string>
+    <string name="email_app">Выберите почтовое приложение</string>
+    <string name="call_app">Выберите приложение для звонка</string>
+    <string name="vacancy_not_found">Вакансия не найдена или удалена</string>
+    <string name="server_error">Ошибка сервера</string>
+    <string name="share_vacancy">Поделиться</string>
+    <string name="list_is_empty">Список пуст</string>
+    <plurals name="jobs_found">
+        <item quantity="one">Найдена %d вакансия</item>
+        <item quantity="few">Найдено %d вакансии</item>
+        <item quantity="many">Найдено %d вакансий</item>
+        <item quantity="other">Найдено %d вакансий</item>
+    </plurals>
 </resources>

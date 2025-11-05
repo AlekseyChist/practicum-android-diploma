@@ -4,4 +4,9 @@
         <item name="fontFamily">@font/ys_display_regular</item>
         <item name="android:textSize">@dimen/bottom_nav_text</item>
     </style>
+    <style name="TextSearchTopBarTitle">
+        <item name="fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/black_text</item>
+    </style>
 </resources>

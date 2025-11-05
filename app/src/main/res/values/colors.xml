@@ -7,4 +7,6 @@
     <color name="gray">#AEAFB4</color>
     <color name="light_gray">#E6E8EB</color>
     <color name="background_overlay">#801A1B22</color>
+    <color name="black_text">#1A1B22</color>
+    <color name="color_gray_search_placeholder">#AEAFB4</color>
 </resources>
