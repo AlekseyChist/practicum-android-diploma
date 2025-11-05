@@ -54,6 +54,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
@@ -82,7 +83,8 @@ fun SearchScreen(
     onSearchClick: () -> Unit,
     onFilterClick: () -> Unit,
     onVacancyClick: (VacancyUi) -> Unit,
-    onLoadNextPage: () -> Unit = {}
+    onLoadNextPage: () -> Unit = {},
+    onDismissPaginationError: () -> Unit = {}
 ) {
     var textState by remember(query) { mutableStateOf(query) }
 
@@ -202,6 +204,38 @@ fun SearchScreen(
                             onLoadMore = onLoadNextPage,
                             hasMorePages = true,
                             isLoadingMore = true,
+                            count = initialCount.intValue,
+                            listState = listState
+                        )
+                    }
+
+                    is SearchState.PaginationError -> {
+                        val context = LocalContext.current
+
+                        // Показываем Toast с ошибкой
+                        LaunchedEffect(state) {
+                            val message = when (state.errorType) {
+                                SearchState.PaginationError.ErrorType.NO_CONNECTION ->
+                                    context.getString(R.string.toast_check_internet)
+                                SearchState.PaginationError.ErrorType.SERVER_ERROR ->
+                                    context.getString(R.string.toast_error_occurred)
+                            }
+                            android.widget.Toast.makeText(
+                                context,
+                                message,
+                                android.widget.Toast.LENGTH_SHORT
+                            ).show()
+
+                            // Автоматически возвращаемся к Success после показа Toast
+                            onDismissPaginationError()
+                        }
+
+                        // Показываем текущие вакансии
+                        VacancyList(
+                            items = state.currentVacancies,
+                            onItemClick = onVacancyClick,
+                            onLoadMore = onLoadNextPage,
+                            hasMorePages = state.currentPage < state.totalPages - 1,
                             count = initialCount.intValue,
                             listState = listState
                         )
@@ -442,7 +476,8 @@ fun PreviewSearchScreenIdle() {
             onClearClick = {},
             onSearchClick = {},
             onFilterClick = {},
-            onVacancyClick = {}
+            onVacancyClick = {},
+            onDismissPaginationError = {}
         )
     }
 }
@@ -458,7 +493,8 @@ fun PreviewSearchScreenLoading() {
             onClearClick = {},
             onSearchClick = {},
             onFilterClick = {},
-            onVacancyClick = {}
+            onVacancyClick = {},
+            onDismissPaginationError = {}
         )
     }
 }
@@ -474,7 +510,8 @@ fun PreviewSearchScreenNoInternet() {
             onClearClick = {},
             onSearchClick = {},
             onFilterClick = {},
-            onVacancyClick = {}
+            onVacancyClick = {},
+            onDismissPaginationError = {}
         )
     }
 }
@@ -490,7 +527,8 @@ fun PreviewSearchScreenEmptyResult() {
             onClearClick = {},
             onSearchClick = {},
             onFilterClick = {},
-            onVacancyClick = {}
+            onVacancyClick = {},
+            onDismissPaginationError = {}
         )
     }
 }
@@ -500,13 +538,14 @@ fun PreviewSearchScreenEmptyResult() {
 fun PreviewSearchScreenError() {
     AppTheme {
         SearchScreen(
-            state = SearchState.Error("Ошибка сервера"),
+            state = SearchState.Error("ÐžÑˆÐ¸Ð±ÐºÐ° ÑÐµÑ€Ð²ÐµÑ€Ð°"),
             query = "QA Engineer",
             onQueryChange = {},
             onClearClick = {},
             onSearchClick = {},
             onFilterClick = {},
-            onVacancyClick = {}
+            onVacancyClick = {},
+            onDismissPaginationError = {}
         )
     }
 }

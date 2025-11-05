@@ -30,6 +30,8 @@
     <string name="server_error">Ошибка сервера</string>
     <string name="share_vacancy">Поделиться</string>
     <string name="list_is_empty">Список пуст</string>
+    <string name="toast_check_internet">Проверьте подключение к интернету</string>
+    <string name="toast_error_occurred">Произошла ошибка</string>
     <plurals name="jobs_found">
         <item quantity="one">Найдена %d вакансия</item>
         <item quantity="few">Найдено %d вакансии</item>
