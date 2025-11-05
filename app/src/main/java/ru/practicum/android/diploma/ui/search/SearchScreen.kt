@@ -75,7 +75,9 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.models.VacancyUi
 import ru.practicum.android.diploma.presentation.search.SearchState
 import ru.practicum.android.diploma.ui.theme.AppTheme
+import ru.practicum.android.diploma.ui.theme.AnimationDurations
 import ru.practicum.android.diploma.ui.theme.Dimens
+import ru.practicum.android.diploma.ui.theme.Red
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -473,9 +475,9 @@ private fun CustomToast(
     var visible by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
-        delay(2000L)
+        delay(AnimationDurations.TOAST_DISPLAY_DURATION)
         visible = false
-        delay(300L)
+        delay(AnimationDurations.TOAST_ANIMATION_DURATION)
         onDismiss()
     }
 
@@ -495,7 +497,7 @@ private fun CustomToast(
                     .padding(bottom = Dimens.padding_16),
                 shape = RoundedCornerShape(Dimens.corner),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFFF56B6C)
+                    containerColor = Red
                 )
             ) {
                 Box(
