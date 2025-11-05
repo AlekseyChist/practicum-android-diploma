@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
@@ -55,10 +56,12 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
@@ -71,7 +74,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import kotlinx.coroutines.delay
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.models.VacancyUi
 import ru.practicum.android.diploma.presentation.search.SearchState
@@ -216,7 +218,6 @@ fun SearchScreen(
                         }
 
                         is SearchState.PaginationError -> {
-                            // Показываем список вакансий (Toast показывается снаружи)
                             VacancyList(
                                 items = state.currentVacancies,
                                 onItemClick = onVacancyClick,
@@ -252,7 +253,6 @@ fun SearchScreen(
             }
         }
 
-        // Показываем кастомный Toast поверх всего контента
         if (state is SearchState.PaginationError) {
             val message = when (state.errorType) {
                 SearchState.PaginationError.ErrorType.NO_CONNECTION ->
@@ -348,7 +348,7 @@ internal fun VacancyList(
             modifier = Modifier.fillMaxSize()
         ) {
             item {
-                Spacer(modifier = Modifier.height(35.dp))
+                Spacer(modifier = Modifier.height(Dimens.padding_35))
             }
 
             items(items, key = { it.id }) { item ->
@@ -364,7 +364,7 @@ internal fun VacancyList(
                         contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator(
-                            modifier = Modifier.size(32.dp),
+                            modifier = Modifier.size(Dimens.dp_32),
                             color = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -379,7 +379,7 @@ internal fun VacancyList(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(1.dp)
+                            .height(Dimens.padding_1)
                     )
                 }
             }
@@ -393,8 +393,8 @@ internal fun VacancyList(
         ) {
             Card(
                 modifier = Modifier
-                    .width(184.dp)
-                    .height(27.dp),
+                    .width(Dimens.size_184)
+                    .height(Dimens.size_27),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primary
                 ),
@@ -454,7 +454,7 @@ private fun Placeholder(
             )
 
             if (text.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(Dimens.padding_16))
 
                 Text(
                     text = text,
@@ -476,9 +476,9 @@ private fun CustomToast(
     var visible by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
-        delay(2000L) // Показываем 2 секунды
+        delay(2000L)
         visible = false
-        delay(300L) // Ждем окончания анимации
+        delay(300L)
         onDismiss()
     }
 
@@ -493,10 +493,10 @@ private fun CustomToast(
         ) {
             Card(
                 modifier = Modifier
-                    .width(328.dp)
-                    .height(56.dp)
-                    .padding(bottom = 16.dp),
-                shape = RoundedCornerShape(12.dp),
+                    .width(Dimens.size_328)
+                    .height(Dimens.dp_56)
+                    .padding(bottom = Dimens.padding_16),
+                shape = RoundedCornerShape(Dimens.corner),
                 colors = CardDefaults.cardColors(
                     containerColor = Color(0xFFF56B6C)
                 )
@@ -505,10 +505,10 @@ private fun CustomToast(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(
-                            top = 4.dp,
-                            bottom = 4.dp,
-                            start = 8.dp,
-                            end = 8.dp
+                            top = Dimens.padding_4,
+                            bottom = Dimens.padding_4,
+                            start = Dimens.padding_8,
+                            end = Dimens.padding_8
                         ),
                     contentAlignment = Alignment.Center
                 ) {
