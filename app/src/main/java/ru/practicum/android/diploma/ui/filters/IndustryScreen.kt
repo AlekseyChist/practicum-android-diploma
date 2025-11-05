@@ -59,10 +59,7 @@ import ru.practicum.android.diploma.ui.theme.AppTheme
 import ru.practicum.android.diploma.ui.theme.Dimens
 
 @Composable
-fun IndustryScreen (
-
-    //state: IndustryState
-
+fun IndustryScreen(
     query: String,
     onBackClick: () -> Unit,
     onQueryChange: (String) -> Unit,
@@ -275,19 +272,6 @@ private fun ListElement(
 
     }
 }
-
-//@Composable
-//private fun Content(
-//    items: Industry
-//) {
-//    LazyColumn(
-//        modifier = Modifier.fillMaxSize()
-//    ) {
-//        items.forEach {
-//
-//        }
-//    }
-//}
 
 @Preview(showBackground = true)
 @Composable
