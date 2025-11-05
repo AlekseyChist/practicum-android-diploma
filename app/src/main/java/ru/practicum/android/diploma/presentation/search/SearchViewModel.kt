@@ -30,6 +30,10 @@ class SearchViewModel(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
+    // Сохраняем данные последнего успешного поиска для PaginationError
+    private var lastSuccessFound: Int = 0
+    private var lastSuccessTotalPages: Int = 0
+
     /**
      * Поиск вакансий с debounce
      * @param query - поисковый запрос
@@ -94,6 +98,22 @@ class SearchViewModel(
     }
 
     /**
+     * Отменить ошибку пагинации и вернуться к Success с текущими вакансиями
+     */
+    fun dismissPaginationError() {
+        val currentState = _state.value
+        if (currentState is SearchState.PaginationError) {
+            _state.value = SearchState.Success(
+                vacancies = currentState.currentVacancies,
+                found = currentState.found,
+                currentPage = currentState.currentPage,
+                totalPages = currentState.totalPages,
+                hasMorePages = currentState.currentPage < currentState.totalPages - 1
+            )
+        }
+    }
+
+    /**
      * Выполнить поиск вакансий
      */
     private suspend fun performSearch(page: Int) {
@@ -143,6 +163,10 @@ class SearchViewModel(
 
         val hasMorePages = page < totalPages - 1
 
+        // Сохраняем для использования в PaginationError
+        lastSuccessFound = found
+        lastSuccessTotalPages = totalPages
+
         _state.value = SearchState.Success(
             vacancies = allVacancies,
             found = found,
@@ -154,13 +178,33 @@ class SearchViewModel(
 
     private fun handleSearchFailure(exception: Throwable) {
         val message = exception.message ?: "Неизвестная ошибка"
+        val currentState = _state.value
 
-        _state.value = when {
-            isNoConnectionError(message) -> {
-                SearchState.NoConnection
+        // Проверяем была ли это ошибка при пагинации
+        if (currentState is SearchState.LoadingNextPage) {
+            // При ошибке пагинации сохраняем текущие вакансии
+            val errorType = if (isNoConnectionError(message)) {
+                SearchState.PaginationError.ErrorType.NO_CONNECTION
+            } else {
+                SearchState.PaginationError.ErrorType.SERVER_ERROR
             }
-            else -> {
-                SearchState.Error(message)
+
+            _state.value = SearchState.PaginationError(
+                currentVacancies = currentState.currentVacancies,
+                currentPage = currentState.currentPage,
+                found = lastSuccessFound,
+                totalPages = lastSuccessTotalPages,
+                errorType = errorType
+            )
+        } else {
+            // При ошибке первичного поиска показываем полноэкранный плейсхолдер
+            _state.value = when {
+                isNoConnectionError(message) -> {
+                    SearchState.NoConnection
+                }
+                else -> {
+                    SearchState.Error(message)
+                }
             }
         }
     }

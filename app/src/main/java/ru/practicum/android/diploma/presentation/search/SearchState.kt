@@ -56,4 +56,17 @@ sealed interface SearchState {
     data class Error(
         val message: String
     ) : SearchState
+
+    data class PaginationError(
+        val currentVacancies: List<VacancyUi>,
+        val currentPage: Int,
+        val found: Int,
+        val totalPages: Int,
+        val errorType: ErrorType
+    ) : SearchState {
+        enum class ErrorType {
+            NO_CONNECTION,
+            SERVER_ERROR
+        }
+    }
 }

@@ -37,6 +37,7 @@ fun SearchScreenRoute(
         onVacancyClick = { vacancy ->
             onVacancyClick(vacancy.id)
         },
-        onLoadNextPage = viewModel::loadNextPage // Добавляем пагинацию!
+        onLoadNextPage = viewModel::loadNextPage,
+        onDismissPaginationError = viewModel::dismissPaginationError
     )
 }
