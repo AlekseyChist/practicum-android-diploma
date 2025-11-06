@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.presentation.filters
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -8,6 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.domain.api.ClearFilterSettingsUseCase
 import ru.practicum.android.diploma.domain.api.GetFilterSettingsUseCase
+import ru.practicum.android.diploma.domain.api.GetIndustriesUseCase
 import ru.practicum.android.diploma.domain.api.SaveFilterSettingsUseCase
 import ru.practicum.android.diploma.domain.models.FilterSettings
 import ru.practicum.android.diploma.domain.models.Industry
@@ -19,7 +21,8 @@ import ru.practicum.android.diploma.domain.models.Industry
 class FiltersSettingsViewModel(
     private val saveFilterSettings: SaveFilterSettingsUseCase,
     private val getFilterSettings: GetFilterSettingsUseCase,
-    private val clearFilterSettings: ClearFilterSettingsUseCase
+    private val clearFilterSettings: ClearFilterSettingsUseCase,
+    private val getIndustries: GetIndustriesUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<FiltersSettingsState>(FiltersSettingsState.Initial)
@@ -29,6 +32,7 @@ class FiltersSettingsViewModel(
     private var currentSalary: String = ""
     private var currentOnlyWithSalary: Boolean = false
     private var currentIndustry: Industry? = null
+    private var allIndustries: List<Industry> = emptyList()
 
     init {
         loadSavedSettings()
@@ -80,9 +84,20 @@ class FiltersSettingsViewModel(
      * Установить выбранную отрасль
      * Вызывается после выбора на экране списка отраслей
      */
-    fun setSelectedIndustry(industry: Industry?) {
-        currentIndustry = industry
-        updateState()
+    fun setSelectedIndustry(industryId: Int) {
+        viewModelScope.launch {
+            getIndustries.execute()
+                .onSuccess { industries ->
+                    allIndustries = industries
+                }
+                .onFailure { exception ->
+                    Log.d("LOG", exception.toString())
+                }
+            currentIndustry = allIndustries.firstOrNull { industry ->
+                industry.id == industryId
+            }
+            updateState()
+        }
     }
 
     /**

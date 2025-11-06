@@ -43,7 +43,7 @@ class IndustryViewModel(
         viewModelScope.launch {
             getIndustries.execute()
                 .onSuccess { industries ->
-                    allIndustries = industries
+                    allIndustries = industries.sortedBy { it.name.lowercase() }
                     selectedIndustry = preselectedIndustry
                     updateState()
                 }
