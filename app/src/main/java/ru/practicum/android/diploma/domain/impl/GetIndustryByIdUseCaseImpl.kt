@@ -6,7 +6,7 @@ import ru.practicum.android.diploma.domain.models.Industry
 
 class GetIndustryByIdUseCaseImpl(
     private val filtersRepository: FiltersRepository
-): GetIndustryByIdUseCase {
+) : GetIndustryByIdUseCase {
     override suspend fun execute(industryId: Int): Result<Industry> {
         return filtersRepository.getIndustryById(industryId)
     }
