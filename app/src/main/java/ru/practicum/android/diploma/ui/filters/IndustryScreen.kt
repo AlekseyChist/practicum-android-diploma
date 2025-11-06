@@ -1,6 +1,7 @@
 package ru.practicum.android.diploma.ui.filters
 
 import android.content.res.Configuration
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,9 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -25,6 +29,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,20 +51,28 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.domain.models.Industry
+import ru.practicum.android.diploma.presentation.filters.IndustryState
+import ru.practicum.android.diploma.ui.filters.mock.IndustryStateProvider
 import ru.practicum.android.diploma.ui.theme.AppTheme
 import ru.practicum.android.diploma.ui.theme.Dimens
 
 @Composable
 fun IndustryScreen(
+    state: IndustryState,
     query: String,
     onBackClick: () -> Unit,
     onQueryChange: (String) -> Unit,
@@ -127,10 +140,41 @@ fun IndustryScreen(
                 }
             )
             Spacer(Modifier.size(Dimens.padding_8))
-            ListElement(
-                text = stringResource(R.string.select_industry),
-                onRadioButtonClick = {}
-            )
+            when (state) {
+                is IndustryState.Content -> {
+                    IndustryList(
+                        state.industries,
+                        onClickIndustry = {}
+                    )
+                }
+
+                is IndustryState.Error -> {
+                    ErrorSection(
+                        idRes = R.drawable.server_not_responding_placeholder,
+                        message = stringResource(R.string.server_error)
+                    )
+                }
+
+                is IndustryState.Initial, IndustryState.Loading -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.primary,
+                            strokeWidth = 4.dp
+                        )
+                    }
+                }
+
+                is IndustryState.NoConnection -> {
+                    ErrorSection(
+                        idRes = R.drawable.no_internet_placeholder,
+                        message = stringResource(R.string.placeholder_no_internet)
+                    )
+                }
+            }
         }
     }
 }
@@ -234,7 +278,21 @@ private fun SearchIndustryField(
 }
 
 @Composable
-private fun ListElement(
+private fun IndustryList(
+    items: List<Industry>,
+    onClickIndustry: () -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        items(items, key = { it.id }) { item ->
+            IndustryListItem(text = item.name, onRadioButtonClick = onClickIndustry)
+        }
+    }
+}
+
+@Composable
+private fun IndustryListItem(
     text: String,
     onRadioButtonClick: () -> Unit
 ) {
@@ -273,11 +331,50 @@ private fun ListElement(
     }
 }
 
+@Composable
+fun ErrorSection(
+    idRes: Int,
+    message: String
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(Dimens.padding_16),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(idRes),
+                contentDescription = "Ошибка загрузки",
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(modifier = Modifier.height(Dimens.padding_16))
+
+            Text(
+                text = message,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .widthIn(max = 268.dp)
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
-fun IndustryScreenPreview() {
+fun IndustryScreenPreview(
+    @PreviewParameter(IndustryStateProvider::class) state: IndustryState
+) {
     AppTheme {
         IndustryScreen(
+            state = state,
             query = "",
             onBackClick = {},
             onQueryChange = {},
@@ -292,9 +389,12 @@ fun IndustryScreenPreview() {
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
-fun IndustryScreenDarkPreview() {
+fun IndustryScreenDarkPreview(
+    @PreviewParameter(IndustryStateProvider::class) state: IndustryState
+) {
     AppTheme {
         IndustryScreen(
+            state = state,
             query = "",
             onBackClick = {},
             onQueryChange = {},
