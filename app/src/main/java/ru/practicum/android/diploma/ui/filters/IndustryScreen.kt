@@ -44,7 +44,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -78,9 +77,9 @@ fun IndustryScreen(
     onQueryChange: (String) -> Unit,
     onClearClick: () -> Unit,
     onSearchClick: () -> Unit,
+    onClickIndustry: (Industry) -> Unit
 ) {
     var textState by remember(query) { mutableStateOf(query) }
-    var selectedIndex by remember { mutableIntStateOf(-1) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     Scaffold(
@@ -88,12 +87,17 @@ fun IndustryScreen(
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = remember { WindowInsets(0, 0, 0, 0) },
         bottomBar = {
-            if (selectedIndex != -1) {
+            if (state is IndustryState.Content && state.selectedIndustry != null) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.background)
-                        .padding(Dimens.padding_16)
+                        .background(Color.Transparent)
+                        .padding(
+                            start = Dimens.padding_16,
+                            end = Dimens.padding_16,
+                            bottom = WindowInsets.navigationBars.asPaddingValues()
+                                .calculateBottomPadding() + Dimens.padding_24
+                        )
                 ) {
                     Button(
                         onClick = {},
@@ -143,8 +147,11 @@ fun IndustryScreen(
             when (state) {
                 is IndustryState.Content -> {
                     IndustryList(
-                        state.industries,
-                        onClickIndustry = {}
+                        state.filteredIndustries,
+                        selectedIndustry = state.selectedIndustry,
+                        onClickIndustry = { industry ->
+                            onClickIndustry(industry)
+                        }
                     )
                 }
 
@@ -280,13 +287,18 @@ private fun SearchIndustryField(
 @Composable
 private fun IndustryList(
     items: List<Industry>,
-    onClickIndustry: () -> Unit
+    selectedIndustry: Industry?,
+    onClickIndustry: (Industry) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
         items(items, key = { it.id }) { item ->
-            IndustryListItem(text = item.name, onRadioButtonClick = onClickIndustry)
+            IndustryListItem(
+                text = item.name,
+                selected = selectedIndustry?.id == item.id,
+                onRadioButtonClick = { onClickIndustry(item) }
+            )
         }
     }
 }
@@ -294,6 +306,7 @@ private fun IndustryList(
 @Composable
 private fun IndustryListItem(
     text: String,
+    selected: Boolean,
     onRadioButtonClick: () -> Unit
 ) {
     Row(
@@ -318,7 +331,7 @@ private fun IndustryListItem(
         ) {
             RadioButton(
                 onClick = onRadioButtonClick,
-                selected = false,
+                selected = selected,
                 colors = RadioButtonDefaults.colors(
                     selectedColor = Color.Blue,
                     unselectedColor = Color.Blue,
@@ -379,7 +392,8 @@ fun IndustryScreenPreview(
             onBackClick = {},
             onQueryChange = {},
             onClearClick = {},
-            onSearchClick = {}
+            onSearchClick = {},
+            onClickIndustry = {}
         )
     }
 }
@@ -399,7 +413,8 @@ fun IndustryScreenDarkPreview(
             onBackClick = {},
             onQueryChange = {},
             onClearClick = {},
-            onSearchClick = {}
+            onSearchClick = {},
+            onClickIndustry = {}
         )
     }
 }
