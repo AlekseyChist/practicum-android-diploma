@@ -22,6 +22,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import ru.practicum.android.diploma.ui.theme.Blue
+import ru.practicum.android.diploma.ui.theme.Gray
+import ru.practicum.android.diploma.ui.theme.LightGray
 
 @Composable
 fun NumberInputScreen(viewModel: SalaryFilterFieldViewModel = viewModel()) {
@@ -64,11 +67,11 @@ fun NumberInputScreen(viewModel: SalaryFilterFieldViewModel = viewModel()) {
                 }
             },
             colors = TextFieldDefaults.colors(
-                focusedLabelColor = Color(0xFF3772E7),
-                unfocusedLabelColor = Color(0xFFAEAFB4),
-                cursorColor = Color(0xFF1976D2),
-                focusedContainerColor = Color(0xFFE6E8EB),
-                unfocusedContainerColor = Color(0xFFE6E8EB),
+                focusedLabelColor = Blue,
+                unfocusedLabelColor = Gray,
+                cursorColor = Blue,
+                focusedContainerColor = LightGray,
+                unfocusedContainerColor = LightGray
             ),
         )
     }
