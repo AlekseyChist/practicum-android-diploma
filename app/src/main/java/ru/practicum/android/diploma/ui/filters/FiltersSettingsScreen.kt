@@ -56,7 +56,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.ui.theme.AppTheme
 import ru.practicum.android.diploma.ui.theme.Dimens
@@ -125,7 +126,7 @@ fun FiltersSettingsScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            Spacer(modifier = Modifier.height(36.dp))
+            Spacer(modifier = Modifier.height(Dimens.padding_36))
 
             IndustryRow(
                 value = industryName,
@@ -133,7 +134,7 @@ fun FiltersSettingsScreen(
                 onClear = onClearIndustry,
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Dimens.padding_24))
 
             SalaryField(
                 value = salaryText,
@@ -148,7 +149,7 @@ fun FiltersSettingsScreen(
                     focus.clearFocus()
                 },
             )
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Dimens.padding_24))
 
             Row(
                 modifier = Modifier
@@ -164,7 +165,12 @@ fun FiltersSettingsScreen(
                 )
                 Checkbox(
                     checked = onlyWithSalary,
-                    onCheckedChange = onToggleOnlyWithSalary
+                    onCheckedChange = onToggleOnlyWithSalary,
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = MaterialTheme.colorScheme.primary,
+                        uncheckedColor = MaterialTheme.colorScheme.primary,
+                        checkmarkColor = MaterialTheme.colorScheme.onPrimary
+                    )
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
@@ -174,7 +180,7 @@ fun FiltersSettingsScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = Dimens.padding_16, vertical = Dimens.padding_16),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(Dimens.padding_8)
                 ) {
                     Button(
                         onClick = {
@@ -184,8 +190,8 @@ fun FiltersSettingsScreen(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(56.dp),
-                        shape = RoundedCornerShape(16.dp),
+                            .height(Dimens.padding_56),
+                        shape = RoundedCornerShape(Dimens.padding_16),
                     ) {
                         Text(
                             stringResource(R.string.filters_apply),
@@ -196,7 +202,7 @@ fun FiltersSettingsScreen(
                     TextButton(
                         onClick = onResetClick,
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp)
+                        shape = RoundedCornerShape(Dimens.padding_16)
                     ) {
                         Text(
                             text = stringResource(R.string.filters_reset),
@@ -222,7 +228,7 @@ private fun IndustryRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, end = 8.dp, top = 6.dp, bottom = 8.dp),
+                .padding(start = Dimens.padding_16, end = Dimens.padding_8, top = Dimens.padding_6, bottom = Dimens.padding_8),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
@@ -231,7 +237,7 @@ private fun IndustryRow(
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Black
                 )
-                Spacer(Modifier.height(1.dp))
+                Spacer(Modifier.height(Dimens.padding_1))
                 Text(
                     text = value!!,
                     style = MaterialTheme.typography.bodyLarge,
@@ -303,7 +309,7 @@ private fun SalaryField(
             color = labelColor,
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(start = 16.dp, top = 6.dp)
+                .padding(start = Dimens.padding_16, top = Dimens.padding_8)
         )
 
         BasicTextField(
@@ -318,9 +324,8 @@ private fun SalaryField(
             keyboardActions = KeyboardActions(onDone = { keyboard?.hide(); onDone() }),
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.CenterStart)
-                .padding(start = 16.dp, end = 48.dp)
-                .padding(top = 20.dp)
+                .align(Alignment.BottomStart)
+                .padding(start = Dimens.padding_16, end = Dimens.padding_16, bottom = Dimens.padding_8 )
                 .onFocusChanged { isFocused = it.isFocused },
             decorationBox = { innerTextField ->
                 Box {
