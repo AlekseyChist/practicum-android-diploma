@@ -11,11 +11,28 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.presentation.filters.FiltersSettingsViewModel
 import ru.practicum.android.diploma.ui.theme.AppTheme
 
 class FiltersSettingsFragment : Fragment() {
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+
+    private val viewModel: FiltersSettingsViewModel by viewModel()
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View? {
+        parentFragmentManager.setFragmentResultListener(
+            "selectIndustry",
+            viewLifecycleOwner,
+        ) { _, bundle ->
+            val selectedIndustryId = bundle.getInt("selectedIndustry")
+            viewModel.setSelectedIndustry(selectedIndustryId)
+        }
+
         return ComposeView(requireContext()).apply {
             setContent {
                 AppTheme {
@@ -32,7 +49,7 @@ class FiltersSettingsFragment : Fragment() {
                         onToggleOnlyWithSalary = { onlyWith = it },
                         onIndustryClick = {
                             findNavController().navigate(
-                                R.id.action_filtersSettingsFragment_to_industryFragment
+                                R.id.action_filtersSettingsFragment_to_industryFragment,
                             )
                         },
                         onClearIndustry = { industry = null },
