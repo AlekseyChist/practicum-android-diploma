@@ -25,9 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun NumberInputScreen(viewModel: SalaryFilterFieldViewModel = viewModel()) {
-
     val value = viewModel.input
-
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(16.dp)
