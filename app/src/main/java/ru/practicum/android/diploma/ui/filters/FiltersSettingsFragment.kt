@@ -28,41 +28,51 @@ class FiltersSettingsFragment : Fragment() {
         parentFragmentManager.setFragmentResultListener(
             "selectIndustry",
             viewLifecycleOwner,
-        ) { _, bundle ->
-            val selectedIndustryId = bundle.getInt("selectedIndustry")
-            viewModel.setSelectedIndustry(selectedIndustryId)
-        }
+        private val viewModel: FiltersSettingsViewModel by viewModel()
 
-        return ComposeView(requireContext()).apply {
-            setContent {
-                AppTheme {
-                    var salary by remember { mutableStateOf("") }
-                    var onlyWith by remember { mutableStateOf(false) }
-                    var industry by remember { mutableStateOf<String?>(null) }
+        override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+        ): View? {
+            parentFragmentManager.setFragmentResultListener(
+                "selectIndustry",
+                viewLifecycleOwner
+            ) { _, bundle ->
+                val selectedIndustryId = bundle.getInt("selectedIndustry")
+                viewModel.setSelectedIndustry(selectedIndustryId)
+            }
 
-                    FiltersSettingsScreen(
-                        salaryText = salary,
-                        onlyWithSalary = onlyWith,
-                        industryName = industry,
-                        onSalaryChange = { salary = it },
-                        onClearSalary = { salary = "" },
-                        onToggleOnlyWithSalary = { onlyWith = it },
-                        onIndustryClick = {
-                            findNavController().navigate(
-                                R.id.action_filtersSettingsFragment_to_industryFragment,
-                            )
-                        },
-                        onClearIndustry = { industry = null },
-                        onApplyClick = { findNavController().popBackStack() },
-                        onResetClick = {
-                            salary = ""
-                            onlyWith = false
-                            industry = null
-                        },
-                        onBackClick = { findNavController().popBackStack() },
-                    )
+            return ComposeView(requireContext()).apply {
+                setContent {
+                    AppTheme {
+                        var salary by remember { mutableStateOf("") }
+                        var onlyWith by remember { mutableStateOf(false) }
+                        var industry by remember { mutableStateOf<String?>(null) }
+
+                        FiltersSettingsScreen(
+                            salaryText = salary,
+                            onlyWithSalary = onlyWith,
+                            industryName = industry,
+                            onSalaryChange = { salary = it },
+                            onClearSalary = { salary = "" },
+                            onToggleOnlyWithSalary = { onlyWith = it },
+                            onIndustryClick = {
+                                findNavController().navigate(
+                                    R.id.action_filtersSettingsFragment_to_industryFragment,
+                                )
+                            },
+                            onClearIndustry = { industry = null },
+                            onApplyClick = { findNavController().popBackStack() },
+                            onResetClick = {
+                                salary = ""
+                                onlyWith = false
+                                industry = null
+                            },
+                            onBackClick = { findNavController().popBackStack() },
+                        )
+                    }
                 }
             }
         }
     }
-}
