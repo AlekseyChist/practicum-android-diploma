@@ -23,12 +23,6 @@ class VacancyNetworkDataSource(
         }
     }
 
-    suspend fun getIndustryById(industryId: Int): NetworkResult<FilterIndustryDto> {
-        return networkClient.executeRequest {
-            api.getIndustryById(industryId = industryId)
-        }
-    }
-
     suspend fun searchVacancies(
         text: String? = null,
         area: Int? = null,

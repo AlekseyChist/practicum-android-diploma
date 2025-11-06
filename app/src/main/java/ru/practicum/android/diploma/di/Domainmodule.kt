@@ -8,7 +8,6 @@ import ru.practicum.android.diploma.domain.api.GetFavoriteVacanciesUseCase
 import ru.practicum.android.diploma.domain.api.GetFavoriteVacancyByIdUseCase
 import ru.practicum.android.diploma.domain.api.GetFilterSettingsUseCase
 import ru.practicum.android.diploma.domain.api.GetIndustriesUseCase
-import ru.practicum.android.diploma.domain.api.GetIndustryByIdUseCase
 import ru.practicum.android.diploma.domain.api.GetVacancyDetailsUseCase
 import ru.practicum.android.diploma.domain.api.RemoveVacancyFromFavoritesUseCase
 import ru.practicum.android.diploma.domain.api.SaveFilterSettingsUseCase
@@ -20,7 +19,6 @@ import ru.practicum.android.diploma.domain.impl.GetFavoriteVacanciesUseCaseImpl
 import ru.practicum.android.diploma.domain.impl.GetFavoriteVacancyByIdUseCaseImpl
 import ru.practicum.android.diploma.domain.impl.GetFilterSettingsUseCaseImpl
 import ru.practicum.android.diploma.domain.impl.GetIndustriesUseCaseImpl
-import ru.practicum.android.diploma.domain.impl.GetIndustryByIdUseCaseImpl
 import ru.practicum.android.diploma.domain.impl.GetVacancyDetailsUseCaseImpl
 import ru.practicum.android.diploma.domain.impl.RemoveVacancyFromFavoritesUseCaseImpl
 import ru.practicum.android.diploma.domain.impl.SaveFilterSettingsUseCaseImpl
@@ -94,11 +92,6 @@ val domainModule = module {
     single<ClearFilterSettingsUseCase> {
         ClearFilterSettingsUseCaseImpl(
             filterSettingsRepository = get()
-        )
-    }
-    single<GetIndustryByIdUseCase> {
-        GetIndustryByIdUseCaseImpl(
-            filtersRepository = get()
         )
     }
 }

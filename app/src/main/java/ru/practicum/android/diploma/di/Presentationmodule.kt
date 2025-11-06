@@ -46,7 +46,7 @@ val presentationModule = module {
             saveFilterSettings = get(),
             getFilterSettings = get(),
             clearFilterSettings = get(),
-            getIndustryById = get(),
+            getIndustries = get()
         )
     }
 

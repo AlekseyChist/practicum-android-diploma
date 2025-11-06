@@ -20,10 +20,4 @@ interface FiltersRepository {
      * @return Result со списком индустрий или ошибка
      */
     suspend fun getIndustries(): Result<List<Industry>>
-
-    /**
-     * Получить индустрию(отрасль)
-     * @return Result со элементом индустрии или ошибка
-     */
-    suspend fun getIndustryById(industryId: Int): Result<Industry>
 }
