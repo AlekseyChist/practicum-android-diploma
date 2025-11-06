@@ -154,7 +154,8 @@ fun FiltersSettingsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = Dimens.padding_16,
-                        vertical = Dimens.padding_8),
+                        vertical = Dimens.padding_8
+                    ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -180,7 +181,8 @@ fun FiltersSettingsScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = Dimens.padding_16,
-                            vertical = Dimens.padding_16),
+                            vertical = Dimens.padding_16
+                        ),
                     verticalArrangement = Arrangement.spacedBy(Dimens.padding_8)
                 ) {
                     Button(
@@ -232,7 +234,8 @@ private fun IndustryRow(
                 .padding(start = Dimens.padding_16,
                     end = Dimens.padding_8,
                     top = Dimens.padding_6,
-                    bottom = Dimens.padding_8),
+                    bottom = Dimens.padding_8
+                ),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
@@ -264,7 +267,8 @@ private fun IndustryRow(
                 .fillMaxWidth()
                 .clickable(onClick = onClick)
                 .padding(horizontal = Dimens.padding_16,
-                    vertical = Dimens.padding_8),
+                    vertical = Dimens.padding_8
+                ),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -295,7 +299,9 @@ private fun SalaryField(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = Dimens.padding_16, vertical = Dimens.padding_8)
+            .padding(horizontal = Dimens.padding_16,
+                vertical = Dimens.padding_8
+            )
             .height(Dimens.dp_56)
             .background(
                 color = colorResource(R.color.light_gray),
@@ -314,7 +320,9 @@ private fun SalaryField(
             color = labelColor,
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(start = Dimens.padding_16, top = Dimens.padding_8)
+                .padding(start = Dimens.padding_16,
+                    top = Dimens.padding_8
+                )
         )
 
         BasicTextField(
@@ -332,7 +340,8 @@ private fun SalaryField(
                 .align(Alignment.BottomStart)
                 .padding(start = Dimens.padding_16,
                     end = Dimens.padding_16,
-                    bottom = Dimens.padding_8 )
+                    bottom = Dimens.padding_8
+                )
                 .onFocusChanged { isFocused = it.isFocused },
             decorationBox = { innerTextField ->
                 Box {
