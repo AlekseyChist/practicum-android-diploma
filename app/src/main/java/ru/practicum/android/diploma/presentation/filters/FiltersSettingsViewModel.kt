@@ -89,13 +89,14 @@ class FiltersSettingsViewModel(
             getIndustries.execute()
                 .onSuccess { industries ->
                     allIndustries = industries
-                    currentIndustry = allIndustries.firstOrNull { it.id == industryId }
-                    updateState()
-                    Log.d("LOG", currentIndustry.toString())
                 }
                 .onFailure { exception ->
                     Log.d("LOG", exception.toString())
                 }
+            currentIndustry = allIndustries.firstOrNull { industry ->
+                industry.id == industryId
+            }
+            updateState()
         }
     }
 

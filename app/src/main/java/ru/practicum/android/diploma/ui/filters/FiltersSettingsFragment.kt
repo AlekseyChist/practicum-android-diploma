@@ -1,7 +1,6 @@
 package ru.practicum.android.diploma.ui.filters
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +24,6 @@ class FiltersSettingsFragment : Fragment() {
             viewLifecycleOwner
         ) { _, bundle ->
             val selectedIndustryId = bundle.getInt("selectedIndustry")
-            Log.d("LOG", selectedIndustryId.toString())
             viewModel.setSelectedIndustry(selectedIndustryId)
         }
         return ComposeView(requireContext()).apply {
