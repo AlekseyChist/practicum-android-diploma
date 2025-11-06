@@ -56,7 +56,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.ui.theme.AppTheme
@@ -154,7 +153,8 @@ fun FiltersSettingsScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = Dimens.padding_16, vertical = Dimens.padding_8),
+                    .padding(horizontal = Dimens.padding_16,
+                        vertical = Dimens.padding_8),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -179,7 +179,8 @@ fun FiltersSettingsScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = Dimens.padding_16, vertical = Dimens.padding_16),
+                        .padding(horizontal = Dimens.padding_16,
+                            vertical = Dimens.padding_16),
                     verticalArrangement = Arrangement.spacedBy(Dimens.padding_8)
                 ) {
                     Button(
@@ -228,7 +229,10 @@ private fun IndustryRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = Dimens.padding_16, end = Dimens.padding_8, top = Dimens.padding_6, bottom = Dimens.padding_8),
+                .padding(start = Dimens.padding_16,
+                    end = Dimens.padding_8,
+                    top = Dimens.padding_6,
+                    bottom = Dimens.padding_8),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
@@ -259,7 +263,8 @@ private fun IndustryRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable(onClick = onClick)
-                .padding(horizontal = Dimens.padding_16, vertical = Dimens.padding_8),
+                .padding(horizontal = Dimens.padding_16,
+                    vertical = Dimens.padding_8),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -325,7 +330,9 @@ private fun SalaryField(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomStart)
-                .padding(start = Dimens.padding_16, end = Dimens.padding_16, bottom = Dimens.padding_8 )
+                .padding(start = Dimens.padding_16,
+                    end = Dimens.padding_16,
+                    bottom = Dimens.padding_8 )
                 .onFocusChanged { isFocused = it.isFocused },
             decorationBox = { innerTextField ->
                 Box {

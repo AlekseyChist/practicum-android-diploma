@@ -25,7 +25,6 @@ object Dimens {
     val size_27 = 27.dp
     val size_48 = 48.dp
 
-
     val size_184 = 184.dp
     val size_328 = 328.dp
     val size_60 = 60.dp
