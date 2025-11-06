@@ -153,7 +153,8 @@ fun FiltersSettingsScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = Dimens.padding_16,
+                    .padding(
+                        horizontal = Dimens.padding_16,
                         vertical = Dimens.padding_8
                     ),
                 verticalAlignment = Alignment.CenterVertically
@@ -180,7 +181,8 @@ fun FiltersSettingsScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = Dimens.padding_16,
+                        .padding(
+                            horizontal = Dimens.padding_16,
                             vertical = Dimens.padding_16
                         ),
                     verticalArrangement = Arrangement.spacedBy(Dimens.padding_8)
@@ -231,7 +233,8 @@ private fun IndustryRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = Dimens.padding_16,
+                .padding(
+                    start = Dimens.padding_16,
                     end = Dimens.padding_8,
                     top = Dimens.padding_6,
                     bottom = Dimens.padding_8
@@ -266,7 +269,8 @@ private fun IndustryRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable(onClick = onClick)
-                .padding(horizontal = Dimens.padding_16,
+                .padding(
+                    horizontal = Dimens.padding_16,
                     vertical = Dimens.padding_8
                 ),
             verticalAlignment = Alignment.CenterVertically
@@ -299,7 +303,8 @@ private fun SalaryField(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = Dimens.padding_16,
+            .padding(
+                horizontal = Dimens.padding_16,
                 vertical = Dimens.padding_8
             )
             .height(Dimens.dp_56)
@@ -320,7 +325,8 @@ private fun SalaryField(
             color = labelColor,
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(start = Dimens.padding_16,
+                .padding(
+                    start = Dimens.padding_16,
                     top = Dimens.padding_8
                 )
         )
@@ -338,7 +344,8 @@ private fun SalaryField(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomStart)
-                .padding(start = Dimens.padding_16,
+                .padding(
+                    start = Dimens.padding_16,
                     end = Dimens.padding_16,
                     bottom = Dimens.padding_8
                 )
