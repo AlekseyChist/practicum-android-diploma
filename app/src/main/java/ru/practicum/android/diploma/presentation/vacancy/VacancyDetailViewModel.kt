@@ -30,6 +30,7 @@ class VacancyDetailViewModel(
     val state: StateFlow<VacancyDetailState> = _state.asStateFlow()
 
     private var currentVacancy: Vacancy? = null
+
     /**
      * Загрузить детальную информацию о вакансии
      */
