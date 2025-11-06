@@ -45,6 +45,21 @@ class FiltersRepositoryImpl(
         }
     }
 
+    override suspend fun getIndustryById(industryId: Int): Result<Industry> {
+        return when (val result = networkDataSource.getIndustryById(industryId)) {
+            is NetworkResult.Success -> {
+                val industry = FilterDtoMapper.mapIndustryToDomain(result.data)
+                Result.success(industry)
+            }
+            is NetworkResult.Error -> {
+                Result.failure(Exception("Ошибка сервера: ${result.code}"))
+            }
+            is NetworkResult.NoConnection -> {
+                Result.failure(Exception(NO_CONNECTION_MESSAGE))
+            }
+        }
+    }
+
     companion object {
         private const val NO_CONNECTION_MESSAGE = "Нет подключения к интернету"
     }

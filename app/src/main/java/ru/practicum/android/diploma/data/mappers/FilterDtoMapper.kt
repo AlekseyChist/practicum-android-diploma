@@ -76,7 +76,7 @@ object FilterDtoMapper {
     /**
      * Преобразует одну индустрию из DTO
      */
-    private fun mapIndustryToDomain(dto: FilterIndustryDto): Industry {
+    fun mapIndustryToDomain(dto: FilterIndustryDto): Industry {
         return Industry(
             id = dto.id,
             name = dto.name

@@ -77,7 +77,8 @@ fun IndustryScreen(
     onQueryChange: (String) -> Unit,
     onClearClick: () -> Unit,
     onSearchClick: () -> Unit,
-    onClickIndustry: (Industry) -> Unit
+    onClickIndustry: (Industry) -> Unit,
+    onSelectIndustry: (Int) -> Unit
 ) {
     var textState by remember(query) { mutableStateOf(query) }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -100,7 +101,9 @@ fun IndustryScreen(
                         )
                 ) {
                     Button(
-                        onClick = {},
+                        onClick = {
+                            onSelectIndustry(state.selectedIndustry.id)
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(Dimens.size_60),
@@ -393,7 +396,8 @@ fun IndustryScreenPreview(
             onQueryChange = {},
             onClearClick = {},
             onSearchClick = {},
-            onClickIndustry = {}
+            onClickIndustry = {},
+            onSelectIndustry = {}
         )
     }
 }
@@ -414,7 +418,8 @@ fun IndustryScreenDarkPreview(
             onQueryChange = {},
             onClearClick = {},
             onSearchClick = {},
-            onClickIndustry = {}
+            onClickIndustry = {},
+            onSelectIndustry = {}
         )
     }
 }

@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.domain.api.ClearFilterSettingsUseCase
 import ru.practicum.android.diploma.domain.api.GetFilterSettingsUseCase
+import ru.practicum.android.diploma.domain.api.GetIndustryByIdUseCase
 import ru.practicum.android.diploma.domain.api.SaveFilterSettingsUseCase
 import ru.practicum.android.diploma.domain.models.FilterSettings
 import ru.practicum.android.diploma.domain.models.Industry
@@ -19,7 +20,8 @@ import ru.practicum.android.diploma.domain.models.Industry
 class FiltersSettingsViewModel(
     private val saveFilterSettings: SaveFilterSettingsUseCase,
     private val getFilterSettings: GetFilterSettingsUseCase,
-    private val clearFilterSettings: ClearFilterSettingsUseCase
+    private val clearFilterSettings: ClearFilterSettingsUseCase,
+    private val getIndustryById: GetIndustryByIdUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<FiltersSettingsState>(FiltersSettingsState.Initial)
@@ -80,9 +82,12 @@ class FiltersSettingsViewModel(
      * Установить выбранную отрасль
      * Вызывается после выбора на экране списка отраслей
      */
-    fun setSelectedIndustry(industry: Industry?) {
-        currentIndustry = industry
-        updateState()
+    fun setSelectedIndustry(industryId: Int) {
+        viewModelScope.launch {
+            val result: Result<Industry> = getIndustryById.execute(industryId)
+            currentIndustry = result.getOrNull()
+            updateState()
+        }
     }
 
     /**

@@ -17,6 +17,11 @@ interface VacancyApi {
     @GET("/industries")
     suspend fun getIndustries(): Response<List<FilterIndustryDto>>
 
+    @GET("/industries/{id}")
+    suspend fun getIndustryById(
+        @Path("id") industryId: Int
+    ): Response<FilterIndustryDto>
+
     @GET("/vacancies")
     suspend fun searchVacancies(
         @Query("text") text: String? = null,

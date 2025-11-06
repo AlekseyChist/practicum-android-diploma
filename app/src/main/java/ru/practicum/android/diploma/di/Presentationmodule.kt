@@ -45,7 +45,8 @@ val presentationModule = module {
         FiltersSettingsViewModel(
             saveFilterSettings = get(),
             getFilterSettings = get(),
-            clearFilterSettings = get()
+            clearFilterSettings = get(),
+            getIndustryById = get(),
         )
     }
 

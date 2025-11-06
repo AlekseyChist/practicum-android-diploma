@@ -44,6 +44,13 @@ class IndustryFragment : Fragment() {
                         },
                         onClickIndustry = { industry ->
                             viewModel.selectIndustry(industry)
+                        },
+                        onSelectIndustry = { selected ->
+                            parentFragmentManager.setFragmentResult(
+                                "selectIndustry",
+                                Bundle().apply { putInt("selectedIndustry", selected) }
+                            )
+                            requireActivity().onBackPressedDispatcher.onBackPressed()
                         }
                     )
                 }
