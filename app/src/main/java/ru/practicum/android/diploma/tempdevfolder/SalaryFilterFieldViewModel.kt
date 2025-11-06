@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.Collect
+package ru.practicum.android.diploma.tempdevfolder
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

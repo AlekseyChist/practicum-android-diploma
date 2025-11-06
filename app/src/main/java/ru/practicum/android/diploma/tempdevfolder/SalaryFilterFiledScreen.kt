@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.Collect
+package ru.practicum.android.diploma.tempdevfolder
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
