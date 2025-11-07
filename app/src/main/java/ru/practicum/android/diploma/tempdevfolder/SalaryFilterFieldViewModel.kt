@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
-open class SalaryFilterFieldViewModel : ViewModel() {
+class SalaryFilterFieldViewModel : ViewModel() {
 
     var input by mutableStateOf("")
         protected set
