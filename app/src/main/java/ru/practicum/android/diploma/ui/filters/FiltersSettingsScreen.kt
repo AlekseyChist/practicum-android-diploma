@@ -82,9 +82,9 @@ fun FiltersSettingsScreen(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = { TopBar(onBackClick) },
         bottomBar = {
-            if (state is FiltersSettingsState.Content &&
+            val hasActiveFilters = state is FiltersSettingsState.Content &&
                 (state.expectedSalary.isNotEmpty() || state.onlyWithSalary || state.selectedIndustry != null)
-            ) {
+            if (hasActiveFilters) {
                 ButtonBlock(
                     onResetClick = onResetClick,
                     onApplyClick = onApplyClick

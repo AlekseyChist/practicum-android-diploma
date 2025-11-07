@@ -50,7 +50,10 @@ class FiltersSettingsFragment : Fragment() {
                             )
                         },
                         onClearIndustry = { viewModel.clearIndustry() },
-                        onApplyClick = { viewModel.applyFilters() },
+                        onApplyClick = {
+                            viewModel.applyFilters()
+                            findNavController().popBackStack()
+                        },
                         onResetClick = { viewModel.resetFilters() },
                         onBackClick = { findNavController().popBackStack() },
                     )
