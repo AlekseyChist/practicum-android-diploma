@@ -101,6 +101,15 @@ class FiltersSettingsViewModel(
     }
 
     /**
+     * Удалить выбранную отрасль
+     * Вызывается после выбора на экране списка отраслей
+     */
+    fun clearIndustry() {
+        currentIndustry = null
+        updateState()
+    }
+
+    /**
      * Применить настройки фильтров
      * Сохраняем в SharedPreferences через UseCase
      */

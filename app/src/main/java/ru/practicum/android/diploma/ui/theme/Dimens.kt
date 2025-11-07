@@ -24,6 +24,7 @@ object Dimens {
     val icon_32 = 32.dp
     val size_27 = 27.dp
     val size_48 = 48.dp
+    val size_51 = 51.dp
 
     val size_184 = 184.dp
     val size_328 = 328.dp
