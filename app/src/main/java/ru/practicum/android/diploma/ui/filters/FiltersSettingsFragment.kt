@@ -5,11 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.fragment.findNavController
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
@@ -24,7 +22,7 @@ class FiltersSettingsFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         parentFragmentManager.setFragmentResultListener(
             "selectIndustry",
             viewLifecycleOwner,
@@ -35,30 +33,28 @@ class FiltersSettingsFragment : Fragment() {
 
         return ComposeView(requireContext()).apply {
             setContent {
+                val state by viewModel.state.collectAsStateWithLifecycle()
                 AppTheme {
-                    var salary by remember { mutableStateOf("") }
-                    var onlyWith by remember { mutableStateOf(false) }
-                    var industry by remember { mutableStateOf<String?>(null) }
-
                     FiltersSettingsScreen(
-                        salaryText = salary,
-                        onlyWithSalary = onlyWith,
-                        industryName = industry,
-                        onSalaryChange = { salary = it },
-                        onClearSalary = { salary = "" },
-                        onToggleOnlyWithSalary = { onlyWith = it },
+                        state = state,
+                        onSalaryChange = { salary ->
+                            viewModel.onSalaryChanged(salary)
+                        },
+                        onClearSalary = { viewModel.clearSalary() },
+                        onToggleOnlyWithSalary = { isEnabled ->
+                            viewModel.onOnlyWithSalaryChanged(isEnabled)
+                        },
                         onIndustryClick = {
                             findNavController().navigate(
                                 R.id.action_filtersSettingsFragment_to_industryFragment,
                             )
                         },
-                        onClearIndustry = { industry = null },
-                        onApplyClick = { findNavController().popBackStack() },
-                        onResetClick = {
-                            salary = ""
-                            onlyWith = false
-                            industry = null
+                        onClearIndustry = { viewModel.clearIndustry() },
+                        onApplyClick = {
+                            viewModel.applyFilters()
+                            findNavController().popBackStack()
                         },
+                        onResetClick = { viewModel.resetFilters() },
                         onBackClick = { findNavController().popBackStack() },
                     )
                 }
