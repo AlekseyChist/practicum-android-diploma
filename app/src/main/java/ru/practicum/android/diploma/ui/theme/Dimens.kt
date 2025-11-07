@@ -10,12 +10,17 @@ object Dimens {
     val padding_0 = 0.dp
     val padding_1 = 1.dp
     val padding_4 = 4.dp
+    val padding_6 = 6.dp
     val padding_8 = 8.dp
     val padding_12 = 12.dp
     val padding_16 = 16.dp
+    val padding_20 = 20.dp
     val padding_24 = 24.dp
     val padding_32 = 32.dp
     val padding_35 = 35.dp
+    val padding_36 = 36.dp
+    val padding_48 = 48.dp
+    val padding_56 = 56.dp
     val icon_32 = 32.dp
     val size_27 = 27.dp
     val size_48 = 48.dp

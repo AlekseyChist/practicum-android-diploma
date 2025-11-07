@@ -43,4 +43,12 @@
         <item quantity="many">Найдено %d вакансий</item>
         <item quantity="other">Найдено %d вакансий</item>
     </plurals>
+    <string name="filters_settings_title">Настройки фильтрации</string>
+    <string name="filters_salary_hint">Введите сумму</string>
+    <string name="filters_no_salary_checkbox">Не показывать без зарплаты</string>
+    <string name="filters_industry_title">Отрасль</string>
+    <string name="filters_value_empty">Не выбрано</string>
+    <string name="filters_apply">Применить</string>
+    <string name="filters_reset">Сбросить</string>
+    <string name="filters_salary_placeholder">Ожидаемая зарплата</string>
 </resources>
