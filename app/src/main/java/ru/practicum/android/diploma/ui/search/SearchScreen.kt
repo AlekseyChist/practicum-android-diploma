@@ -57,10 +57,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -97,19 +99,11 @@ fun SearchScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-    LaunchedEffect(state) {
-        when (state) {
-            is SearchState.Success,
-            is SearchState.EmptyResult,
-            is SearchState.Loading,
-            is SearchState.NoConnection,
-            is SearchState.Error -> {
-                keyboardController?.hide()
-                focusManager.clearFocus()
-            }
-            else -> Unit
-        }
-    }
+    HandleFocusOnStateChange(
+        state = state,
+        keyboardController = keyboardController,
+        focusManager = focusManager
+    )
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
@@ -186,84 +180,42 @@ fun SearchScreen(
                     }
                     val listState = rememberLazyListState()
 
-                    when (state) {
-                        SearchState.Initial -> {
-                            Placeholder(imageRes = R.drawable.search_placeholder_euy, text = "")
-                        }
-
-                        SearchState.Loading -> LoadingPlaceholder()
-
-                        is SearchState.Success -> {
-                            VacancyList(
-                                items = state.vacancies,
-                                onItemClick = onVacancyClick,
-                                onLoadMore = onLoadNextPage,
-                                hasMorePages = state.hasMorePages,
-                                count = initialCount.intValue,
-                                listState = listState
-                            )
-                        }
-
-                        is SearchState.LoadingNextPage -> {
-                            VacancyList(
-                                items = state.currentVacancies,
-                                onItemClick = onVacancyClick,
-                                onLoadMore = onLoadNextPage,
-                                hasMorePages = true,
-                                isLoadingMore = true,
-                                count = initialCount.intValue,
-                                listState = listState
-                            )
-                        }
-
-                        is SearchState.PaginationError -> {
-                            VacancyList(
-                                items = state.currentVacancies,
-                                onItemClick = onVacancyClick,
-                                onLoadMore = onLoadNextPage,
-                                hasMorePages = state.currentPage < state.totalPages - 1,
-                                count = initialCount.intValue,
-                                listState = listState
-                            )
-                        }
-
-                        is SearchState.EmptyResult -> {
-                            Placeholder(
-                                imageRes = R.drawable.no_vacanc_placeholder,
-                                text = stringResource(R.string.placeholder_nothing_found)
-                            )
-                        }
-
-                        SearchState.NoConnection -> {
-                            Placeholder(
-                                imageRes = R.drawable.no_internet_placeholder,
-                                text = stringResource(R.string.placeholder_no_internet)
-                            )
-                        }
-
-                        is SearchState.Error -> {
-                            Placeholder(
-                                imageRes = R.drawable.server_not_responding_placeholder,
-                                text = stringResource(R.string.placeholder_error)
-                            )
-                        }
-                    }
+                    SearchContent(
+                        state = state,
+                        onVacancyClick = onVacancyClick,
+                        onLoadNextPage = onLoadNextPage,
+                        listState = listState,
+                        initialCount = initialCount.intValue
+                    )
                 }
             }
         }
 
-        if (state is SearchState.PaginationError) {
-            val message = when (state.errorType) {
-                SearchState.PaginationError.ErrorType.NO_CONNECTION ->
-                    stringResource(R.string.toast_check_internet)
-                SearchState.PaginationError.ErrorType.SERVER_ERROR ->
-                    stringResource(R.string.toast_error_occurred)
+        PaginatorErrorToast(
+            state = state,
+            onDismiss = onDismissPaginationError
+        )
+    }
+}
+
+@Composable
+private fun HandleFocusOnStateChange(
+    state: SearchState,
+    keyboardController: SoftwareKeyboardController?,
+    focusManager: FocusManager
+) {
+    LaunchedEffect(state) {
+        when (state) {
+            is SearchState.Success,
+            is SearchState.EmptyResult,
+            is SearchState.Loading,
+            is SearchState.NoConnection,
+            is SearchState.Error -> {
+                keyboardController?.hide()
+                focusManager.clearFocus()
             }
 
-            CustomToast(
-                message = message,
-                onDismiss = onDismissPaginationError
-            )
+            else -> Unit
         }
     }
 }
@@ -329,6 +281,78 @@ private fun SearchField(
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         keyboardActions = KeyboardActions(onSearch = { onSubmit() })
     )
+}
+
+@Composable
+private fun SearchContent(
+    state: SearchState,
+    onVacancyClick: (VacancyUi) -> Unit,
+    onLoadNextPage: () -> Unit,
+    listState: LazyListState,
+    initialCount: Int
+) {
+    when (state) {
+        SearchState.Initial -> {
+            Placeholder(imageRes = R.drawable.search_placeholder_euy, text = "")
+        }
+
+        SearchState.Loading -> LoadingPlaceholder()
+
+        is SearchState.Success -> {
+            VacancyList(
+                items = state.vacancies,
+                onItemClick = onVacancyClick,
+                onLoadMore = onLoadNextPage,
+                hasMorePages = state.hasMorePages,
+                count = initialCount,
+                listState = listState
+            )
+        }
+
+        is SearchState.LoadingNextPage -> {
+            VacancyList(
+                items = state.currentVacancies,
+                onItemClick = onVacancyClick,
+                onLoadMore = onLoadNextPage,
+                hasMorePages = true,
+                isLoadingMore = true,
+                count = initialCount,
+                listState = listState
+            )
+        }
+
+        is SearchState.PaginationError -> {
+            VacancyList(
+                items = state.currentVacancies,
+                onItemClick = onVacancyClick,
+                onLoadMore = onLoadNextPage,
+                hasMorePages = state.currentPage < state.totalPages - 1,
+                count = initialCount,
+                listState = listState
+            )
+        }
+
+        is SearchState.EmptyResult -> {
+            Placeholder(
+                imageRes = R.drawable.no_vacanc_placeholder,
+                text = stringResource(R.string.placeholder_nothing_found)
+            )
+        }
+
+        SearchState.NoConnection -> {
+            Placeholder(
+                imageRes = R.drawable.no_internet_placeholder,
+                text = stringResource(R.string.placeholder_no_internet)
+            )
+        }
+
+        is SearchState.Error -> {
+            Placeholder(
+                imageRes = R.drawable.server_not_responding_placeholder,
+                text = stringResource(R.string.placeholder_error)
+            )
+        }
+    }
 }
 
 @Composable
@@ -520,6 +544,27 @@ private fun CustomToast(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun PaginatorErrorToast(
+    state: SearchState,
+    onDismiss: () -> Unit
+) {
+    if (state is SearchState.PaginationError) {
+        val message = when (state.errorType) {
+            SearchState.PaginationError.ErrorType.NO_CONNECTION ->
+                stringResource(R.string.toast_check_internet)
+
+            SearchState.PaginationError.ErrorType.SERVER_ERROR ->
+                stringResource(R.string.toast_error_occurred)
+        }
+
+        CustomToast(
+            message = message,
+            onDismiss = onDismiss
+        )
     }
 }
 

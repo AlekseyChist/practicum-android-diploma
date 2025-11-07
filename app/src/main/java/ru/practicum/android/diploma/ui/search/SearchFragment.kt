@@ -26,7 +26,7 @@ class SearchFragment : Fragment() {
                             )
                         },
                         onVacancyClick = { vacancyId ->
-                            // Передаем vacancyId в Bundle для VacancyFragment
+                            // Передаем  vacancyId в Bundle для VacancyFragment
                             val bundle = Bundle().apply {
                                 putString("vacancyId", vacancyId)
                             }

@@ -1,6 +1,7 @@
 package ru.practicum.android.diploma.ui.filters
 
 import android.content.res.Configuration
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,9 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -25,6 +29,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -39,35 +44,43 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.domain.models.Industry
+import ru.practicum.android.diploma.presentation.filters.IndustryState
+import ru.practicum.android.diploma.ui.filters.mock.IndustryStateProvider
 import ru.practicum.android.diploma.ui.theme.AppTheme
 import ru.practicum.android.diploma.ui.theme.Dimens
 
 @Composable
 fun IndustryScreen(
+    state: IndustryState,
     query: String,
     onBackClick: () -> Unit,
     onQueryChange: (String) -> Unit,
     onClearClick: () -> Unit,
     onSearchClick: () -> Unit,
+    onClickIndustry: (Industry) -> Unit,
+    onSelectIndustry: (Int) -> Unit
 ) {
     var textState by remember(query) { mutableStateOf(query) }
-    var selectedIndex by remember { mutableIntStateOf(-1) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     Scaffold(
@@ -75,15 +88,22 @@ fun IndustryScreen(
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = remember { WindowInsets(0, 0, 0, 0) },
         bottomBar = {
-            if (selectedIndex != -1) {
+            if (state is IndustryState.Content && state.selectedIndustry != null) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.background)
-                        .padding(Dimens.padding_16)
+                        .background(Color.Transparent)
+                        .padding(
+                            start = Dimens.padding_16,
+                            end = Dimens.padding_16,
+                            bottom = WindowInsets.navigationBars.asPaddingValues()
+                                .calculateBottomPadding() + Dimens.padding_24
+                        )
                 ) {
                     Button(
-                        onClick = {},
+                        onClick = {
+                            onSelectIndustry(state.selectedIndustry.id)
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(Dimens.size_60),
@@ -127,10 +147,44 @@ fun IndustryScreen(
                 }
             )
             Spacer(Modifier.size(Dimens.padding_8))
-            ListElement(
-                text = stringResource(R.string.select_industry),
-                onRadioButtonClick = {}
-            )
+            when (state) {
+                is IndustryState.Content -> {
+                    IndustryList(
+                        state.filteredIndustries,
+                        selectedIndustry = state.selectedIndustry,
+                        onClickIndustry = { industry ->
+                            onClickIndustry(industry)
+                        }
+                    )
+                }
+
+                is IndustryState.Error -> {
+                    ErrorSection(
+                        idRes = R.drawable.server_not_responding_placeholder,
+                        message = stringResource(R.string.server_error)
+                    )
+                }
+
+                is IndustryState.Initial, IndustryState.Loading -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.primary,
+                            strokeWidth = 4.dp
+                        )
+                    }
+                }
+
+                is IndustryState.NoConnection -> {
+                    ErrorSection(
+                        idRes = R.drawable.no_internet_placeholder,
+                        message = stringResource(R.string.placeholder_no_internet)
+                    )
+                }
+            }
         }
     }
 }
@@ -234,8 +288,28 @@ private fun SearchIndustryField(
 }
 
 @Composable
-private fun ListElement(
+private fun IndustryList(
+    items: List<Industry>,
+    selectedIndustry: Industry?,
+    onClickIndustry: (Industry) -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        items(items, key = { it.id }) { item ->
+            IndustryListItem(
+                text = item.name,
+                selected = selectedIndustry?.id == item.id,
+                onRadioButtonClick = { onClickIndustry(item) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun IndustryListItem(
     text: String,
+    selected: Boolean,
     onRadioButtonClick: () -> Unit
 ) {
     Row(
@@ -260,7 +334,7 @@ private fun ListElement(
         ) {
             RadioButton(
                 onClick = onRadioButtonClick,
-                selected = false,
+                selected = selected,
                 colors = RadioButtonDefaults.colors(
                     selectedColor = Color.Blue,
                     unselectedColor = Color.Blue,
@@ -273,16 +347,57 @@ private fun ListElement(
     }
 }
 
+@Composable
+fun ErrorSection(
+    idRes: Int,
+    message: String
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(Dimens.padding_16),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(idRes),
+                contentDescription = "Ошибка загрузки",
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(modifier = Modifier.height(Dimens.padding_16))
+
+            Text(
+                text = message,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .widthIn(max = 268.dp)
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
-fun IndustryScreenPreview() {
+fun IndustryScreenPreview(
+    @PreviewParameter(IndustryStateProvider::class) state: IndustryState
+) {
     AppTheme {
         IndustryScreen(
+            state = state,
             query = "",
             onBackClick = {},
             onQueryChange = {},
             onClearClick = {},
-            onSearchClick = {}
+            onSearchClick = {},
+            onClickIndustry = {},
+            onSelectIndustry = {}
         )
     }
 }
@@ -292,14 +407,19 @@ fun IndustryScreenPreview() {
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
-fun IndustryScreenDarkPreview() {
+fun IndustryScreenDarkPreview(
+    @PreviewParameter(IndustryStateProvider::class) state: IndustryState
+) {
     AppTheme {
         IndustryScreen(
+            state = state,
             query = "",
             onBackClick = {},
             onQueryChange = {},
             onClearClick = {},
-            onSearchClick = {}
+            onSearchClick = {},
+            onClickIndustry = {},
+            onSelectIndustry = {}
         )
     }
 }
