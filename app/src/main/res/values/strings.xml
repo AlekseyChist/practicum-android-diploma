@@ -43,4 +43,9 @@
         <item quantity="many">Найдено %d вакансий</item>
         <item quantity="other">Найдено %d вакансий</item>
     </plurals>
+
+    <string name="expected_salary">Ожидаемая зарплата</string>
+    <string name="enter_amount">Введите сумму</string>
+    <string name="clear_field">Очистить</string>
+
 </resources>

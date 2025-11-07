@@ -1,11 +1,8 @@
-package ru.practicum.android.diploma.tempdevfolder
+package ru.practicum.android.diploma.presentation.search
 
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 
 class SalaryFilterFieldViewModel : ViewModel() {
