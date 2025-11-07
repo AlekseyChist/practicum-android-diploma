@@ -79,12 +79,6 @@ fun SalaryFilterField(viewModel: SalaryFilterFieldViewModel = viewModel()) {
 @Composable
 fun SalaryFilterFieldPreview() {
     MaterialTheme {
-        SalaryFilterField(
-            viewModel = object : SalaryFilterFieldViewModel() {
-                init {
-                    input = "1234"
-                }
-            }
-        )
+        SalaryFilterField()
     }
 }
