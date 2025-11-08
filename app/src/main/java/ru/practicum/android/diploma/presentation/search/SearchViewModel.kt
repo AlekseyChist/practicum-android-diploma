@@ -9,16 +9,20 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.data.dto.requests.VacancySearchRequest
+import ru.practicum.android.diploma.domain.api.GetFilterSettingsUseCase
 import ru.practicum.android.diploma.domain.api.SearchVacanciesUseCase
 import ru.practicum.android.diploma.domain.models.VacancyUi
+import ru.practicum.android.diploma.domain.models.toApiParams
 import ru.practicum.android.diploma.presentation.mappers.VacancyUiMapper
 
 /**
  * ViewModel для экрана поиска вакансий
  * Использует VacancyUiMapper для преобразования Domain → UI моделей
+ * Автоматически применяет фильтры из SharedPreferences к каждому поиску
  */
 class SearchViewModel(
-    private val searchVacanciesUseCase: SearchVacanciesUseCase
+    private val searchVacanciesUseCase: SearchVacanciesUseCase,
+    private val getFilterSettingsUseCase: GetFilterSettingsUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<SearchState>(SearchState.Initial)
@@ -30,31 +34,82 @@ class SearchViewModel(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
+    // Флаг для отслеживания, есть ли активные фильтры (для подсветки кнопки)
+    private val _hasActiveFilters = MutableStateFlow(false)
+    val hasActiveFilters: StateFlow<Boolean> = _hasActiveFilters.asStateFlow()
+
     // Сохраняем данные последнего успешного поиска для PaginationError
     private var lastSuccessFound: Int = 0
     private var lastSuccessTotalPages: Int = 0
 
+    init {
+        // Загружаем фильтры при инициализации ViewModel
+        loadFilters()
+    }
+
+    /**
+     * Загрузить актуальные фильтры из SharedPreferences
+     */
+    private fun loadFilters() {
+        viewModelScope.launch {
+            val settings = getFilterSettingsUseCase.execute()
+            val apiParams = settings.toApiParams()
+
+            // Обновляем флаг активных фильтров
+            _hasActiveFilters.value = settings.industry != null ||
+                settings.expectedSalary != null ||
+                settings.onlyWithSalary
+
+            // Конвертируем в VacancySearchRequest (без text и page)
+            currentFilters = VacancySearchRequest(
+                text = null,
+                area = apiParams.area,
+                industry = apiParams.industry,
+                salary = apiParams.salary,
+                onlyWithSalary = apiParams.onlyWithSalary,
+                page = 0
+            )
+        }
+    }
+
+    /**
+     * Перезагрузить фильтры и повторить последний поиск
+     * Вызывается при возврате с экрана фильтров
+     */
+    fun reloadFiltersAndSearch() {
+        viewModelScope.launch {
+            // Загружаем новые фильтры
+            loadFilters()
+
+            // Если есть активный поисковый запрос - повторяем поиск
+            if (currentSearchQuery.isNotEmpty()) {
+                _state.value = SearchState.Loading
+                performSearch(page = 0)
+            }
+        }
+    }
+
     /**
      * Поиск вакансий с debounce
      * @param query - поисковый запрос
-     * @param filters - фильтры поиска (регион, отрасль, зарплата)
      */
-    fun searchVacancies(
-        query: String,
-        filters: VacancySearchRequest? = null
-    ) {
+    fun searchVacancies(query: String) {
         currentSearchQuery = query.trim()
         _searchQuery.value = query
-        currentFilters = filters
 
         if (currentSearchQuery.isEmpty()) {
             _state.value = SearchState.Initial
             return
         }
+
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
             delay(DEBOUNCE_DELAY_MS)
-            // Устанавливаем Loading ПЕРЕД запросом!
+
+            // Перезагружаем фильтры перед каждым поиском (на случай изменений)
+            loadFilters()
+
+            // Устанавливаем Loading ПЕРЕД запросом
             _state.value = SearchState.Loading
 
             performSearch(page = 0)
@@ -114,7 +169,7 @@ class SearchViewModel(
     }
 
     /**
-     * Выполнить поиск вакансий
+     * Выполнить поиск вакансий с применением фильтров
      */
     private suspend fun performSearch(page: Int) {
         val request = createSearchRequest(page)
@@ -131,6 +186,7 @@ class SearchViewModel(
     }
 
     private fun createSearchRequest(page: Int): VacancySearchRequest {
+        // Объединяем текущий запрос с фильтрами
         val request = VacancySearchRequest(
             text = currentSearchQuery,
             area = currentFilters?.area,
@@ -223,7 +279,7 @@ class SearchViewModel(
         searchJob?.cancel()
         currentSearchQuery = ""
         _searchQuery.value = ""
-        currentFilters = null
+        // НЕ очищаем currentFilters - фильтры должны сохраняться
         _state.value = SearchState.Initial
     }
 
