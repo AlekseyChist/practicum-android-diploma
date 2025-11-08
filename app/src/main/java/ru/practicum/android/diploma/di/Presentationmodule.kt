@@ -22,7 +22,8 @@ val presentationModule = module {
             removeVacancyFromFavoritesUseCase = get(),
             checkIfVacancyFavoriteUseCase = get(),
             getFavoriteVacancyByIdUseCase = get(),
-            navigator = get()
+            navigator = get(),
+            connectivityChecker = get()
         )
     }
 
@@ -34,7 +35,6 @@ val presentationModule = module {
         )
     }
 
-    // ViewModel для экрана поиска с автоматическим применением фильтров
     viewModel {
         SearchViewModel(
             searchVacanciesUseCase = get(),

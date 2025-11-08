@@ -158,6 +158,13 @@ fun IndustryScreen(
                     )
                 }
 
+                is IndustryState.EmptySearch -> {
+                    ErrorSection(
+                        idRes = R.drawable.no_vacanc_placeholder,
+                        message = stringResource(R.string.placeholder_no_such_industry)
+                    )
+                }
+
                 is IndustryState.Error -> {
                     ErrorSection(
                         idRes = R.drawable.server_not_responding_placeholder,
@@ -180,8 +187,8 @@ fun IndustryScreen(
 
                 is IndustryState.NoConnection -> {
                     ErrorSection(
-                        idRes = R.drawable.no_internet_placeholder,
-                        message = stringResource(R.string.placeholder_no_internet)
+                        idRes = R.drawable.no_list_placeholder,
+                        message = stringResource(R.string.placeholder_no_list_found)
                     )
                 }
             }
@@ -363,7 +370,7 @@ fun ErrorSection(
         ) {
             Image(
                 painter = painterResource(idRes),
-                contentDescription = "Ошибка загрузки",
+                contentDescription = "ÐžÑˆÐ¸Ð±ÐºÐ° Ð·Ð°Ð³Ñ€ÑƒÐ·ÐºÐ¸",
                 modifier = Modifier
                     .fillMaxWidth(),
                 contentScale = ContentScale.Crop
