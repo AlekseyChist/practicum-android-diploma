@@ -48,7 +48,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -60,7 +59,6 @@ import ru.practicum.android.diploma.domain.models.formatForDisplay
 import ru.practicum.android.diploma.presentation.vacancy.VacancyDetailState
 import ru.practicum.android.diploma.ui.theme.AppTheme
 import ru.practicum.android.diploma.ui.theme.Dimens
-import ru.practicum.android.diploma.ui.vacancy.mock.VacancyStateProvider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -121,6 +119,13 @@ fun VacancyScreen(
                     ErrorSection(
                         idRes = R.drawable.vacancy_not_found_error,
                         message = stringResource(R.string.vacancy_not_found)
+                    )
+                }
+
+                is VacancyDetailState.NoConnection -> {
+                    ErrorSection(
+                        idRes = R.drawable.no_internet_placeholder,
+                        message = stringResource(R.string.placeholder_no_internet)
                     )
                 }
 
@@ -441,7 +446,7 @@ fun LabeledListSection(
                 modifier = Modifier.padding(bottom = Dimens.padding_4)
             ) {
                 Text(
-                    text = "•",
+                    text = "â€¢",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(end = Dimens.padding_8)
@@ -474,7 +479,7 @@ fun ErrorSection(
         ) {
             Image(
                 painter = painterResource(idRes),
-                contentDescription = "Ошибка загрузки",
+                contentDescription = "ÐžÑˆÐ¸Ð±ÐºÐ° Ð·Ð°Ð³Ñ€ÑƒÐ·ÐºÐ¸",
                 modifier = Modifier
                     .fillMaxWidth(),
                 contentScale = ContentScale.Crop
@@ -494,14 +499,114 @@ fun ErrorSection(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(name = "Loading", showBackground = true)
 @Composable
-fun VacancyScreenPreview(
-    @PreviewParameter(VacancyStateProvider::class) state: VacancyDetailState
-) {
+fun VacancyScreenLoadingPreview() {
     AppTheme {
         VacancyScreen(
-            state = state,
+            state = VacancyDetailState.Loading,
+            onBackClick = {},
+            onShareClick = {},
+            onFavoriteClick = {},
+            onEmailClick = {},
+            onPhoneClick = {}
+        )
+    }
+}
+
+@Preview(name = "Not Found", showBackground = true)
+@Composable
+fun VacancyScreenNotFoundPreview() {
+    AppTheme {
+        VacancyScreen(
+            state = VacancyDetailState.NotFound,
+            onBackClick = {},
+            onShareClick = {},
+            onFavoriteClick = {},
+            onEmailClick = {},
+            onPhoneClick = {}
+        )
+    }
+}
+
+@Preview(name = "No Connection", showBackground = true)
+@Composable
+fun VacancyScreenNoConnectionPreview() {
+    AppTheme {
+        VacancyScreen(
+            state = VacancyDetailState.NoConnection,
+            onBackClick = {},
+            onShareClick = {},
+            onFavoriteClick = {},
+            onEmailClick = {},
+            onPhoneClick = {}
+        )
+    }
+}
+
+@Preview(name = "Server Error", showBackground = true)
+@Composable
+fun VacancyScreenServerErrorPreview() {
+    AppTheme {
+        VacancyScreen(
+            state = VacancyDetailState.ServerError("Ошибка сервера"),
+            onBackClick = {},
+            onShareClick = {},
+            onFavoriteClick = {},
+            onEmailClick = {},
+            onPhoneClick = {}
+        )
+    }
+}
+
+@Preview(name = "Success", showBackground = true, heightDp = 1000)
+@Composable
+fun VacancyScreenSuccessPreview() {
+    AppTheme {
+        VacancyScreen(
+            state = VacancyDetailState.Success(
+                vacancy = ru.practicum.android.diploma.domain.models.Vacancy(
+                    id = "123",
+                    name = "Android разработчик",
+                    area = ru.practicum.android.diploma.domain.models.Area(
+                        id = "1",
+                        name = "Москва"
+                    ),
+                    employer = ru.practicum.android.diploma.domain.models.Employer(
+                        id = "1",
+                        name = "Яндекс",
+                        logoUrl = null
+                    ),
+                    salary = ru.practicum.android.diploma.domain.models.Salary(
+                        from = 100000,
+                        to = 200000,
+                        currency = "RUR"
+                    ),
+                    experience = ru.practicum.android.diploma.domain.models.Experience(
+                        id = "between1And3",
+                        name = "От 1 до 3 лет"
+                    ),
+                    employment = ru.practicum.android.diploma.domain.models.Employment(
+                        id = "full",
+                        name = "Полная занятость"
+                    ),
+                    schedule = ru.practicum.android.diploma.domain.models.Schedule(
+                        id = "fullDay",
+                        name = "Полный день"
+                    ),
+                    description = "Мы ищем опытного Android разработчика для работы над крутыми проектами.",
+                    keySkills = listOf("Kotlin", "Jetpack Compose", "MVVM", "Clean Architecture"),
+                    contacts = ru.practicum.android.diploma.domain.models.Contacts(
+                        name = "Иван Иванов",
+                        email = "ivan@example.com",
+                        phones = listOf("+7 (999) 123-45-67")
+                    ),
+                    address = "Москва, ул. Льва Толстого, 16",
+                    url = "https://hh.ru/vacancy/123",
+                    isFavorite = false
+                ),
+                isFavorite = false
+            ),
             onBackClick = {},
             onShareClick = {},
             onFavoriteClick = {},
@@ -512,16 +617,58 @@ fun VacancyScreenPreview(
 }
 
 @Preview(
+    name = "Success - Dark",
     showBackground = true,
-    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
+    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES,
+    heightDp = 1000
 )
 @Composable
-fun VacancyScreenDarkPreview(
-    @PreviewParameter(VacancyStateProvider::class) state: VacancyDetailState
-) {
+fun VacancyScreenSuccessDarkPreview() {
     AppTheme {
         VacancyScreen(
-            state = state,
+            state = VacancyDetailState.Success(
+                vacancy = ru.practicum.android.diploma.domain.models.Vacancy(
+                    id = "123",
+                    name = "Android разработчик",
+                    area = ru.practicum.android.diploma.domain.models.Area(
+                        id = "1",
+                        name = "Москва"
+                    ),
+                    employer = ru.practicum.android.diploma.domain.models.Employer(
+                        id = "1",
+                        name = "Яндекс",
+                        logoUrl = null
+                    ),
+                    salary = ru.practicum.android.diploma.domain.models.Salary(
+                        from = 100000,
+                        to = 200000,
+                        currency = "RUR"
+                    ),
+                    experience = ru.practicum.android.diploma.domain.models.Experience(
+                        id = "between1And3",
+                        name = "От 1 до 3 лет"
+                    ),
+                    employment = ru.practicum.android.diploma.domain.models.Employment(
+                        id = "full",
+                        name = "Полная занятость"
+                    ),
+                    schedule = ru.practicum.android.diploma.domain.models.Schedule(
+                        id = "fullDay",
+                        name = "Полный день"
+                    ),
+                    description = "Мы ищем опытного Android разработчика для работы над крутыми проектами.",
+                    keySkills = listOf("Kotlin", "Jetpack Compose", "MVVM", "Clean Architecture"),
+                    contacts = ru.practicum.android.diploma.domain.models.Contacts(
+                        name = "Иван Иванов",
+                        email = "ivan@example.com",
+                        phones = listOf("+7 (999) 123-45-67")
+                    ),
+                    address = "Москва, ул. Льва Толстого, 16",
+                    url = "https://hh.ru/vacancy/123",
+                    isFavorite = false
+                ),
+                isFavorite = true
+            ),
             onBackClick = {},
             onShareClick = {},
             onFavoriteClick = {},

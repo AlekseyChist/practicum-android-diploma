@@ -13,9 +13,11 @@ import ru.practicum.android.diploma.domain.api.GetFavoriteVacancyByIdUseCase
 import ru.practicum.android.diploma.domain.api.GetVacancyDetailsUseCase
 import ru.practicum.android.diploma.domain.api.RemoveVacancyFromFavoritesUseCase
 import ru.practicum.android.diploma.domain.models.Vacancy
+import ru.practicum.android.diploma.util.connectivity.ConnectivityChecker
 
 /**
  * ViewModel для экрана деталей вакансии
+ * проверяет интернет через ConnectivityChecker
  */
 class VacancyDetailViewModel(
     private val getVacancyDetailsUseCase: GetVacancyDetailsUseCase,
@@ -23,7 +25,8 @@ class VacancyDetailViewModel(
     private val removeVacancyFromFavoritesUseCase: RemoveVacancyFromFavoritesUseCase,
     private val checkIfVacancyFavoriteUseCase: CheckIfVacancyFavoriteUseCase,
     private val getFavoriteVacancyByIdUseCase: GetFavoriteVacancyByIdUseCase,
-    private val navigator: ExternalNavigator
+    private val navigator: ExternalNavigator,
+    private val connectivityChecker: ConnectivityChecker
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<VacancyDetailState>(VacancyDetailState.Initial)
@@ -107,10 +110,18 @@ class VacancyDetailViewModel(
 
     /**
      * Обработка ошибок с различением типов
+     * сначала проверяем интернет потом тип ошибки
      */
     private fun handleError(exception: Throwable) {
         val message = exception.message ?: "Неизвестная ошибка"
 
+        // сначала проверяем наличие интернета
+        if (!connectivityChecker.isConnected()) {
+            _state.value = VacancyDetailState.NoConnection
+            return
+        }
+
+        // если интернет есть - проверяем тип ошибки сервера
         _state.value = when {
             message.contains("VACANCY_NOT_FOUND") -> {
                 VacancyDetailState.NotFound

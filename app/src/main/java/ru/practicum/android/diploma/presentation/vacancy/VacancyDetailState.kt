@@ -35,4 +35,10 @@ sealed class VacancyDetailState {
      */
     data class ServerError(val message: String) : VacancyDetailState()
 
+    /**
+     * Нет подключения к интернету
+     * проверяется через ConnectivityChecker
+     */
+    object NoConnection : VacancyDetailState()
+
 }
