@@ -86,6 +86,7 @@ import ru.practicum.android.diploma.ui.theme.Red
 fun SearchScreen(
     state: SearchState,
     query: String,
+    hasActiveFilters: Boolean = false,
     onQueryChange: (String) -> Unit,
     onClearClick: () -> Unit,
     onSearchClick: () -> Unit,
@@ -128,7 +129,11 @@ fun SearchScreen(
                                 Icon(
                                     imageVector = Icons.Outlined.FilterList,
                                     contentDescription = stringResource(R.string.filters_settings),
-                                    tint = MaterialTheme.colorScheme.onBackground
+                                    tint = if (hasActiveFilters) {
+                                        colorResource(R.color.blue)
+                                    } else {
+                                        MaterialTheme.colorScheme.onBackground
+                                    }
                                 )
                             }
                         },

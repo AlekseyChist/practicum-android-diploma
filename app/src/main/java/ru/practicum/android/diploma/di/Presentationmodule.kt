@@ -34,9 +34,11 @@ val presentationModule = module {
         )
     }
 
+    // ViewModel для экрана поиска с автоматическим применением фильтров
     viewModel {
         SearchViewModel(
-            searchVacanciesUseCase = get()
+            searchVacanciesUseCase = get(),
+            getFilterSettingsUseCase = get()
         )
     }
 
