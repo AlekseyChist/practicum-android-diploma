@@ -187,8 +187,8 @@ fun IndustryScreen(
 
                 is IndustryState.NoConnection -> {
                     ErrorSection(
-                        idRes = R.drawable.no_internet_placeholder,
-                        message = stringResource(R.string.placeholder_no_internet)
+                        idRes = R.drawable.no_list_placeholder,
+                        message = stringResource(R.string.placeholder_no_list_found)
                     )
                 }
             }
