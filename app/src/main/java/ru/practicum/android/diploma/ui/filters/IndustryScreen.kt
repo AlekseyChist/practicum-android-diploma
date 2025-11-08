@@ -160,8 +160,8 @@ fun IndustryScreen(
 
                 is IndustryState.EmptySearch -> {
                     ErrorSection(
-                        idRes = R.drawable.no_list_placeholder,
-                        message = stringResource(R.string.placeholder_no_list_found)
+                        idRes = R.drawable.no_vacanc_placeholder,
+                        message = stringResource(R.string.placeholder_no_such_industry)
                     )
                 }
 
