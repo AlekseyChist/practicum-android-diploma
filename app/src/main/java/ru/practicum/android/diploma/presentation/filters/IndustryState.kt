@@ -41,4 +41,10 @@ sealed interface IndustryState {
      * Нет подключения к интернету
      */
     data object NoConnection : IndustryState
+
+    /**
+     * Ничего не найдено по поисковому запросу
+     * используется когда отрасли загружены но фильтр пуст
+     */
+    data object EmptySearch : IndustryState
 }

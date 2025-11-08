@@ -123,7 +123,12 @@ class IndustryViewModel(
     private fun updateState() {
         val filteredList = filterIndustries()
 
-        _state.value = IndustryState.Content(
+        if (filteredList.isEmpty() && searchQuery.isNotEmpty()) {
+            _state.value = IndustryState.EmptySearch  // плейсхолдер
+            return
+        }
+
+        _state.value = IndustryState.Content(  // показываем список
             industries = allIndustries,
             filteredIndustries = filteredList,
             selectedIndustry = selectedIndustry,
