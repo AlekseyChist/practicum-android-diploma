@@ -15,11 +15,6 @@ import ru.practicum.android.diploma.domain.models.VacancyUi
 import ru.practicum.android.diploma.domain.models.toApiParams
 import ru.practicum.android.diploma.presentation.mappers.VacancyUiMapper
 
-/**
- * ViewModel для экрана поиска вакансий
- * Использует VacancyUiMapper для преобразования Domain → UI моделей
- * Автоматически применяет фильтры из SharedPreferences к каждому поиску
- */
 class SearchViewModel(
     private val searchVacanciesUseCase: SearchVacanciesUseCase,
     private val getFilterSettingsUseCase: GetFilterSettingsUseCase
@@ -34,47 +29,45 @@ class SearchViewModel(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-    // Флаг для отслеживания, есть ли активные фильтры (для подсветки кнопки)
     private val _hasActiveFilters = MutableStateFlow(false)
     val hasActiveFilters: StateFlow<Boolean> = _hasActiveFilters.asStateFlow()
 
-    // Сохраняем данные последнего успешного поиска для PaginationError
     private var lastSuccessFound: Int = 0
     private var lastSuccessTotalPages: Int = 0
 
     init {
-        // Загружаем фильтры при инициализации ViewModel
-        loadFilters()
-    }
-
-    /**
-     * Загрузить актуальные фильтры из SharedPreferences
-     */
-    private fun loadFilters() {
+        // Загружаем фильтры при инициализации
         viewModelScope.launch {
-            val settings = getFilterSettingsUseCase.execute()
-            val apiParams = settings.toApiParams()
-
-            // Обновляем флаг активных фильтров
-            _hasActiveFilters.value = settings.industry != null ||
-                settings.expectedSalary != null ||
-                settings.onlyWithSalary
-
-            // Конвертируем в VacancySearchRequest (без text и page)
-            currentFilters = VacancySearchRequest(
-                text = null,
-                area = apiParams.area,
-                industry = apiParams.industry,
-                salary = apiParams.salary,
-                onlyWithSalary = apiParams.onlyWithSalary,
-                page = 0
-            )
+            loadFilters()
         }
     }
 
     /**
+     * Загрузить актуальные фильтры из SharedPreferences
+     * ИЗМЕНЕНО: теперь это suspend-функция без внутреннего launch
+     */
+    private suspend fun loadFilters() {
+        val settings = getFilterSettingsUseCase.execute()
+        val apiParams = settings.toApiParams()
+
+        // Обновляем флаг активных фильтров
+        _hasActiveFilters.value = settings.industry != null ||
+            settings.expectedSalary != null ||
+            settings.onlyWithSalary
+
+        // Конвертируем в VacancySearchRequest
+        currentFilters = VacancySearchRequest(
+            text = null,
+            area = apiParams.area,
+            industry = apiParams.industry,
+            salary = apiParams.salary,
+            onlyWithSalary = apiParams.onlyWithSalary,
+            page = 0
+        )
+    }
+
+    /**
      * Перезагрузить фильтры и повторить последний поиск
-     * Вызывается при возврате с экрана фильтров
      */
     fun reloadFiltersAndSearch() {
         viewModelScope.launch {
@@ -91,7 +84,6 @@ class SearchViewModel(
 
     /**
      * Поиск вакансий с debounce
-     * @param query - поисковый запрос
      */
     fun searchVacancies(query: String) {
         currentSearchQuery = query.trim()
@@ -106,7 +98,7 @@ class SearchViewModel(
         searchJob = viewModelScope.launch {
             delay(DEBOUNCE_DELAY_MS)
 
-            // Перезагружаем фильтры перед каждым поиском (на случай изменений)
+            // Перезагружаем фильтры ПЕРЕД поиском и ждем завершения!
             loadFilters()
 
             // Устанавливаем Loading ПЕРЕД запросом
@@ -141,19 +133,21 @@ class SearchViewModel(
     }
 
     /**
-     * Повторить последний поиск (при ошибке или отсутствии сети)
+     * Повторить последний поиск
      */
     fun retry() {
         if (currentSearchQuery.isNotEmpty()) {
             _state.value = SearchState.Loading
             viewModelScope.launch {
+                // Перезагружаем фильтры перед retry
+                loadFilters()
                 performSearch(page = 0)
             }
         }
     }
 
     /**
-     * Отменить ошибку пагинации и вернуться к Success с текущими вакансиями
+     * Отменить ошибку пагинации
      */
     fun dismissPaginationError() {
         val currentState = _state.value
@@ -175,9 +169,7 @@ class SearchViewModel(
         val request = createSearchRequest(page)
         searchVacanciesUseCase.execute(request)
             .onSuccess { result ->
-
                 val vacanciesUi = VacancyUiMapper.mapToUi(result.vacancies)
-
                 handleSearchSuccess(vacanciesUi, result.found, result.page, result.pages)
             }
             .onFailure { exception ->
@@ -186,8 +178,7 @@ class SearchViewModel(
     }
 
     private fun createSearchRequest(page: Int): VacancySearchRequest {
-        // Объединяем текущий запрос с фильтрами
-        val request = VacancySearchRequest(
+        return VacancySearchRequest(
             text = currentSearchQuery,
             area = currentFilters?.area,
             industry = currentFilters?.industry,
@@ -195,7 +186,6 @@ class SearchViewModel(
             onlyWithSalary = currentFilters?.onlyWithSalary,
             page = page
         )
-        return request
     }
 
     private fun handleSearchSuccess(
@@ -219,7 +209,6 @@ class SearchViewModel(
 
         val hasMorePages = page < totalPages - 1
 
-        // Сохраняем для использования в PaginationError
         lastSuccessFound = found
         lastSuccessTotalPages = totalPages
 
@@ -236,9 +225,7 @@ class SearchViewModel(
         val message = exception.message ?: "Неизвестная ошибка"
         val currentState = _state.value
 
-        // Проверяем была ли это ошибка при пагинации
         if (currentState is SearchState.LoadingNextPage) {
-            // При ошибке пагинации сохраняем текущие вакансии
             val errorType = if (isNoConnectionError(message)) {
                 SearchState.PaginationError.ErrorType.NO_CONNECTION
             } else {
@@ -253,23 +240,17 @@ class SearchViewModel(
                 errorType = errorType
             )
         } else {
-            // При ошибке первичного поиска показываем полноэкранный плейсхолдер
             _state.value = when {
-                isNoConnectionError(message) -> {
-                    SearchState.NoConnection
-                }
-                else -> {
-                    SearchState.Error(message)
-                }
+                isNoConnectionError(message) -> SearchState.NoConnection
+                else -> SearchState.Error(message)
             }
         }
     }
 
     private fun isNoConnectionError(message: String): Boolean {
-        val isNoConnection = message.contains("интернет", ignoreCase = true) ||
+        return message.contains("интернет", ignoreCase = true) ||
             message.contains("connection", ignoreCase = true) ||
             message.contains("подключения", ignoreCase = true)
-        return isNoConnection
     }
 
     /**
@@ -279,11 +260,10 @@ class SearchViewModel(
         searchJob?.cancel()
         currentSearchQuery = ""
         _searchQuery.value = ""
-        // НЕ очищаем currentFilters - фильтры должны сохраняться
         _state.value = SearchState.Initial
     }
 
     companion object {
-        private const val DEBOUNCE_DELAY_MS = 2000L // 2 секунды согласно ТЗ
+        private const val DEBOUNCE_DELAY_MS = 2000L
     }
 }
