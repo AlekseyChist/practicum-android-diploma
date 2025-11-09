@@ -3,6 +3,7 @@ package ru.practicum.android.diploma.ui.filters
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -323,7 +324,8 @@ private fun IndustryListItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = Dimens.padding_16, end = Dimens.padding_4)
-            .height(Dimens.size_60),
+            .height(Dimens.size_60)
+            .clickable { onRadioButtonClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -340,7 +342,7 @@ private fun IndustryListItem(
             contentAlignment = Alignment.Center
         ) {
             RadioButton(
-                onClick = onRadioButtonClick,
+                onClick = null,
                 selected = selected,
                 colors = RadioButtonDefaults.colors(
                     selectedColor = Color.Blue,
