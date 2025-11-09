@@ -38,6 +38,10 @@ class FiltersSettingsViewModel(
         loadSavedSettings()
     }
 
+    fun getCurrentIndustryId(): Int? {
+        return currentIndustry?.id
+    }
+
     /**
      * Загрузить сохраненные настройки при открытии экрана
      */

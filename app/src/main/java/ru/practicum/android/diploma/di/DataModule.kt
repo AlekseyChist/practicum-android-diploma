@@ -20,22 +20,15 @@ import ru.practicum.android.diploma.domain.api.FilterSettingsRepository
 import ru.practicum.android.diploma.domain.api.FiltersRepository
 import ru.practicum.android.diploma.domain.api.GetVacancyDetailsUseCase
 import ru.practicum.android.diploma.domain.impl.GetVacancyDetailsUseCaseImpl
-import ru.practicum.android.diploma.util.connectivity.ConnectivityChecker
 
 /**
- * Koin Ð¼Ð¾Ð´ÑƒÐ»ÑŒ Ð´Ð»Ñ ÑÐ»Ð¾Ñ Ð´Ð°Ð½Ð½Ñ‹Ñ…
- * Ð ÐµÐ³Ð¸ÑÑ‚Ñ€Ð¸Ñ€ÑƒÐµÐ¼ Ð²ÑÐµ ÐºÐ¾Ð¼Ð¿Ð¾Ð½ÐµÐ½Ñ‚Ñ‹ Ð·Ð´ÐµÑÑŒ
+ * Koin
  */
 val dataModule = module {
 
     // LocalStorage (SharedPreferences)
     single<LocalStorage> {
         LocalStorageImpl(context = androidContext())
-    }
-
-    // ConnectivityChecker для проверки интернета
-    single {
-        ConnectivityChecker(context = androidContext())
     }
 
     // Room Database
