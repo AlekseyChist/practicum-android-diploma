@@ -65,7 +65,7 @@ class FiltersSettingsViewModel(
     fun onSalaryChanged(salary: String) {
         // фильтруем только цифры
         currentSalary = salary.filter { it.isDigit() }
-        updateState()
+        applyFilters()
     }
 
     /**
@@ -73,7 +73,7 @@ class FiltersSettingsViewModel(
      */
     fun clearSalary() {
         currentSalary = ""
-        updateState()
+        applyFilters()
     }
 
     /**
@@ -81,7 +81,7 @@ class FiltersSettingsViewModel(
      */
     fun onOnlyWithSalaryChanged(enabled: Boolean) {
         currentOnlyWithSalary = enabled
-        updateState()
+        applyFilters()
     }
 
     /**
@@ -100,7 +100,7 @@ class FiltersSettingsViewModel(
             currentIndustry = allIndustries.firstOrNull { industry ->
                 industry.id == industryId
             }
-            updateState()
+            applyFilters()
         }
     }
 
@@ -110,7 +110,7 @@ class FiltersSettingsViewModel(
      */
     fun clearIndustry() {
         currentIndustry = null
-        updateState()
+        applyFilters()
     }
 
     /**

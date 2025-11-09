@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.fragment.findNavController
@@ -56,6 +57,10 @@ class FiltersSettingsFragment : Fragment() {
                         },
                         onClearIndustry = { viewModel.clearIndustry() },
                         onApplyClick = {
+                            parentFragmentManager.setFragmentResult(
+                                "applyFiltersKey",
+                                bundleOf("applyFilters" to true)
+                            )
                             viewModel.applyFilters()
                             findNavController().popBackStack()
                         },

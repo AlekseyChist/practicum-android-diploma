@@ -46,7 +46,7 @@ class SearchViewModel(
      * Загрузить актуальные фильтры из SharedPreferences
      * ИЗМЕНЕНО: теперь это suspend-функция без внутреннего launch
      */
-    private suspend fun loadFilters() {
+    suspend fun loadFilters() {
         val settings = getFilterSettingsUseCase.execute()
         val apiParams = settings.toApiParams()
 
