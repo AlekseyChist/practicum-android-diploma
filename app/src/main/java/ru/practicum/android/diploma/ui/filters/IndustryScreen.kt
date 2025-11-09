@@ -323,9 +323,9 @@ private fun IndustryListItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable { onRadioButtonClick() }
             .padding(start = Dimens.padding_16, end = Dimens.padding_4)
-            .height(Dimens.size_60)
-            .clickable { onRadioButtonClick() },
+            .height(Dimens.size_60),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
