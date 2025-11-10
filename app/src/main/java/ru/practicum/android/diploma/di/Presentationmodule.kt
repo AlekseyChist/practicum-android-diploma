@@ -22,8 +22,7 @@ val presentationModule = module {
             removeVacancyFromFavoritesUseCase = get(),
             checkIfVacancyFavoriteUseCase = get(),
             getFavoriteVacancyByIdUseCase = get(),
-            navigator = get(),
-            connectivityChecker = get()
+            navigator = get()
         )
     }
 

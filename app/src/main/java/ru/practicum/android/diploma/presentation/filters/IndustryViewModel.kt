@@ -30,10 +30,12 @@ class IndustryViewModel(
      * Загрузить список отраслей при открытии экрана
      * Вызывается из UI (Fragment/Composable)
      */
-    fun loadIndustries(preselectedIndustry: Industry? = null) {
+    fun loadIndustries(preselectedIndustry: Int? = null) {
         // если уже загружено - не грузим повторно
         if (allIndustries.isNotEmpty()) {
-            selectedIndustry = preselectedIndustry
+            selectedIndustry = allIndustries.firstOrNull { industry ->
+                industry.id == preselectedIndustry
+            }
             updateState()
             return
         }
@@ -44,7 +46,9 @@ class IndustryViewModel(
             getIndustries.execute()
                 .onSuccess { industries ->
                     allIndustries = industries.sortedBy { it.name.lowercase() }
-                    selectedIndustry = preselectedIndustry
+                    selectedIndustry = allIndustries.firstOrNull { industry ->
+                        industry.id == preselectedIndustry
+                    }
                     updateState()
                 }
                 .onFailure { exception ->
@@ -113,7 +117,7 @@ class IndustryViewModel(
     fun retry() {
         // сбрасываем кеш и грузим заново
         allIndustries = emptyList()
-        loadIndustries(selectedIndustry)
+        loadIndustries(selectedIndustry?.id)
     }
 
     /**

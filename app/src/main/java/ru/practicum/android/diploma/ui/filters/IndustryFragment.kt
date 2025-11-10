@@ -19,8 +19,10 @@ class IndustryFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        viewModel.loadIndustries()
+    ): View {
+        val currentIndustryId: Int? = arguments?.takeIf { it.containsKey("industryId") }
+            ?.getInt("industryId")
+        viewModel.loadIndustries(currentIndustryId)
         return ComposeView(requireContext()).apply {
             setContent {
                 val state by viewModel.state.collectAsStateWithLifecycle()

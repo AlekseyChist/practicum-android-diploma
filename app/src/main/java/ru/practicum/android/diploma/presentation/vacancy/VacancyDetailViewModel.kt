@@ -13,7 +13,6 @@ import ru.practicum.android.diploma.domain.api.GetFavoriteVacancyByIdUseCase
 import ru.practicum.android.diploma.domain.api.GetVacancyDetailsUseCase
 import ru.practicum.android.diploma.domain.api.RemoveVacancyFromFavoritesUseCase
 import ru.practicum.android.diploma.domain.models.Vacancy
-import ru.practicum.android.diploma.util.connectivity.ConnectivityChecker
 
 /**
  * ViewModel для экрана деталей вакансии
@@ -25,8 +24,7 @@ class VacancyDetailViewModel(
     private val removeVacancyFromFavoritesUseCase: RemoveVacancyFromFavoritesUseCase,
     private val checkIfVacancyFavoriteUseCase: CheckIfVacancyFavoriteUseCase,
     private val getFavoriteVacancyByIdUseCase: GetFavoriteVacancyByIdUseCase,
-    private val navigator: ExternalNavigator,
-    private val connectivityChecker: ConnectivityChecker
+    private val navigator: ExternalNavigator
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<VacancyDetailState>(VacancyDetailState.Initial)
@@ -116,7 +114,10 @@ class VacancyDetailViewModel(
         val message = exception.message ?: "Неизвестная ошибка"
 
         // сначала проверяем наличие интернета
-        if (!connectivityChecker.isConnected()) {
+        if (
+            message.contains("интернет", ignoreCase = true) ||
+            message.contains("connection", ignoreCase = true)
+        ) {
             _state.value = VacancyDetailState.NoConnection
             return
         }

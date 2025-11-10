@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.fragment.findNavController
@@ -45,12 +46,21 @@ class FiltersSettingsFragment : Fragment() {
                             viewModel.onOnlyWithSalaryChanged(isEnabled)
                         },
                         onIndustryClick = {
+                            val industryId = viewModel.getCurrentIndustryId()
+                            val bundle = Bundle().apply {
+                                industryId?.let { putInt("industryId", it) }
+                            }
                             findNavController().navigate(
                                 R.id.action_filtersSettingsFragment_to_industryFragment,
+                                bundle
                             )
                         },
                         onClearIndustry = { viewModel.clearIndustry() },
                         onApplyClick = {
+                            parentFragmentManager.setFragmentResult(
+                                "applyFiltersKey",
+                                bundleOf("applyFilters" to true)
+                            )
                             viewModel.applyFilters()
                             findNavController().popBackStack()
                         },
