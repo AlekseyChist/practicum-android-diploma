@@ -24,6 +24,11 @@ class FiltersSettingsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
+        setupIndustryResultListener()
+        return createComposeView()
+    }
+
+    private fun setupIndustryResultListener() {
         parentFragmentManager.setFragmentResultListener(
             "selectIndustry",
             viewLifecycleOwner,
@@ -31,7 +36,9 @@ class FiltersSettingsFragment : Fragment() {
             val selectedIndustryId = bundle.getInt("selectedIndustry")
             viewModel.setSelectedIndustry(selectedIndustryId)
         }
+    }
 
+    private fun createComposeView(): ComposeView {
         return ComposeView(requireContext()).apply {
             setContent {
                 val state by viewModel.state.collectAsStateWithLifecycle()
@@ -45,30 +52,34 @@ class FiltersSettingsFragment : Fragment() {
                         onToggleOnlyWithSalary = { isEnabled ->
                             viewModel.onOnlyWithSalaryChanged(isEnabled)
                         },
-                        onIndustryClick = {
-                            val industryId = viewModel.getCurrentIndustryId()
-                            val bundle = Bundle().apply {
-                                industryId?.let { putInt("industryId", it) }
-                            }
-                            findNavController().navigate(
-                                R.id.action_filtersSettingsFragment_to_industryFragment,
-                                bundle
-                            )
-                        },
+                        onIndustryClick = { navigateToIndustryScreen() },
                         onClearIndustry = { viewModel.clearIndustry() },
-                        onApplyClick = {
-                            parentFragmentManager.setFragmentResult(
-                                "applyFiltersKey",
-                                bundleOf("applyFilters" to true)
-                            )
-                            viewModel.applyFilters()
-                            findNavController().popBackStack()
-                        },
+                        onApplyClick = { applyFiltersAndGoBack() },
                         onResetClick = { viewModel.resetFilters() },
                         onBackClick = { findNavController().popBackStack() },
                     )
                 }
             }
         }
+    }
+
+    private fun navigateToIndustryScreen() {
+        val industryId = viewModel.getCurrentIndustryId()
+        val bundle = Bundle().apply {
+            industryId?.let { putInt("industryId", it) }
+        }
+        findNavController().navigate(
+            R.id.action_filtersSettingsFragment_to_industryFragment,
+            bundle
+        )
+    }
+
+    private fun applyFiltersAndGoBack() {
+        parentFragmentManager.setFragmentResult(
+            "applyFiltersKey",
+            bundleOf("applyFilters" to true)
+        )
+        viewModel.applyFilters()
+        findNavController().popBackStack()
     }
 }

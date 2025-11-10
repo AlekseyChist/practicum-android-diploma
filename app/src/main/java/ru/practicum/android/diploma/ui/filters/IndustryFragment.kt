@@ -14,22 +14,29 @@ import ru.practicum.android.diploma.presentation.filters.IndustryViewModel
 import ru.practicum.android.diploma.ui.theme.AppTheme
 
 class IndustryFragment : Fragment() {
+
     private val viewModel: IndustryViewModel by viewModel()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val currentIndustryId: Int? = arguments?.takeIf { it.containsKey("industryId") }
-            ?.getInt("industryId")
+        val currentIndustryId = getCurrentIndustryId()
         viewModel.loadIndustries(currentIndustryId)
+        return createComposeView()
+    }
+
+    private fun getCurrentIndustryId(): Int? {
+        return arguments?.takeIf { it.containsKey("industryId") }
+            ?.getInt("industryId")
+    }
+
+    private fun createComposeView(): ComposeView {
         return ComposeView(requireContext()).apply {
             setContent {
                 val state by viewModel.state.collectAsStateWithLifecycle()
-                val query = when (val s = state) {
-                    is IndustryState.Content -> s.searchQuery
-                    else -> ""
-                }
+                val query = getSearchQuery(state)
                 AppTheme {
                     IndustryScreen(
                         state = state,
@@ -48,15 +55,26 @@ class IndustryFragment : Fragment() {
                             viewModel.selectIndustry(industry)
                         },
                         onSelectIndustry = { selected ->
-                            parentFragmentManager.setFragmentResult(
-                                "selectIndustry",
-                                Bundle().apply { putInt("selectedIndustry", selected) }
-                            )
-                            requireActivity().onBackPressedDispatcher.onBackPressed()
+                            handleIndustrySelection(selected)
                         }
                     )
                 }
             }
         }
+    }
+
+    private fun getSearchQuery(state: IndustryState): String {
+        return when (state) {
+            is IndustryState.Content -> state.searchQuery
+            else -> ""
+        }
+    }
+
+    private fun handleIndustrySelection(selected: Int) {
+        parentFragmentManager.setFragmentResult(
+            "selectIndustry",
+            Bundle().apply { putInt("selectedIndustry", selected) }
+        )
+        requireActivity().onBackPressedDispatcher.onBackPressed()
     }
 }
