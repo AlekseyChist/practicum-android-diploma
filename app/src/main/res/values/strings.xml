@@ -30,10 +30,29 @@
     <string name="server_error">Ошибка сервера</string>
     <string name="share_vacancy">Поделиться</string>
     <string name="list_is_empty">Список пуст</string>
+    <string name="placeholder_no_list_found">Не удалось получить\nсписок</string>
+    <string name="placeholder_no_such_industry">Такой отрасли нет</string>
+
+
+
+    <string name="toast_check_internet">Проверьте подключение к интернету</string>
+    <string name="toast_error_occurred">Произошла ошибка</string>
+
+    <string name="indostry_hint">Введите отрасль</string>
+    <string name="choose">Выбрать</string>
+
     <plurals name="jobs_found">
         <item quantity="one">Найдена %d вакансия</item>
         <item quantity="few">Найдено %d вакансии</item>
         <item quantity="many">Найдено %d вакансий</item>
         <item quantity="other">Найдено %d вакансий</item>
     </plurals>
+    <string name="filters_settings_title">Настройки фильтрации</string>
+    <string name="filters_salary_hint">Введите сумму</string>
+    <string name="filters_no_salary_checkbox">Не показывать без зарплаты</string>
+    <string name="filters_industry_title">Отрасль</string>
+    <string name="filters_value_empty">Не выбрано</string>
+    <string name="filters_apply">Применить</string>
+    <string name="filters_reset">Сбросить</string>
+    <string name="filters_salary_placeholder">Ожидаемая зарплата</string>
 </resources>

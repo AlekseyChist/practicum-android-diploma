@@ -48,7 +48,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -60,7 +59,6 @@ import ru.practicum.android.diploma.domain.models.formatForDisplay
 import ru.practicum.android.diploma.presentation.vacancy.VacancyDetailState
 import ru.practicum.android.diploma.ui.theme.AppTheme
 import ru.practicum.android.diploma.ui.theme.Dimens
-import ru.practicum.android.diploma.ui.vacancy.mock.VacancyStateProvider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -121,6 +119,13 @@ fun VacancyScreen(
                     ErrorSection(
                         idRes = R.drawable.vacancy_not_found_error,
                         message = stringResource(R.string.vacancy_not_found)
+                    )
+                }
+
+                is VacancyDetailState.NoConnection -> {
+                    ErrorSection(
+                        idRes = R.drawable.no_internet_placeholder,
+                        message = stringResource(R.string.placeholder_no_internet)
                     )
                 }
 
@@ -441,7 +446,7 @@ fun LabeledListSection(
                 modifier = Modifier.padding(bottom = Dimens.padding_4)
             ) {
                 Text(
-                    text = "•",
+                    text = "â€¢",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(end = Dimens.padding_8)
@@ -474,7 +479,7 @@ fun ErrorSection(
         ) {
             Image(
                 painter = painterResource(idRes),
-                contentDescription = "Ошибка загрузки",
+                contentDescription = "ÐžÑˆÐ¸Ð±ÐºÐ° Ð·Ð°Ð³Ñ€ÑƒÐ·ÐºÐ¸",
                 modifier = Modifier
                     .fillMaxWidth(),
                 contentScale = ContentScale.Crop
@@ -494,14 +499,12 @@ fun ErrorSection(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(name = "Loading", showBackground = true)
 @Composable
-fun VacancyScreenPreview(
-    @PreviewParameter(VacancyStateProvider::class) state: VacancyDetailState
-) {
+fun VacancyScreenLoadingPreview() {
     AppTheme {
         VacancyScreen(
-            state = state,
+            state = VacancyDetailState.Loading,
             onBackClick = {},
             onShareClick = {},
             onFavoriteClick = {},
@@ -511,17 +514,42 @@ fun VacancyScreenPreview(
     }
 }
 
-@Preview(
-    showBackground = true,
-    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
-)
+@Preview(name = "Not Found", showBackground = true)
 @Composable
-fun VacancyScreenDarkPreview(
-    @PreviewParameter(VacancyStateProvider::class) state: VacancyDetailState
-) {
+fun VacancyScreenNotFoundPreview() {
     AppTheme {
         VacancyScreen(
-            state = state,
+            state = VacancyDetailState.NotFound,
+            onBackClick = {},
+            onShareClick = {},
+            onFavoriteClick = {},
+            onEmailClick = {},
+            onPhoneClick = {}
+        )
+    }
+}
+
+@Preview(name = "No Connection", showBackground = true)
+@Composable
+fun VacancyScreenNoConnectionPreview() {
+    AppTheme {
+        VacancyScreen(
+            state = VacancyDetailState.NoConnection,
+            onBackClick = {},
+            onShareClick = {},
+            onFavoriteClick = {},
+            onEmailClick = {},
+            onPhoneClick = {}
+        )
+    }
+}
+
+@Preview(name = "Server Error", showBackground = true)
+@Composable
+fun VacancyScreenServerErrorPreview() {
+    AppTheme {
+        VacancyScreen(
+            state = VacancyDetailState.ServerError("Ошибка сервера"),
             onBackClick = {},
             onShareClick = {},
             onFavoriteClick = {},

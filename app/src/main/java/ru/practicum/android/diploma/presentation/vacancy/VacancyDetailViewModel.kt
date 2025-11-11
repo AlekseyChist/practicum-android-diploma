@@ -16,6 +16,7 @@ import ru.practicum.android.diploma.domain.models.Vacancy
 
 /**
  * ViewModel для экрана деталей вакансии
+ * проверяет интернет через ConnectivityChecker
  */
 class VacancyDetailViewModel(
     private val getVacancyDetailsUseCase: GetVacancyDetailsUseCase,
@@ -107,10 +108,21 @@ class VacancyDetailViewModel(
 
     /**
      * Обработка ошибок с различением типов
+     * сначала проверяем интернет потом тип ошибки
      */
     private fun handleError(exception: Throwable) {
         val message = exception.message ?: "Неизвестная ошибка"
 
+        // сначала проверяем наличие интернета
+        if (
+            message.contains("интернет", ignoreCase = true) ||
+            message.contains("connection", ignoreCase = true)
+        ) {
+            _state.value = VacancyDetailState.NoConnection
+            return
+        }
+
+        // если интернет есть - проверяем тип ошибки сервера
         _state.value = when {
             message.contains("VACANCY_NOT_FOUND") -> {
                 VacancyDetailState.NotFound

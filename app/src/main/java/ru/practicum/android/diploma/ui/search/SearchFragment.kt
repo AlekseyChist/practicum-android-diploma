@@ -7,15 +7,27 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.presentation.search.SearchViewModel
 import ru.practicum.android.diploma.ui.theme.AppTheme
 
 class SearchFragment : Fragment() {
+    private val viewModel: SearchViewModel by viewModel()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        parentFragmentManager.setFragmentResultListener(
+            "applyFiltersKey",
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val shouldApply = bundle.getBoolean("applyFilters", false)
+            if (shouldApply) {
+                viewModel.reloadFiltersAndSearch()
+            }
+        }
         return ComposeView(requireContext()).apply {
             setContent {
                 AppTheme {
@@ -26,7 +38,7 @@ class SearchFragment : Fragment() {
                             )
                         },
                         onVacancyClick = { vacancyId ->
-                            // Передаем vacancyId в Bundle для VacancyFragment
+                            // Передаем  vacancyId в Bundle для VacancyFragment
                             val bundle = Bundle().apply {
                                 putString("vacancyId", vacancyId)
                             }
@@ -34,7 +46,8 @@ class SearchFragment : Fragment() {
                                 R.id.action_searchFragment_to_vacancyFragment,
                                 bundle
                             )
-                        }
+                        },
+                        viewModel = viewModel
                     )
                 }
             }
